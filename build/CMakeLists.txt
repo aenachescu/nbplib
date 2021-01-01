@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 3.17)
 project(NBP)
 
 include("${CMAKE_SOURCE_DIR}/test_config.cmake")
