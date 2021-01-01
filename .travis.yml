@@ -32,24 +32,23 @@ matrix:
     # gcc
     #
     - os: linux
+      dist: xenial
       env:
         - DESCRIPTION="linux gcc"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - deadsnakes
           packages:
             - gcc-5
             - gcc-6
             - gcc-7
             - gcc-8
             - gcc-9
+            - python3.6
       before_install:
         - gem install coveralls-lcov
-        - sudo add-apt-repository ppa:jonathonf/python-3.6 -y
-        - sudo apt-get update -q
-        - sudo apt-get install python3.6
-        - sudo apt-get install python3.6-dev
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -66,24 +65,23 @@ matrix:
     # g++
     #
     - os: linux
+      dist: xenial
       env:
         - DESCRIPTION="linux g++"
       addons:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - deadsnakes
           packages:
             - g++-5
             - g++-6
             - g++-7
             - g++-8
             - g++-9
+            - python3.6
       before_install:
         - gem install coveralls-lcov
-        - sudo add-apt-repository ppa:jonathonf/python-3.6 -y
-        - sudo apt-get update -q
-        - sudo apt-get install python3.6
-        - sudo apt-get install python3.6-dev
       script:
         # install lcov 1.14
         - mkdir lcov
