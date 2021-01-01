@@ -46,8 +46,10 @@ matrix:
             - gcc-9
       before_install:
         - gem install coveralls-lcov
-        - sudo apt-get update
+        - sudo add-apt-repository ppa:jonathonf/python-3.6 -y
+        - sudo apt-get update -q
         - sudo apt-get install python3.6
+        - sudo apt-get install python3.6-dev
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -78,8 +80,10 @@ matrix:
             - g++-9
       before_install:
         - gem install coveralls-lcov
-        - sudo apt-get update
+        - sudo add-apt-repository ppa:jonathonf/python-3.6 -y
+        - sudo apt-get update -q
         - sudo apt-get install python3.6
+        - sudo apt-get install python3.6-dev
       script:
         # install lcov 1.14
         - mkdir lcov
