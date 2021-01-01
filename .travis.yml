@@ -47,7 +47,7 @@ matrix:
             - gcc-8
             - gcc-9
             - python3.6
-            - python3.6-pip
+            - python3-pip
       before_install:
         - gem install coveralls-lcov
       install:
@@ -84,7 +84,7 @@ matrix:
             - g++-8
             - g++-9
             - python3.6
-            - python3.6-pip
+            - python3-pip
       before_install:
         - gem install coveralls-lcov
       install:
