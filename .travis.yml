@@ -73,6 +73,39 @@ matrix:
         - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "gcc-5;gcc-6;gcc-7;gcc-8;gcc-9" -rtmt -v -sote -sobe
 
     #
+    # gcc-9 sanitizers
+    #
+    - os: linux
+      dist: xenial
+      env:
+        - DESCRIPTION="linux gcc-9 sanitizers"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - deadsnakes
+          packages:
+            - gcc-9
+            - gcc-9-multilib
+            - python3.6
+            - python3-pip
+      before_install:
+        - gem install coveralls-lcov
+      install:
+        - python3.6 -m pip install pexpect colorlog
+      script:
+        # install cmake 3.17
+        - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17
+        - export PATH=`pwd`/cmake-3.17/bin:$PATH
+
+        # run sanitizers on 64bits
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m64>" -comp "gcc-9" -san "<all>" -rtmt -v -sote -sobe
+
+        # only UB and address sanitizers are available on 32bits
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "gcc-9" -san "address" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "gcc-9" -san "ub" -rtmt -v -sote -sobe
+
+    #
     # g++
     #
     - os: linux
@@ -116,3 +149,36 @@ matrix:
         - cd ../../
 
         - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "g++-5;g++-6;g++-7;g++-8;g++-9" -rtmt -v -sote -sobe
+
+    #
+    # g++-9 sanitizers
+    #
+    - os: linux
+      dist: xenial
+      env:
+        - DESCRIPTION="linux g++-9 sanitizers"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - deadsnakes
+          packages:
+            - g++-9
+            - g++-9-multilib
+            - python3.6
+            - python3-pip
+      before_install:
+        - gem install coveralls-lcov
+      install:
+        - python3.6 -m pip install pexpect colorlog
+      script:
+        # install cmake 3.17
+        - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17
+        - export PATH=`pwd`/cmake-3.17/bin:$PATH
+
+        # run sanitizers on 64bits
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m64>" -comp "g++-9" -san "<all>" -rtmt -v -sote -sobe
+
+        # only UB and address sanitizers are available on 32bits
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "g++-9" -san "address" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "g++-9" -san "ub" -rtmt -v -sote -sobe
