@@ -46,6 +46,11 @@ matrix:
             - gcc-7
             - gcc-8
             - gcc-9
+            - gcc-5-multilib
+            - gcc-6-multilib
+            - gcc-7-multilib
+            - gcc-8-multilib
+            - gcc-9-multilib
             - python3.6
             - python3-pip
       before_install:
@@ -85,6 +90,11 @@ matrix:
             - g++-7
             - g++-8
             - g++-9
+            - g++-5-multilib
+            - g++-6-multilib
+            - g++-7-multilib
+            - g++-8-multilib
+            - g++-9-multilib
             - python3.6
             - python3-pip
       before_install:
