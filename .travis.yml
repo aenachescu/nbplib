@@ -50,8 +50,8 @@ matrix:
       before_install:
         - gem install coveralls-lcov
       install:
-        - pip install pexpect
-        - pip install colorlog
+        - pip3.6 install pexpect
+        - pip3.6 install colorlog
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -86,8 +86,8 @@ matrix:
       before_install:
         - gem install coveralls-lcov
       install:
-        - pip install pexpect
-        - pip install colorlog
+        - pip3.6 install pexpect
+        - pip3.6 install colorlog
       script:
         # install lcov 1.14
         - mkdir lcov
