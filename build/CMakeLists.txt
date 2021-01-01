@@ -76,10 +76,10 @@ unset(LEAK_SANITIZER CACHE)
 
 if(UNDEFINED_BEHAVIOR_SANITIZER MATCHES ON)
 set(SANITIZERS_CFLAGS "-fsanitize=undefined,shift,integer-divide-by-zero,\
-    unreachable,vla-bound,null,return,signed-integer-overflow,bounds,\
-    bounds-strict,alignment,object-size,float-divide-by-zero,\
-    float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,\
-    vptr,pointer-overflow,builtin -fuse-ld=gold")
+unreachable,vla-bound,null,return,signed-integer-overflow,bounds,\
+bounds-strict,alignment,object-size,float-divide-by-zero,\
+float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,\
+vptr,pointer-overflow,builtin -fuse-ld=gold")
 set(DEBUG_CFLAGS "-g")
 set(OPTIMIZATION_CFLAGS "")
 endif()
