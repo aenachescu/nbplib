@@ -47,12 +47,12 @@ matrix:
             - gcc-8
             - gcc-9
             - python3.6
-            - python3-pip
+            - python3.6-pip
       before_install:
         - gem install coveralls-lcov
-        - pip3 --version
-        - pip3 install --upgrade pip
-        - pip3 --version
+        - pip3.6 --version
+        - pip3.6 install --upgrade pip
+        - pip3.6 --version
       install:
         - pip3 install pexpect
         - pip3 install colorlog
