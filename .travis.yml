@@ -50,6 +50,7 @@ matrix:
             - python3-pip
       before_install:
         - gem install coveralls-lcov
+        - pip3 --version
       install:
         - pip3 install pexpect
         - pip3 install colorlog
@@ -87,6 +88,7 @@ matrix:
             - python3-pip
       before_install:
         - gem install coveralls-lcov
+        - pip3 --version
       install:
         - pip3 install pexpect
         - pip3 install colorlog
