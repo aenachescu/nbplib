@@ -49,6 +49,9 @@ matrix:
             - python3.6
       before_install:
         - gem install coveralls-lcov
+      install:
+        - pip install pexpect
+        - pip install colorlog
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -82,6 +85,9 @@ matrix:
             - python3.6
       before_install:
         - gem install coveralls-lcov
+      install:
+        - pip install pexpect
+        - pip install colorlog
       script:
         # install lcov 1.14
         - mkdir lcov
