@@ -53,6 +53,9 @@ matrix:
       install:
         - python3.6 -m pip install pexpect colorlog
       script:
+        # install cmake 3.17
+        - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17
+        - export PATH=`pwd`/cmake-3.17/bin:$PATH
         # install lcov 1.14
         - mkdir lcov
         - cd lcov
@@ -89,6 +92,10 @@ matrix:
       install:
         - python3.6 -m pip install pexpect colorlog
       script:
+        # install cmake 3.17
+        - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17
+        - export PATH=`pwd`/cmake-3.17/bin:$PATH
+
         # install lcov 1.14
         - mkdir lcov
         - cd lcov
