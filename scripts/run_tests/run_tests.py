@@ -189,6 +189,8 @@ def build_tests(compiler = "", standard = "", platform = ""):
             success = False
             break
 
+        os.mkdir(cmakeFilesPath)
+
         config = ""
 
         if len(compiler):
