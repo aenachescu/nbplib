@@ -44,6 +44,8 @@ from tests_config import *
 testsArray = []
 requestedTests = []
 
+sanitizers = []
+
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 buildPath = os.path.abspath(os.path.join(rootPath, 'build'))
@@ -164,10 +166,10 @@ def print_process_output(output, error, source):
         print(output)
         runTestsMtLogMutex.release()
 
-def build_tests(compiler = "", standard = "", platform = ""):
+def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
     log.info(
-        "Building tests: compiler = %s, standard = %s, platform = %s",
-        compiler, standard, platform,
+        "Building tests: compiler = %s, standard = %s, platform = %s, sanitizer = %s",
+        compiler, standard, platform, sanitizer
     )
 
     startTime = time.time()
@@ -199,6 +201,19 @@ def build_tests(compiler = "", standard = "", platform = ""):
             config = "{} -DSTANDARD={}".format(config, standard)
         if len(platform):
             config = "{} -DPLATFORM={}".format(config, platform)
+
+        if sanitizer == "address":
+            config += " -DADDRESS_SANITIZER=ON"
+        elif sanitizer == "thread":
+            config += " -DTHREAD_SANITIZER=ON"
+        elif sanitizer == "leak":
+            config += " -DLEAK_SANITIZER=ON"
+        elif sanitizer == "ub":
+            config += " -DUNDEFINED_BEHAVIOR_SANITIZER=ON"
+        elif sanitizer != "":
+            log.error("Unknown sanitizer %s", sanitizer)
+            success = False
+            break
 
         # run cmake
         cmakeCmdline = "cmake -S {} -B {} {}".format(buildPath, cmakeFilesPath, config)
@@ -276,6 +291,7 @@ def load_expected_printer_output(filePath):
 def run_test(testName):
     log.info("Running test %s...", testName)
     success = False
+    unexpectedRc = False
 
     startTime = time.time()
 
@@ -321,7 +337,7 @@ def run_test(testName):
                 testConfig["returnCode"],
                 testRc
             )
-            break
+            unexpectedRc = True
 
         if testOutput != expectedOutput:
             runTestsMtLogMutex.acquire()
@@ -334,6 +350,9 @@ def run_test(testName):
             break
         else:
             print_process_output(testOutput, False, "test")
+
+        if unexpectedRc:
+            break
 
         success = True
         break
@@ -558,33 +577,36 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
 
     for std in standards:
         for p in platforms:
-            if not build_tests(compiler, std, p):
-                buildError = True
-                if stopOnBuildError:
-                    log.fatal("Exiting because stop on build error is set")
-                    return False, True, False
-                else:
-                    continue
-            if runTests:
-                if not run_tests():
-                    testError = True
-                    if stopOnTestCaseError:
-                        return False, False, True
-                    elif stopOnTestError:
-                        log.fatal("Exiting because stop on test error is set")
-                        return False, False, True
+            for san in sanitizers:
+                if not build_tests(compiler, std, p, san):
+                    buildError = True
+                    if stopOnBuildError:
+                        log.fatal("Exiting because stop on build error is set")
+                        return False, True, False
                     else:
                         continue
+                if runTests:
+                    if not run_tests():
+                        testError = True
+                        if stopOnTestCaseError:
+                            return False, False, True
+                        elif stopOnTestError:
+                            log.fatal("Exiting because stop on test error is set")
+                            return False, False, True
+                        else:
+                            continue
 
     return False, buildError, testError
 
 def build_and_run_tests(compiler, standard, platform, runTests):
     if len(compiler) == 0:
-        if not build_tests():
-            return False
+        for san in sanitizers:
+            if not build_tests(sanitizer=san):
+                return False
 
-        if not run_tests():
-            return False
+            if runTests:
+                if not run_tests():
+                    return False
     elif compiler == "<all>":
         fail = False
         for comp in supportedCompilersDict:
@@ -876,6 +898,14 @@ if __name__ == '__main__':
         action='store_true'
     )
 
+    parser.add_argument(
+        '-san',
+        '--sanitizer',
+        help='if it is set then the sanitizers will be enabled. Possible values:\
+        <all>, address, thread, leak, ub',
+        default=''
+    )
+
     args = parser.parse_args()
 
     #
@@ -896,9 +926,10 @@ if __name__ == '__main__':
     log.setLevel(logLevel)
     log.addHandler(stream)
 
-    compiler = args.compiler
-    standard = args.standard
-    platform = args.platform
+    compiler  = args.compiler
+    standard  = args.standard
+    platform  = args.platform
+    sanitizer = args.sanitizer
 
     log.info("script      path = %s", scriptPath)
     log.info("root        path = %s", rootPath)
@@ -907,9 +938,10 @@ if __name__ == '__main__':
     log.info("bin         path = %s", binPath)
     log.info("test        path = %s", testPath)
     log.info("number of cpus = %d", numberOfCpus)
-    log.info("compiler = %s", compiler)
-    log.info("standard = %s", standard)
-    log.info("platform = %s", platform)
+    log.info("compiler  = %s", compiler)
+    log.info("standard  = %s", standard)
+    log.info("platform  = %s", platform)
+    log.info("sanitizer = %s", sanitizer)
 
     if args.print_cmake_output:
         printCmakeOutput = True
@@ -927,6 +959,25 @@ if __name__ == '__main__':
         runTestsMt = True
 
     parse_tests_list(args.tests)
+
+    if sanitizer == "address":
+        sanitizers.append("address")
+    elif sanitizer == "thread":
+        sanitizers.append("thread")
+    elif sanitizer == "leak":
+        sanitizers.append("leak")
+    elif sanitizer == "ub":
+        sanitizers.append("ub")
+    elif sanitizer == "<all>":
+        sanitizers.append("address")
+        sanitizers.append("thread")
+        sanitizers.append("leak")
+        sanitizers.append("ub")
+    elif sanitizer == "":
+        sanitizers.append("")
+    else:
+        log.error("Unsupported sanitizer %s", sanitizer)
+        sys.exit(1)
 
     if args.run_tests:
         run_tests_mode()
