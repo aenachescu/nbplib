@@ -25,8 +25,6 @@
 
 language: c
 sudo: required
-python:
-  - "3.6"
 
 matrix:
   include:
@@ -48,6 +46,8 @@ matrix:
             - gcc-9
       before_install:
         - gem install coveralls-lcov
+        - sudo apt-get update
+        - sudo apt-get install python3
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -58,7 +58,7 @@ matrix:
         - sudo make install
         - cd ../../
 
-        - python3.6.7 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "gcc-5;gcc-6;gcc-7;gcc-8;gcc-9" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "gcc-5;gcc-6;gcc-7;gcc-8;gcc-9" -rtmt -v -sote -sobe
 
     #
     # g++
@@ -78,6 +78,8 @@ matrix:
             - g++-9
       before_install:
         - gem install coveralls-lcov
+        - sudo apt-get update
+        - sudo apt-get install python3
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -88,4 +90,4 @@ matrix:
         - sudo make install
         - cd ../../
 
-        - python3.6.7 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "g++-5;g++-6;g++-7;g++-8;g++-9" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "g++-5;g++-6;g++-7;g++-8;g++-9" -rtmt -v -sote -sobe
