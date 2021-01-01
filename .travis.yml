@@ -47,7 +47,7 @@ matrix:
       before_install:
         - gem install coveralls-lcov
         - sudo apt-get update
-        - sudo apt-get install python3
+        - sudo apt-get install python3.6
       script:
         # install lcov 1.14
         - mkdir lcov
@@ -79,7 +79,7 @@ matrix:
       before_install:
         - gem install coveralls-lcov
         - sudo apt-get update
-        - sudo apt-get install python3
+        - sudo apt-get install python3.6
       script:
         # install lcov 1.14
         - mkdir lcov
