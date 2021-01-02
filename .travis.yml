@@ -64,13 +64,13 @@ matrix:
         # install lcov 1.14
         - mkdir lcov
         - cd lcov
-        - wget https://github.com/linux-test-project/lcov/archive/v1.14.tar.gz
+        - wget https://github.com/linux-test-project/lcov/archive/v1.15.tar.gz
         - tar xfvz v1.14.tar.gz
         - cd lcov-1.14
         - sudo make install
         - cd ../../
 
-        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "gcc-5;gcc-6;gcc-7;gcc-8;gcc-9" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "gcc-5;gcc-6;gcc-7;gcc-8;gcc-9" -rtmt -v -sote -sobe -rcov
 
     #
     # gcc-9 sanitizers
@@ -142,13 +142,13 @@ matrix:
         # install lcov 1.14
         - mkdir lcov
         - cd lcov
-        - wget https://github.com/linux-test-project/lcov/archive/v1.14.tar.gz
+        - wget https://github.com/linux-test-project/lcov/archive/v1.15.tar.gz
         - tar xfvz v1.14.tar.gz
         - cd lcov-1.14
         - sudo make install
         - cd ../../
 
-        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "g++-5;g++-6;g++-7;g++-8;g++-9" -rtmt -v -sote -sobe
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "g++-5;g++-6;g++-7;g++-8;g++-9" -rtmt -v -sote -sobe -rcov
 
     #
     # g++-9 sanitizers
