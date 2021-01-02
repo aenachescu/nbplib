@@ -24,11 +24,11 @@
 
 import argparse
 import concurrent.futures
+import glob
 import logging
 import multiprocessing
 import os
 import shutil
-import subprocess
 import sys
 import time
 from threading import Lock
@@ -46,24 +46,31 @@ requestedTests = []
 
 sanitizers = []
 
+coverageFileId = 0
+
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 buildPath = os.path.abspath(os.path.join(rootPath, 'build'))
 cmakeFilesPath = os.path.abspath(os.path.join(rootPath, 'build/cmake_files'))
 binPath = os.path.abspath(os.path.join(rootPath, 'bin'))
 testPath = os.path.abspath(os.path.join(rootPath, 'test'))
+coveragePath = os.path.abspath(os.path.join(rootPath, "coverage"))
 numberOfCpus = multiprocessing.cpu_count()
 
-printCmakeOutput    = False
-printMakeOutput     = False
-printTestOutput     = False
-stopOnBuildError    = False
-stopOnTestError     = False
-stopOnTestCaseError = False
-runTestsMt          = False
+printCmakeOutput        = False
+printMakeOutput         = False
+printTestOutput         = False
+printLCovOutput         = False
+printCoverallsOutput    = False
+stopOnBuildError        = False
+stopOnTestError         = False
+stopOnTestCaseError     = False
+runTestsMt              = False
+enableCoverage          = False
+reportCoverage          = False
 
-runTestsMtStop      = False
-runTestsMtLogMutex  = Lock()
+runTestsMtStop          = False
+runTestsMtLogMutex      = Lock()
 
 statistics = {
     "numberOfFailedBuilds" : 0,
@@ -165,6 +172,10 @@ def print_process_output(output, error, source):
         runTestsMtLogMutex.acquire()
         print(output)
         runTestsMtLogMutex.release()
+    elif source == "lcov" and printLCovOutput:
+        print(output)
+    elif source == "coveralls" and printCoverallsOutput:
+        print(output)
 
 def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
     log.info(
@@ -215,6 +226,9 @@ def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
             success = False
             break
 
+        if enableCoverage:
+            config += " -DCODE_COVERAGE=ON"
+
         # run cmake
         cmakeCmdline = "cmake -S {} -B {} {}".format(buildPath, cmakeFilesPath, config)
         output, rc = pexpect.runu(cmakeCmdline, withexitstatus=1, timeout=-1)
@@ -263,6 +277,152 @@ def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
         )
 
     return success
+
+def remove_abs_path_from_coverage_report(coverageReportPath):
+    f = open(coverageReportPath, mode='r')
+    data = f.read()
+    f.close()
+
+    absPath = rootPath
+    if not absPath.endswith("/"):
+        absPath += "/"
+
+    data = data.replace(absPath, "")
+
+    f = open(coverageReportPath, mode='w')
+    f.write(data)
+    f.close()
+
+    return True
+
+def generate_coverage_report(compiler):
+    global coverageFileId
+
+    log.info("Generating coverage report...")
+
+    coverageFiles = ""
+    success = True
+    gcovTool = ""
+
+    if compiler != "":
+        if compiler in supportedCompilersDict:
+            if "gcov_tool" in supportedCompilersDict[compiler]:
+                gcovTool = "--gcov-tool " + supportedCompilersDict[compiler]["gcov_tool"]
+        else:
+            log.error("Unknown compiler %s", compiler)
+            return False
+
+    for testName in testsArray:
+        log.info("Generating coverage report for test %s", testName)
+
+        testBinPath = os.path.join(binPath, testName)
+        coverageFile = os.path.join(testBinPath, "coverage.info")
+
+        coverageFiles += " -a " + coverageFile
+
+        testCMakePath = os.path.join(
+            cmakeFilesPath,
+            "CMakeFiles",
+            testName + ".dir"
+        )
+        testCMakePath += testPath
+        testCMakePath = os.path.join(testCMakePath, testName)
+
+        gcdaFiles = glob.iglob(os.path.join(testCMakePath, "*.gcda"))
+        for f in gcdaFiles:
+            if os.path.isfile(f):
+                shutil.copy2(f, testBinPath)
+
+        gcnoFiles = glob.iglob(os.path.join(testCMakePath, "*.gcno"))
+        for f in gcnoFiles:
+            if os.path.isfile(f):
+                shutil.copy2(f, testBinPath)
+
+        lcovCmd = "lcov --directory {} --capture --output-file {} {}".format(
+            testBinPath,
+            coverageFile,
+            gcovTool
+        )
+        output, rc = pexpect.runu(lcovCmd, timeout=-1, withexitstatus=1)
+
+        if rc != 0:
+            log.error("lcov failed: rc = %d, cmdline = %s", rc, lcovCmd)
+            print_process_output(output, True, "lcov")
+            success = False
+            break
+
+        print_process_output(output, False, "lcov")
+
+    if success:
+        coverageFilename = "coverage_" + str(coverageFileId) + ".info"
+        coverageFileId += 1
+
+        coverageReportFile = os.path.join(coveragePath, coverageFilename)
+        lcovCmd = "lcov {} -o {}".format(coverageFiles, coverageReportFile)
+
+        output, rc = pexpect.runu(lcovCmd, timeout=-1, withexitstatus=1)
+        if rc != 0:
+            log.error("lcov failed: rc = %d, cmdline = %s", rc, lcovCmd)
+            print_process_output(output, True, "lcov")
+            success = False
+        else:
+            print_process_output(output, False, "lcov")
+
+            if not remove_abs_path_from_coverage_report(coverageReportFile):
+                success = False
+
+    if success:
+        log.info(
+            "%sCoverage report generated successfully%s",
+            COLOR_GREEN,
+            COLOR_RESET
+        )
+    else:
+        log.error(
+            "%sGenerate coverage report failed%s",
+            COLOR_RED,
+            COLOR_RESET
+        )
+
+    return success
+
+def send_coverage_report():
+    coverageFilesParam = ""
+    coverageFiles = glob.iglob(os.path.join(coveragePath, "coverage_*.info"))
+
+    for f in coverageFiles:
+        coverageFilesParam += " -a " + f
+
+    coverageReportFile = os.path.join(coveragePath, "coverage.info")
+    lcovCmd = "lcov {} -o {}".format(coverageFilesParam, coverageReportFile)
+
+    output, rc = pexpect.runu(lcovCmd, timeout=-1, withexitstatus=1)
+
+    if rc != 0:
+        log.error("lcov failed: rc = %d, cmdline = %s", rc, lcovCmd)
+        print_process_output(output, True, "lcov")
+        return False
+
+    print_process_output(output, False, "lcov")
+
+    if not reportCoverage:
+        return True
+
+    log.info("Reporting coverage to coveralls...")
+
+    coverallsCmd = "coveralls-lcov {}".format(coverageReportFile)
+    output, rc = pexpect.runu(coverallsCmd, timeout=-1, withexitstatus=1)
+
+    if rc != 0:
+        log.error("coveralls failed: rc = %d, cmdline = %s", rc, coverallsCmd)
+        print_process_output(output, True, "coveralls")
+        return False
+
+    print_process_output(output, False, "coveralls")
+
+    log.info("Coverage reported to coveralls successfully")
+
+    return True
 
 def get_test_config(testName):
     testConfig = {
@@ -398,7 +558,7 @@ def run_test_mt(testName):
 
     return 2
 
-def run_tests():
+def run_tests(compiler=""):
     log.info("Running tests...")
 
     startTime = time.time()
@@ -439,6 +599,10 @@ def run_tests():
                 if stopOnTestCaseError:
                     log.fatal("Exiting because stop on test case error is set")
                     break
+
+    if enableCoverage:
+        if not generate_coverage_report(compiler):
+            success = False
 
     endTime = time.time()
     duration = endTime - startTime
@@ -586,7 +750,7 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
                     else:
                         continue
                 if runTests:
-                    if not run_tests():
+                    if not run_tests(compiler):
                         testError = True
                         if stopOnTestCaseError:
                             return False, False, True
@@ -698,6 +862,10 @@ def run_tests_mode():
             error = True
             break
 
+        if not send_coverage_report():
+            error = True
+            break
+
         break
 
     print_statistics()
@@ -764,6 +932,10 @@ def build_and_run_tests_mode(compiler, standard, platform):
             testsArray = requestedTests
 
         if not build_and_run_tests(compiler, standard, platform, True):
+            error = True
+            break
+
+        if not send_coverage_report():
             error = True
             break
 
@@ -906,6 +1078,38 @@ if __name__ == '__main__':
         default=''
     )
 
+    parser.add_argument(
+        '-cov',
+        '--coverage',
+        help='if it is set then the tests will be built with the coverage\
+        support but the coverage won\'t be reported.',
+        action='store_true'
+    )
+
+    parser.add_argument(
+        '-rcov',
+        '--report-coverage',
+        help='if it is set then the tests will be built with the coverage\
+        support and the coverage statistics will be reported to coveralls.',
+        action='store_true'
+    )
+
+    parser.add_argument(
+        '-plco',
+        '--print-lcov-output',
+        help='if it is set then lcov output will be printed even if lcov does\
+        not fail',
+        action='store_true'
+    )
+
+    parser.add_argument(
+        '-pco',
+        '--print-coveralls-output',
+        help='if it is set then coveralls output will be printed even if\
+        coveralls does not fail',
+        action='store_true'
+    )
+
     args = parser.parse_args()
 
     #
@@ -949,6 +1153,10 @@ if __name__ == '__main__':
         printMakeOutput = True
     if args.print_test_output:
         printTestOutput = True
+    if args.print_lcov_output:
+        printLCovOutput = True
+    if args.print_coveralls_output:
+        printCoverallsOutput = True
     if args.stop_on_build_error:
         stopOnBuildError = True
     if args.stop_on_test_error:
@@ -957,6 +1165,11 @@ if __name__ == '__main__':
         stopOnTestCaseError = True
     if args.run_tests_multithreading:
         runTestsMt = True
+    if args.coverage:
+        enableCoverage = True
+    if args.report_coverage:
+        enableCoverage = True
+        reportCoverage = True
 
     parse_tests_list(args.tests)
 
@@ -978,6 +1191,14 @@ if __name__ == '__main__':
     else:
         log.error("Unsupported sanitizer %s", sanitizer)
         sys.exit(1)
+
+    if enableCoverage:
+        shutil.rmtree(coveragePath, ignore_errors=True)
+        if os.path.exists(coveragePath):
+            log.critical("coverage folder exists")
+            sys.exit(1)
+        else:
+            os.mkdir(coveragePath)
 
     if args.run_tests:
         run_tests_mode()
