@@ -25,42 +25,52 @@
 supportedCompilersDict = {
     "gcc-5": {
         "standards": [ "-std=c99", "-std=c11" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-5"
     },
     "gcc-6": {
         "standards": [ "-std=c99", "-std=c11" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-6"
     },
     "gcc-7": {
         "standards": [ "-std=c99", "-std=c11" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-7"
     },
     "gcc-8": {
         "standards": [ "-std=c99", "-std=c11" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-8"
     },
     "gcc-9": {
         "standards": [ "-std=c99", "-std=c11" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-9"
     },
     "g++-5": {
         "standards": [ "-std=c++03", "-std=c++11", "-std=c++14", "-std=c++17" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-5"
     },
     "g++-6": {
         "standards": [ "-std=c++03", "-std=c++11", "-std=c++14", "-std=c++17" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-6"
     },
     "g++-7": {
         "standards": [ "-std=c++03", "-std=c++11", "-std=c++14", "-std=c++17" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-7"
     },
     "g++-8": {
         "standards": [ "-std=c++03", "-std=c++11", "-std=c++14", "-std=c++17" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-8"
     },
     "g++-9": {
         "standards": [ "-std=c++03", "-std=c++11", "-std=c++14", "-std=c++17" ],
-        "platforms": [ "-m32", "-m64"]
+        "platforms": [ "-m32", "-m64"],
+        "gcov_tool": "gcov-9"
     },
 }
