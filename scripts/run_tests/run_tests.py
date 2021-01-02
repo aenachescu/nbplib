@@ -387,6 +387,9 @@ def generate_coverage_report(compiler):
     return success
 
 def send_coverage_report():
+    if not enableCoverage:
+        return True
+
     coverageFilesParam = ""
     coverageFiles = glob.iglob(os.path.join(coveragePath, "coverage_*.info"))
 
