@@ -29,10 +29,12 @@ SOFTWARE.
 #include <stdlib.h>
 
 #ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+extern "C" {
 
 const char* __asan_default_options()
 {
     return "detect_leaks=0";
+}
 }
 
 #endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
