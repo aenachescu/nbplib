@@ -427,7 +427,63 @@ def send_coverage_report():
 
     return True
 
-def get_test_config(testName):
+def parse_test_config(testData, buildConfig):
+    testConfig = {
+        "returnCode": 0,
+        "cmdline": ""
+    }
+
+    if "returnCode" in testData:
+        testConfig["returnCode"] = testData["returnCode"]
+    if "cmdline" in testData:
+        testConfig["cmdline"] = testData["cmdline"]
+    if "outputContains" in testData:
+        testConfig["outputContains"] = testData["outputContains"]
+
+    if not "buildConfig" in testData:
+        return testConfig
+
+    for testBuildConfig in testData["buildConfig"]:
+        if not "config" in testBuildConfig:
+            log.warning(
+                "No config field for an object from buildConfig array from test %s",
+                testData["name"]
+            )
+            continue
+
+        configValues = testBuildConfig["config"].split(":")
+        if len(configValues) != 4:
+            log.warning(
+                "Invalid config field from buildConfig array from test %s",
+                testData["name"]
+            )
+            continue
+
+        if (configValues[0] != "<any>" and
+            unwrap_value(configValues[0]) != buildConfig["compiler"]):
+            continue
+        if (configValues[1] != "<any>" and
+            unwrap_value(configValues[1]) != buildConfig["standard"]):
+            continue
+        if (configValues[2] != "<any>" and
+            unwrap_value(configValues[2]) != buildConfig["platform"]):
+            continue
+        if (configValues[3] != "<any>" and
+            unwrap_value(configValues[3]) != buildConfig["sanitizer"]):
+            continue
+
+        if "returnCode" in testBuildConfig:
+            testConfig["returnCode"] = testBuildConfig["returnCode"]
+        if "cmdline" in testBuildConfig:
+            testConfig["cmdline"] = testBuildConfig["cmdline"]
+        if "outputContains" in testBuildConfig:
+            testConfig["outputContains"] = testBuildConfig["outputContains"]
+
+        break
+
+    return testConfig
+
+def get_test_config(testName, buildConfig):
     testConfig = {
         "returnCode": 0,
         "cmdline": "",
@@ -437,10 +493,9 @@ def get_test_config(testName):
         if test["name"] != testName:
             continue
 
-        if "returnCode" in test:
-            testConfig["returnCode"] = test["returnCode"]
-        if "cmdline" in test:
-            testConfig["cmdline"] = test["cmdline"]
+        testConfig = parse_test_config(test, buildConfig)
+
+        break
 
     return testConfig
 
@@ -451,7 +506,50 @@ def load_expected_printer_output(filePath):
 
     return output
 
-def run_test(testName):
+def check_test_output(testName, testOutput, testConfig):
+    if "outputContains" in testConfig:
+        if testOutput.find(testConfig["outputContains"]) == -1:
+            runTestsMtLogMutex.acquire()
+            log.error("Unexpected output for test %s", testName)
+            print("{}Output should contains:{}".format(COLOR_GREEN, COLOR_RESET))
+            print(testConfig["outputContains"])
+            print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
+            print(testOutput)
+            runTestsMtLogMutex.release()
+            return False
+        else:
+            print_process_output(testOutput, False, "test")
+    else:
+        testFolder = os.path.join(testPath, testName)
+        printerOutputPath = os.path.join(
+            testFolder,
+            "expected_linux_printer_output.txt"
+        )
+
+        if not os.path.exists(printerOutputPath):
+            log.error(
+                "Expected printer output does not exists [%s]",
+                printerOutputPath
+            )
+            return False
+
+        expectedOutput = load_expected_printer_output(printerOutputPath)
+
+        if testOutput != expectedOutput:
+            runTestsMtLogMutex.acquire()
+            log.error("Unexpected output for test %s", testName)
+            print("{}Expected printer output:{}".format(COLOR_GREEN, COLOR_RESET))
+            print(expectedOutput)
+            print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
+            print(testOutput)
+            runTestsMtLogMutex.release()
+            return False
+        else:
+            print_process_output(testOutput, False, "test")
+
+    return True
+
+def run_test(testName, buildConfig):
     log.info("Running test %s...", testName)
     success = False
     unexpectedRc = False
@@ -459,11 +557,10 @@ def run_test(testName):
     startTime = time.time()
 
     while True:
-        testConfig = get_test_config(testName)
+        testConfig = get_test_config(testName, buildConfig)
         testFolder = os.path.join(testPath, testName)
         testBinFolder = os.path.join(binPath, testName)
         testExe = os.path.join(testBinFolder, testName)
-        printerOutputPath = os.path.join(testFolder, "expected_linux_printer_output.txt")
 
         if not os.path.exists(testFolder):
             log.error("Test folder does not exists [%s]", testFolder)
@@ -476,12 +573,6 @@ def run_test(testName):
         if not os.path.exists(testExe):
             log.error("Test exe does not exists [%s]", testExe)
             break
-
-        if not os.path.exists(printerOutputPath):
-            log.error("Expected printer output does not exists [%s]", printerOutputPath)
-            break
-
-        expectedOutput = load_expected_printer_output(printerOutputPath)
 
         testCmd = "{} {}".format(testExe, testConfig["cmdline"])
         testOutput, testRc = pexpect.runu(
@@ -502,17 +593,8 @@ def run_test(testName):
             )
             unexpectedRc = True
 
-        if testOutput != expectedOutput:
-            runTestsMtLogMutex.acquire()
-            log.error("Unexpected output for test %s", testName)
-            print("{}Expected printer output:{}".format(COLOR_GREEN, COLOR_RESET))
-            print(expectedOutput)
-            print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
-            print(testOutput)
-            runTestsMtLogMutex.release()
+        if not check_test_output(testName, testOutput, testConfig):
             break
-        else:
-            print_process_output(testOutput, False, "test")
 
         if unexpectedRc:
             break
@@ -542,14 +624,14 @@ def run_test(testName):
 
     return success
 
-def run_test_mt(testName):
+def run_test_mt(testName, buildConfig):
     global runTestsMtStop
     global stopOnTestCaseError
 
     if runTestsMtStop:
         return 0
 
-    testPassed = run_test(testName)
+    testPassed = run_test(testName, buildConfig)
 
     update_test_statistics(testPassed)
 
@@ -561,7 +643,7 @@ def run_test_mt(testName):
 
     return 2
 
-def run_tests(compiler=""):
+def run_tests(buildConfig):
     log.info("Running tests...")
 
     startTime = time.time()
@@ -573,7 +655,7 @@ def run_tests(compiler=""):
     if runTestsMt:
         with concurrent.futures.ThreadPoolExecutor(max_workers=numberOfCpus) as executor:
             futureTests = {
-                executor.submit(run_test_mt, testName ) : testName
+                executor.submit(run_test_mt, testName, buildConfig ) : testName
                     for testName in testsArray
             }
             for future in concurrent.futures.as_completed(futureTests):
@@ -591,7 +673,7 @@ def run_tests(compiler=""):
                     log.error("Unknown status = %d", status)
     else:
         for testName in testsArray:
-            testPassed = run_test(testName)
+            testPassed = run_test(testName, buildConfig)
 
             update_test_statistics(testPassed)
             if testPassed:
@@ -604,7 +686,7 @@ def run_tests(compiler=""):
                     break
 
     if enableCoverage:
-        if not generate_coverage_report(compiler):
+        if not generate_coverage_report(buildConfig["compiler"]):
             success = False
 
     endTime = time.time()
@@ -742,9 +824,19 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
     buildError = False
     testError  = False
 
+    buildConfig = {
+        "compiler":  compiler,
+        "standard":  "",
+        "platform":  "",
+        "sanitizer": ""
+    }
+
     for std in standards:
+        buildConfig["standard"] = std
         for p in platforms:
+            buildConfig["platform"] = p
             for san in sanitizers:
+                buildConfig["sanitizer"] = san
                 if not build_tests(compiler, std, p, san):
                     buildError = True
                     if stopOnBuildError:
@@ -753,7 +845,7 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
                     else:
                         continue
                 if runTests:
-                    if not run_tests(compiler):
+                    if not run_tests(buildConfig):
                         testError = True
                         if stopOnTestCaseError:
                             return False, False, True
@@ -767,12 +859,19 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
 
 def build_and_run_tests(compiler, standard, platform, runTests):
     if len(compiler) == 0:
+        buildConfig = {
+            "compiler":  "",
+            "standard":  "",
+            "platform":  "",
+            "sanitizer": ""
+        }
         for san in sanitizers:
+            buildConfig["sanitizer"] = san
             if not build_tests(sanitizer=san):
                 return False
 
             if runTests:
-                if not run_tests():
+                if not run_tests(buildConfig):
                     return False
     elif compiler == "<all>":
         fail = False
@@ -842,6 +941,12 @@ def run_tests_mode():
     startTime = time.time()
 
     error = False
+    buildConfig = {
+        "compiler":  "",
+        "standard":  "",
+        "platform":  "",
+        "sanitizer": ""
+    }
 
     while True:
         if not load_tests():
@@ -861,7 +966,7 @@ def run_tests_mode():
 
             testsArray = requestedTests
 
-        if not run_tests():
+        if not run_tests(buildConfig):
             error = True
             break
 
