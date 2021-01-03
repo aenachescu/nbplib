@@ -27,5 +27,16 @@ testsConfig = [
         "name": "tmp2",
         "cmdline": "--version",
         "returnCode": 1
+    },
+    {
+        "name": "check_leak_sanitizer",
+        "outputContains": "check_leak_sanitizer completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<-m64>:<leak>",
+                "returnCode": 23,
+                "outputContains": "detected memory leaks"
+            }
+        ]
     }
 ]
