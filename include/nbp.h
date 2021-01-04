@@ -40,4 +40,6 @@ SOFTWARE.
 #define NBP_VERSION                                                            \
     NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
 
+#include "internal/build_configuration.h"
+
 #endif // end if _H_NBP_LIBRARY
