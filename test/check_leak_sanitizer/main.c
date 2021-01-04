@@ -25,17 +25,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include "nbp.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
 #ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+
+#ifdef NBP_LANGUAGE_CPP
 extern "C" {
+#endif // end if NBP_LANGUAGE_CPP
 
 const char* __asan_default_options()
 {
     return "detect_leaks=0";
 }
+
+#ifdef NBP_LANGUAGE_CPP
 }
+#endif // end if NBP_LANGUAGE_CPP
 
 #endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
