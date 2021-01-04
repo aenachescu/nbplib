@@ -29,6 +29,15 @@ testsConfig = [
         "returnCode": 1
     },
     {
+        "name": "check_build_configuration",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<any>",
+                "outputContains": "linux ${compiler} ${standard} ${platform} ${sanitizer}"
+            }
+        ]
+    },
+    {
         "name": "check_leak_sanitizer",
         "outputContains": "check_leak_sanitizer completed successfully",
         "buildConfig": [
