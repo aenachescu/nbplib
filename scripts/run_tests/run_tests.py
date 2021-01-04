@@ -427,6 +427,16 @@ def send_coverage_report():
 
     return True
 
+def parse_build_config_variables(data, buildConfig):
+    tmp = data
+
+    tmp = tmp.replace("${compiler}", buildConfig["compiler"])
+    tmp = tmp.replace("${standard}", buildConfig["standard"])
+    tmp = tmp.replace("${platform}", buildConfig["platform"])
+    tmp = tmp.replace("${sanitizer}", buildConfig["sanitizer"])
+
+    return tmp
+
 def parse_test_config(testData, buildConfig):
     testConfig = {
         "returnCode": 0,
@@ -438,7 +448,10 @@ def parse_test_config(testData, buildConfig):
     if "cmdline" in testData:
         testConfig["cmdline"] = testData["cmdline"]
     if "outputContains" in testData:
-        testConfig["outputContains"] = testData["outputContains"]
+        testConfig["outputContains"] = parse_build_config_variables(
+            testData["outputContains"],
+            buildConfig
+        )
 
     if not "buildConfig" in testData:
         return testConfig
@@ -477,7 +490,10 @@ def parse_test_config(testData, buildConfig):
         if "cmdline" in testBuildConfig:
             testConfig["cmdline"] = testBuildConfig["cmdline"]
         if "outputContains" in testBuildConfig:
-            testConfig["outputContains"] = testBuildConfig["outputContains"]
+            testConfig["outputContains"] = parse_build_config_variables(
+                testBuildConfig["outputContains"],
+                buildConfig
+            )
 
         break
 
