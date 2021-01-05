@@ -48,5 +48,16 @@ testsConfig = [
                 "outputContains": "detected memory leaks"
             }
         ]
+    },
+    {
+        "name": "check_thread_sanitizer",
+        "outputContains": "check_thread_sanitizer completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<thread>",
+                "returnCode": 66,
+                "outputContains": "ThreadSanitizer: data race"
+            }
+        ]
     }
 ]

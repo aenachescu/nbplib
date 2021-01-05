@@ -10,6 +10,7 @@ set(MT_SCHEDULER_LFLAGS
 list(APPEND TESTS
     tmp1 "" ""
     tmp2 ${MT_SCHEDULER_CFLAGS} ${MT_SCHEDULER_LFLAGS}
-    check_leak_sanitizer "" ""
     check_build_configuration "" ""
+    check_leak_sanitizer "" ""
+    check_thread_sanitizer "" "-lpthread -pthread"
 )
