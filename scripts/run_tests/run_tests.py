@@ -1,4 +1,5 @@
-# https://github.com/aenachescu/nbp
+# No Bugs in Production (NBP) Library
+# https://github.com/aenachescu/nbplib
 #
 # Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 # SPDX-License-Identifier: MIT
