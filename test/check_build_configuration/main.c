@@ -29,182 +29,100 @@ SOFTWARE.
 
 #include <stdio.h>
 
-int os              = 0;
-int compiler        = 0;
-int compilerVersion = 0;
-int standard        = 0;
-int platform        = 0;
-int sanitizer       = 0;
-
-void initialize_build_configuration()
-{
-#ifdef NBP_OS_LINUX
-    os = 1;
-#endif // end if NBP_OS_LINUX
-
-#ifdef NBP_OS_WINDOWS
-    os = 2;
-#endif // end if NBP_OS_WINDOWS
-
-#ifdef NBP_OS_MAC
-    os = 3;
-#endif // end if NBP_OS_MAC
-
-#ifdef NBP_OS_CUSTOM
-    os = 4;
-#endif // end if NBP_OS_CUSTOM
-
-#ifdef NBP_COMPILER_GCC
-    compiler = 1;
-#ifdef NBP_COMPILER_VERSION
-    compilerVersion = NBP_COMPILER_VERSION;
-#endif // end if NBP_COMPILER_VERSION
-#endif // end if NBP_COMPILER_GCC
-
-#ifdef NBP_COMPILER_GXX
-    compiler = 2;
-#ifdef NBP_COMPILER_VERSION
-    compilerVersion = NBP_COMPILER_VERSION;
-#endif // end if NBP_COMPILER_VERSION
-#endif // end if NBP_COMPILER_GXX
-
-#ifdef NBP_COMPILER_CLANG
-    compiler = 3;
-#endif // end if NBP_COMPILER_CLANG
-
-#ifdef NBP_COMPILER_CUSTOM
-    compiler = 4;
-#endif // end if NBP_COMPILER_CUSTOM
-
-#ifdef NBP_LANGUAGE_STANDARD_C99
-    standard = 1;
-#endif // end if NBP_LANGUAGE_STANDARD_C99
-
-#ifdef NBP_LANGUAGE_STANDARD_C11
-    standard = 2;
-#endif // end if NBP_LANGUAGE_STANDARD_C11
-
-#ifdef NBP_LANGUAGE_STANDARD_CPP03
-    standard = 3;
-#endif // end if NBP_LANGUAGE_STANDARD_CPP03
-
-#ifdef NBP_LANGUAGE_STANDARD_CPP11
-    standard = 4;
-#endif // end if NBP_LANGUAGE_STANDARD_CPP11
-
-#ifdef NBP_LANGUAGE_STANDARD_CPP14
-    standard = 5;
-#endif // end if NBP_LANGUAGE_STANDARD_CPP14
-
-#ifdef NBP_LANGUAGE_STANDARD_CPP17
-    standard = 6;
-#endif // end if NBP_LANGUAGE_STANDARD_CPP17
-
-#ifdef NBP_PLATFORM_32BIT
-    platform = 1;
-#endif // end if NBP_PLATFORM_32BIT
-
-#ifdef NBP_PLATFORM_64BIT
-    platform = 2;
-#endif // end if NBP_PLATFORM_64BIT
-
-#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
-    sanitizer = 1;
-#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
-
-#ifdef NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-    sanitizer = 2;
-#endif // end if NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-
-#ifdef NBP_TEST_MODE_LEAK_SANITIZER_ENABLED
-    sanitizer = 3;
-#endif // end if NBP_TEST_MODE_LEAK_SANITIZER_ENABLED
-
-#ifdef NBP_TEST_MODE_UB_SANITIZER_ENABLED
-    sanitizer = 4;
-#endif // end if NBP_TEST_MODE_UB_SANITIZER_ENABLED
-}
-
 int main()
 {
-    initialize_build_configuration();
-
     // print operating system name
-    if (os == 1) {
-        printf("linux ");
-    } else if (os == 2) {
-        printf("windows ");
-    } else if (os == 3) {
-        printf("mac ");
-    } else if (os == 4) {
-        printf("custom ");
-    }
+#ifdef NBP_OS_LINUX
+    printf("linux ");
+#elif defined NBP_OS_WINDOWS
+    printf("windows ");
+#elif defined NBP_OS_MAC
+    printf("mac ");
+#elif defined NBP_OS_CUSTOM
+    printf("custom ");
+#else
+    printf("unknown ");
+#endif // end if NBP_OS_LINUX
 
     // print compiler name and version
-    if (compiler == 1) {
-        printf("gcc-");
-        if (compilerVersion == 5) {
-            printf("5 ");
-        } else if (compilerVersion == 6) {
-            printf("6 ");
-        } else if (compilerVersion == 7) {
-            printf("7 ");
-        } else if (compilerVersion == 8) {
-            printf("8 ");
-        } else if (compilerVersion == 9) {
-            printf("9 ");
-        }
-    } else if (compiler == 2) {
-        printf("g++-");
-        if (compilerVersion == 5) {
-            printf("5 ");
-        } else if (compilerVersion == 6) {
-            printf("6 ");
-        } else if (compilerVersion == 7) {
-            printf("7 ");
-        } else if (compilerVersion == 8) {
-            printf("8 ");
-        } else if (compilerVersion == 9) {
-            printf("9 ");
-        }
-    } else if (compiler == 3) {
-        printf("clang-");
-    } else if (compiler == 4) {
-        printf("custom");
-    }
+#ifdef NBP_COMPILER_GCC
+    printf("gcc-");
+
+#if NBP_COMPILER_VERSION == 5
+    printf("5 ");
+#elif NBP_COMPILER_VERSION == 6
+    printf("6 ");
+#elif NBP_COMPILER_VERSION == 7
+    printf("7 ");
+#elif NBP_COMPILER_VERSION == 8
+    printf("8 ");
+#elif NBP_COMPILER_VERSION == 9
+    printf("9 ");
+#else
+    printf("unknown ");
+#endif // end if NBP_COMPILER_VERSION
+
+#elif defined NBP_COMPILER_GXX
+    printf("g++-");
+
+#if NBP_COMPILER_VERSION == 5
+    printf("5 ");
+#elif NBP_COMPILER_VERSION == 6
+    printf("6 ");
+#elif NBP_COMPILER_VERSION == 7
+    printf("7 ");
+#elif NBP_COMPILER_VERSION == 8
+    printf("8 ");
+#elif NBP_COMPILER_VERSION == 9
+    printf("9 ");
+#else
+    printf("unknown ");
+#endif // end if NBP_COMPILER_VERSION
+
+#elif defined NBP_COMPILER_CLANG
+    printf("clang-");
+#elif defined NBP_COMPILER_CUSTOM
+    printf("custom ");
+#else
+    printf("unknown ");
+#endif // end if NBP_COMPILER_GCC
 
     // print standard
-    if (standard == 1) {
-        printf("-std=c99 ");
-    } else if (standard == 2) {
-        printf("-std=c11 ");
-    } else if (standard == 3) {
-        printf("-std=c++03 ");
-    } else if (standard == 4) {
-        printf("-std=c++11 ");
-    } else if (standard == 5) {
-        printf("-std=c++14 ");
-    } else if (standard == 6) {
-        printf("-std=c++17 ");
-    }
+#ifdef NBP_LANGUAGE_STANDARD_C99
+    printf("-std=c99 ");
+#elif defined NBP_LANGUAGE_STANDARD_C11
+    printf("-std=c11 ");
+#elif defined NBP_LANGUAGE_STANDARD_CPP03
+    printf("-std=c++03 ");
+#elif defined NBP_LANGUAGE_STANDARD_CPP11
+    printf("-std=c++11 ");
+#elif defined NBP_LANGUAGE_STANDARD_CPP14
+    printf("-std=c++14 ");
+#elif defined NBP_LANGUAGE_STANDARD_CPP17
+    printf("-std=c++17 ");
+#else
+    printf("unknown ");
+#endif // end if NBP_LANGUAGE_STANDARD_C99
 
     // print platform
-    if (platform == 1) {
-        printf("-m32 ");
-    } else if (platform == 2) {
-        printf("-m64 ");
-    }
+#ifdef NBP_PLATFORM_32BIT
+    printf("-m32 ");
+#elif defined NBP_PLATFORM_64BIT
+    printf("-m64 ");
+#else
+    printf("unknown");
+#endif // end if NBP_PLATFORM_32BIT
 
     // print sanitizer
-    if (sanitizer == 1) {
-        printf("address ");
-    } else if (sanitizer == 2) {
-        printf("thread ");
-    } else if (sanitizer == 3) {
-        printf("leak ");
-    } else if (sanitizer == 4) {
-        printf("ub ");
-    }
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+    printf("address ");
+#elif defined NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
+    printf("thread ");
+#elif defined NBP_TEST_MODE_LEAK_SANITIZER_ENABLED
+    printf("leak ");
+#elif defined NBP_TEST_MODE_UB_SANITIZER_ENABLED
+    printf("ub ");
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
     printf("\n");
 
