@@ -13,4 +13,5 @@ list(APPEND TESTS
     check_build_configuration "" ""
     check_leak_sanitizer "" ""
     check_thread_sanitizer "" "-lpthread -pthread"
+    check_ub_sanitizer "" ""
 )

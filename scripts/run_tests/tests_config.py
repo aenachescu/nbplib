@@ -59,5 +59,15 @@ testsConfig = [
                 "outputContains": "ThreadSanitizer: data race"
             }
         ]
+    },
+    {
+        "name": "check_ub_sanitizer",
+        "outputContains": "check_ub_sanitizer completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<ub>",
+                "outputContains": "signed integer overflow"
+            }
+        ]
     }
 ]
