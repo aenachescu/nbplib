@@ -414,7 +414,7 @@ def send_coverage_report():
 
     log.info("Reporting coverage to coveralls...")
 
-    coverallsCmd = "coveralls-lcov {}".format(coverageReportFile)
+    coverallsCmd = "coveralls-lcov {} --verbose".format(coverageReportFile)
     output, rc = pexpect.runu(coverallsCmd, timeout=-1, withexitstatus=1)
 
     if rc != 0:
