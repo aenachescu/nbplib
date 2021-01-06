@@ -25,22 +25,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#define NBP_LIBRARY_MAIN
-#include "nbp.h"
+#ifndef _H_TEST_ADDRESS_SANITIZER_OPTIONS
+#define _H_TEST_ADDRESS_SANITIZER_OPTIONS
 
-// test_utils.h must be included after nbp
-#include "../test_utils.h"
+#ifdef NBP_LIBRARY_MAIN
 
-#include <stdio.h>
-#include <stdlib.h>
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
-int main()
+#ifdef NBP_LANGUAGE_CPP
+extern "C" {
+#endif // end if NBP_LANGUAGE_CPP
+
+const char* __asan_default_options()
 {
-    void* ptr = malloc(100);
-    printf("value = %p\n", ptr);
-    ptr = NULL;
-
-    printf("check_leak_sanitizer completed successfully\n");
-
-    return 0;
+    return "detect_leaks=0";
 }
+
+#ifdef NBP_LANGUAGE_CPP
+}
+#endif // end if NBP_LANGUAGE_CPP
+
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+
+#endif // end if NBP_LIBRARY_MAIN
+
+#endif // end if _H_TEST_ADDRESS_SANITIZER_OPTIONS

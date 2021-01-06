@@ -25,22 +25,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#define NBP_LIBRARY_MAIN
-#include "nbp.h"
+#ifndef _H_TEST_TEST_UTILS
+#define _H_TEST_TEST_UTILS
 
-// test_utils.h must be included after nbp
-#include "../test_utils.h"
+#include "address_sanitizer_options.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-int main()
-{
-    void* ptr = malloc(100);
-    printf("value = %p\n", ptr);
-    ptr = NULL;
-
-    printf("check_leak_sanitizer completed successfully\n");
-
-    return 0;
-}
+#endif // end if _H_TEST_TEST_UTILS
