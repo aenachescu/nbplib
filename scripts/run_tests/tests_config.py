@@ -140,5 +140,16 @@ testsConfig = [
                 "outputContains": "AddressSanitizer: invalid-pointer-pair:"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_pointer_subtraction",
+        "outputContains": "check_address_sanitizer_pointer_subtraction completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: invalid-pointer-pair:"
+            }
+        ]
     }
 ]
