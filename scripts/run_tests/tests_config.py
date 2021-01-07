@@ -80,5 +80,16 @@ testsConfig = [
                 "outputContains": "AddressSanitizer: heap-use-after-free on address"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_heap_buffer_overflow",
+        "outputContains": "check_address_sanitizer(heap buffer overflow) completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: heap-buffer-overflow on address"
+            }
+        ]
     }
 ]
