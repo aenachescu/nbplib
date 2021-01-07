@@ -41,7 +41,9 @@ int main()
 
     free(ptr);
 
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
     ptr[0] = 101;
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
     printf(
         "check_address_sanitizer(heap use after free) completed "

@@ -38,7 +38,10 @@ int main()
 {
     int* ptr = (int*) malloc(100);
     ptr[0]   = 100;
+
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
     ptr[100] = 101;
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
     free(ptr);
 

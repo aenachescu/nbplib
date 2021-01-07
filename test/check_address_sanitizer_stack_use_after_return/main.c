@@ -47,8 +47,10 @@ int main()
 {
     func();
 
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
     *gPtr = 100;
     printf("pointer = %d", *gPtr);
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
     printf(
         "check_address_sanitizer_stack_use_after_return completed "
