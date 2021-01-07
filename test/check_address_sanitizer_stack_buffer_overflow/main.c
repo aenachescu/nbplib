@@ -37,8 +37,15 @@ SOFTWARE.
 int main(int argc, const char** argv)
 {
     int data[100];
+    int size = 100;
 
-    for (int i = 0; i < argc + 100; i++) {
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+    size += argc;
+#else
+    size -= argc;
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+
+    for (int i = 0; i < size; i++) {
         data[i] = 0;
     }
 
