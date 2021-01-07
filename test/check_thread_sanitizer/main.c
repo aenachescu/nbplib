@@ -25,7 +25,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#define NBP_LIBRARY_MAIN
 #include "nbp.h"
+
+// test_utils.h must be included after nbp
+#include "../test_utils.h"
 
 #include <pthread.h>
 #include <stdio.h>
