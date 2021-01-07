@@ -14,4 +14,5 @@ list(APPEND TESTS
     check_leak_sanitizer "" ""
     check_thread_sanitizer "" "-lpthread -pthread"
     check_ub_sanitizer "" ""
+    check_address_sanitizer_heap_use_after_free "" ""
 )

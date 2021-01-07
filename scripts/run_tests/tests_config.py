@@ -69,5 +69,16 @@ testsConfig = [
                 "outputContains": "signed integer overflow"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_heap_use_after_free",
+        "outputContains": "check_address_sanitizer(heap use after free) completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: heap-use-after-free on address"
+            }
+        ]
     }
 ]
