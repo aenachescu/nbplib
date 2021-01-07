@@ -25,45 +25,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_TEST_ADDRESS_SANITIZER_OPTIONS
-#define _H_TEST_ADDRESS_SANITIZER_OPTIONS
+#define NBP_LIBRARY_MAIN
+#include "nbp.h"
 
-#ifdef NBP_LIBRARY_MAIN
+// test_utils.h must be included after nbp
+#include "../test_utils.h"
 
-#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+#include <stdio.h>
+#include <stdlib.h>
 
-#ifdef NBP_LANGUAGE_CPP
-extern "C" {
-#endif // end if NBP_LANGUAGE_CPP
+int* gPtr = NULL;
 
-const char* __asan_default_options()
+void func()
 {
-    return "detect_leaks=0:detect_stack_use_after_return=1";
+    int a = 10;
+    gPtr  = &a;
+    printf("pointer = %d\n", *gPtr);
 }
 
-#ifdef NBP_LANGUAGE_CPP
-}
-#endif // end if NBP_LANGUAGE_CPP
-
-#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
-
-#ifdef NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-
-#ifdef NBP_LANGUAGE_CPP
-extern "C" {
-#endif // end if NBP_LANGUAGE_CPP
-
-const char* __tsan_default_options()
+int main()
 {
-    return "halt_on_error=1";
+    func();
+
+    *gPtr = 100;
+    printf("pointer = %d", *gPtr);
+
+    printf(
+        "check_address_sanitizer_stack_use_after_return completed "
+        "successfully\n");
+
+    return 0;
 }
-
-#ifdef NBP_LANGUAGE_CPP
-}
-#endif // end if NBP_LANGUAGE_CPP
-
-#endif // end if NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-
-#endif // end if NBP_LIBRARY_MAIN
-
-#endif // end if _H_TEST_ADDRESS_SANITIZER_OPTIONS

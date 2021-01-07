@@ -118,5 +118,16 @@ testsConfig = [
                 "outputContains": "AddressSanitizer: global-buffer-overflow on address"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_stack_use_after_return",
+        "outputContains": "check_address_sanitizer_stack_use_after_return completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: stack-use-after-return on address"
+            }
+        ]
     }
 ]
