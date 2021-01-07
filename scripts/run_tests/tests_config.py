@@ -78,11 +78,6 @@ testsConfig = [
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
                 "outputContains": "AddressSanitizer: heap-use-after-free on address"
-            },
-            {
-                "config": "<any>:<any>:<any>:<thread>",
-                "returnCode": 66,
-                "outputContains": "ThreadSanitizer: heap-use-after-free"
             }
         ]
     },
