@@ -38,7 +38,15 @@ int gData[100] = {-1};
 
 int main(int argc, const char** argv)
 {
-    for (int i = 0; i < argc + 100; i++) {
+    int size = 100;
+
+#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+    size += argc;
+#else
+    size -= argc;
+#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+
+    for (int i = 0; i < size; i++) {
         gData[i] = 0;
     }
 
