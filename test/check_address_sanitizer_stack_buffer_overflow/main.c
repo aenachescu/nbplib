@@ -34,16 +34,15 @@ SOFTWARE.
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
+int main(int argc, const char** argv)
 {
     int data[100];
 
-    data[0]   = 0;
-    data[101] = 1;
+    for (int i = 0; i < argc + 100; i++) {
+        data[i] = 0;
+    }
 
-    printf(
-        "check_address_sanitizer(stack buffer overflow) completed "
-        "successfully\n");
+    printf("%s completed successfully\n", argv[0]);
 
     return data[0];
 }

@@ -94,7 +94,7 @@ testsConfig = [
     },
     {
         "name": "check_address_sanitizer_stack_buffer_overflow",
-        "outputContains": "check_address_sanitizer(stack buffer overflow) completed successfully",
+        "outputContains": "check_address_sanitizer_stack_buffer_overflow completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
@@ -105,7 +105,7 @@ testsConfig = [
     },
     {
         "name": "check_address_sanitizer_global_buffer_overflow",
-        "outputContains": "check_address_sanitizer(global buffer overflow) completed successfully",
+        "outputContains": "check_address_sanitizer_global_buffer_overflow completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",

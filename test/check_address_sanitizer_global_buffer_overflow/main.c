@@ -36,13 +36,13 @@ SOFTWARE.
 
 int gData[100] = {-1};
 
-int main()
+int main(int argc, const char** argv)
 {
-    gData[101] = 0;
+    for (int i = 0; i < argc + 100; i++) {
+        gData[i] = 0;
+    }
 
-    printf(
-        "check_address_sanitizer(global buffer overflow) completed "
-        "successfully\n");
+    printf("%s completed successfully\n", argv[0]);
 
-    return 0;
+    return gData[0];
 }
