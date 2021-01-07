@@ -28,6 +28,11 @@ SOFTWARE.
 #ifndef _H_TEST_TEST_UTILS
 #define _H_TEST_TEST_UTILS
 
+// Make sure that the nbp.h file is included before this file.
+#ifndef NBP_VERSION
+#error "The nbp.h file must be included before this file"
+#endif // end if NBP_VERSION
+
 #include "address_sanitizer_options.h"
 
 #endif // end if _H_TEST_TEST_UTILS
