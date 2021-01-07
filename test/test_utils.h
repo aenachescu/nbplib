@@ -33,6 +33,6 @@ SOFTWARE.
 #error "The nbp.h file must be included before this file"
 #endif // end if NBP_VERSION
 
-#include "address_sanitizer_options.h"
+#include "sanitizer_options.h"
 
 #endif // end if _H_TEST_TEST_UTILS
