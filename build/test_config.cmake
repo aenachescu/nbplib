@@ -17,4 +17,5 @@ list(APPEND TESTS
     check_address_sanitizer_stack_buffer_overflow "" ""
     check_address_sanitizer_global_buffer_overflow "" ""
     check_address_sanitizer_stack_use_after_return "" ""
+    check_address_sanitizer_pointer_comparison "" ""
 )

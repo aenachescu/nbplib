@@ -129,5 +129,16 @@ testsConfig = [
                 "outputContains": "AddressSanitizer: stack-use-after-return on address"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_pointer_comparison",
+        "outputContains": "check_address_sanitizer_pointer_comparison completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: invalid-pointer-pair:"
+            }
+        ]
     }
 ]

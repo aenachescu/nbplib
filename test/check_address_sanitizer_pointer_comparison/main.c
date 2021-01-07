@@ -25,48 +25,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_TEST_ADDRESS_SANITIZER_OPTIONS
-#define _H_TEST_ADDRESS_SANITIZER_OPTIONS
+#define NBP_LIBRARY_MAIN
+#include "nbp.h"
 
-#ifdef NBP_LIBRARY_MAIN
+// test_utils.h must be included after nbp
+#include "../test_utils.h"
 
-#ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
+#include <stdio.h>
+#include <stdlib.h>
 
-#ifdef NBP_LANGUAGE_CPP
-extern "C" {
-#endif // end if NBP_LANGUAGE_CPP
-
-const char* __asan_default_options()
+int main()
 {
-    const char* options =
-        "detect_leaks=0:detect_stack_use_after_return=1:"
-        "detect_invalid_pointer_pairs=1";
-    return options;
+    int* ptr1 = (int*) malloc(100);
+    int* ptr2 = (int*) malloc(100);
+
+    int value = ptr1 < ptr2;
+
+    free(ptr1);
+    free(ptr2);
+
+    printf("value = %d\n", value);
+
+    printf(
+        "check_address_sanitizer_pointer_comparison completed "
+        "successfully\n");
+
+    return 0;
 }
-
-#ifdef NBP_LANGUAGE_CPP
-}
-#endif // end if NBP_LANGUAGE_CPP
-
-#endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
-
-#ifdef NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-
-#ifdef NBP_LANGUAGE_CPP
-extern "C" {
-#endif // end if NBP_LANGUAGE_CPP
-
-const char* __tsan_default_options()
-{
-    return "halt_on_error=1";
-}
-
-#ifdef NBP_LANGUAGE_CPP
-}
-#endif // end if NBP_LANGUAGE_CPP
-
-#endif // end if NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
-
-#endif // end if NBP_LIBRARY_MAIN
-
-#endif // end if _H_TEST_ADDRESS_SANITIZER_OPTIONS
