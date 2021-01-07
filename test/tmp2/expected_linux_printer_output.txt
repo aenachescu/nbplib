@@ -1,6 +1,0 @@
-nbp version = 1.0.0
-nbp version = 10000
-message#1 = not greater than 1.0.0
-message#2 = greater than or equal to 1.0.0
-message#3 = greater than 0.9.9
---version
