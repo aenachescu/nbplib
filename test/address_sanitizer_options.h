@@ -47,6 +47,23 @@ const char* __asan_default_options()
 
 #endif // end if NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
 
+#ifdef NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
+
+#ifdef NBP_LANGUAGE_CPP
+extern "C" {
+#endif // end if NBP_LANGUAGE_CPP
+
+const char* __tsan_default_options()
+{
+    return "halt_on_error=1";
+}
+
+#ifdef NBP_LANGUAGE_CPP
+}
+#endif // end if NBP_LANGUAGE_CPP
+
+#endif // end if NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
+
 #endif // end if NBP_LIBRARY_MAIN
 
 #endif // end if _H_TEST_ADDRESS_SANITIZER_OPTIONS
