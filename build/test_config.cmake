@@ -16,4 +16,6 @@ list(APPEND TESTS
     check_ub_sanitizer "" ""
     check_address_sanitizer_heap_use_after_free "" ""
     check_address_sanitizer_heap_buffer_overflow "" ""
+    check_address_sanitizer_stack_buffer_overflow "" ""
+    check_address_sanitizer_global_buffer_overflow "" ""
 )

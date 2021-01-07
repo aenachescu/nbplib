@@ -91,5 +91,27 @@ testsConfig = [
                 "outputContains": "AddressSanitizer: heap-buffer-overflow on address"
             }
         ]
+    },
+    {
+        "name": "check_address_sanitizer_stack_buffer_overflow",
+        "outputContains": "check_address_sanitizer(stack buffer overflow) completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: stack-buffer-overflow on address"
+            }
+        ]
+    },
+    {
+        "name": "check_address_sanitizer_global_buffer_overflow",
+        "outputContains": "check_address_sanitizer(global buffer overflow) completed successfully",
+        "buildConfig": [
+            {
+                "config": "<any>:<any>:<any>:<address>",
+                "returnCode": 1,
+                "outputContains": "AddressSanitizer: global-buffer-overflow on address"
+            }
+        ]
     }
 ]
