@@ -66,6 +66,7 @@ testsConfig = [
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<ub>",
+                "returnCode": 1,
                 "outputContains": "signed integer overflow"
             }
         ]
