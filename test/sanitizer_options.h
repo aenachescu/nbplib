@@ -39,8 +39,36 @@ extern "C" {
 const char* __asan_default_options()
 {
     const char* options =
-        "detect_leaks=0:detect_stack_use_after_return=1:"
-        "detect_invalid_pointer_pairs=1";
+        "report_globals=1"
+        ":check_initialization_order=true"
+        ":replace_str=true"
+        ":replace_intrin=true"
+        ":detect_stack_use_after_return=true"
+        ":alloc_dealloc_mismatch=true"
+        ":new_delete_type_mismatch=true"
+        ":strict_init_order=true"
+        ":detect_invalid_pointer_pairs=100"
+        ":detect_container_overflow=true"
+        ":detect_odr_violation=2"
+        ":halt_on_error=true"
+        ":detect_leaks=false"
+        ":leak_check_at_exit=false"
+        ":detect_deadlocks=false"
+        ":strict_string_checks=true"
+        ":intercept_strstr=true"
+        ":intercept_strspn=true"
+        ":intercept_strtok=true"
+        ":intercept_strpbrk=true"
+        ":intercept_strlen=true"
+        ":intercept_strndup=true"
+        ":intercept_strchr=true"
+        ":intercept_memcmp=true"
+        ":strict_memcmp=true"
+        ":intercept_memmem=true"
+        ":intercept_intrin=true"
+        ":intercept_stat=true"
+        ":intercept_send=true";
+
     return options;
 }
 
@@ -58,7 +86,17 @@ extern "C" {
 
 const char* __tsan_default_options()
 {
-    return "halt_on_error=1";
+    const char* options =
+        "report_bugs=1"
+        ":report_thread_leaks=1"
+        ":report_destroy_locked=1"
+        ":report_mutex_bugs=1"
+        ":report_signal_unsafe=1"
+        ":report_atomic_races=1"
+        ":halt_on_error=true"
+        ":detect_deadlocks=1";
+
+    return options;
 }
 
 #ifdef NBP_LANGUAGE_CPP
@@ -66,6 +104,52 @@ const char* __tsan_default_options()
 #endif // end if NBP_LANGUAGE_CPP
 
 #endif // end if NBP_TEST_MODE_THREAD_SANITIZER_ENABLED
+
+#ifdef NBP_TEST_MODE_LEAK_SANITIZER_ENABLED
+
+#ifdef NBP_LANGUAGE_CPP
+extern "C" {
+#endif // end if NBP_LANGUAGE_CPP
+
+const char* __lsan_default_options()
+{
+    const char* options =
+        "use_globals=true"
+        ":use_stacks=true"
+        ":use_registers=true"
+        ":use_tls=true"
+        ":use_root_sections=true"
+        ":detect_leaks=true"
+        ":leak_check_at_exit=true"
+        ":check_printf=true";
+
+    return options;
+}
+
+#ifdef NBP_LANGUAGE_CPP
+}
+#endif // end if NBP_LANGUAGE_CPP
+
+#endif // end if NBP_TEST_MODE_LEAK_SANITIZER_ENABLED
+
+#ifdef NBP_TEST_MODE_UB_SANITIZER_ENABLED
+
+#ifdef NBP_LANGUAGE_CPP
+extern "C" {
+#endif // end if NBP_LANGUAGE_CPP
+
+const char* __ubsan_default_options()
+{
+    const char* options = "halt_on_error=true";
+
+    return options;
+}
+
+#ifdef NBP_LANGUAGE_CPP
+}
+#endif // end if NBP_LANGUAGE_CPP
+
+#endif // end if NBP_TEST_MODE_UB_SANITIZER_ENABLED
 
 #endif // end if NBP_LIBRARY_MAIN
 
