@@ -34,7 +34,8 @@ testsConfig = [
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<any>",
-                "outputContains": "linux ${compiler} ${standard} ${platform} ${sanitizer}"
+                "outputContains": "linux ${compiler} ${standard} ${platform} "
+                    "${sanitizer}"
             }
         ]
     },
@@ -73,62 +74,73 @@ testsConfig = [
     },
     {
         "name": "check_address_sanitizer_heap_use_after_free",
-        "outputContains": "check_address_sanitizer(heap use after free) completed successfully",
+        "outputContains": "check_address_sanitizer(heap use after free) "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: heap-use-after-free on address"
+                "outputContains": "AddressSanitizer: heap-use-after-free on "
+                    "address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_heap_buffer_overflow",
-        "outputContains": "check_address_sanitizer(heap buffer overflow) completed successfully",
+        "outputContains": "check_address_sanitizer(heap buffer overflow) "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: heap-buffer-overflow on address"
+                "outputContains": "AddressSanitizer: heap-buffer-overflow on "
+                    "address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_stack_buffer_overflow",
-        "outputContains": "check_address_sanitizer_stack_buffer_overflow completed successfully",
+        "outputContains": "check_address_sanitizer_stack_buffer_overflow "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: stack-buffer-overflow on address"
+                "outputContains": "AddressSanitizer: stack-buffer-overflow on "
+                    "address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_global_buffer_overflow",
-        "outputContains": "check_address_sanitizer_global_buffer_overflow completed successfully",
+        "outputContains": "check_address_sanitizer_global_buffer_overflow "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: global-buffer-overflow on address"
+                "outputContains": "AddressSanitizer: global-buffer-overflow on "
+                    "address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_stack_use_after_return",
-        "outputContains": "check_address_sanitizer_stack_use_after_return completed successfully",
+        "outputContains": "check_address_sanitizer_stack_use_after_return "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: stack-use-after-return on address"
+                "outputContains": "AddressSanitizer: stack-use-after-return on "
+                    "address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_pointer_comparison",
-        "outputContains": "check_address_sanitizer_pointer_comparison completed successfully",
+        "outputContains": "check_address_sanitizer_pointer_comparison completed"
+            " successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
@@ -139,7 +151,8 @@ testsConfig = [
     },
     {
         "name": "check_address_sanitizer_pointer_subtraction",
-        "outputContains": "check_address_sanitizer_pointer_subtraction completed successfully",
+        "outputContains": "check_address_sanitizer_pointer_subtraction "
+            "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",

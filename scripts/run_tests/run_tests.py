@@ -180,7 +180,8 @@ def print_process_output(output, error, source):
 
 def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
     log.info(
-        "Building tests: compiler = %s, standard = %s, platform = %s, sanitizer = %s",
+        "Building tests: compiler = %s, standard = %s, platform = %s, "
+        "sanitizer = %s",
         compiler, standard, platform, sanitizer
     )
 
@@ -231,7 +232,9 @@ def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
             config += " -DCODE_COVERAGE=ON"
 
         # run cmake
-        cmakeCmdline = "cmake -S {} -B {} {}".format(buildPath, cmakeFilesPath, config)
+        cmakeCmdline = "cmake -S {} -B {} {}".format(
+            buildPath, cmakeFilesPath, config
+        )
         output, rc = pexpect.runu(cmakeCmdline, withexitstatus=1, timeout=-1)
 
         if rc != 0:
@@ -308,7 +311,8 @@ def generate_coverage_report(compiler):
     if compiler != "":
         if compiler in supportedCompilersDict:
             if "gcov_tool" in supportedCompilersDict[compiler]:
-                gcovTool = "--gcov-tool " + supportedCompilersDict[compiler]["gcov_tool"]
+                gcovTool = ("--gcov-tool "
+                    + supportedCompilersDict[compiler]["gcov_tool"])
         else:
             log.error("Unknown compiler %s", compiler)
             return False
@@ -460,7 +464,8 @@ def parse_test_config(testData, buildConfig):
     for testBuildConfig in testData["buildConfig"]:
         if not "config" in testBuildConfig:
             log.warning(
-                "No config field for an object from buildConfig array from test %s",
+                "No config field for an object from buildConfig array from "
+                "test %s",
                 testData["name"]
             )
             continue
@@ -528,7 +533,9 @@ def check_test_output(testName, testOutput, testConfig):
         if testOutput.find(testConfig["outputContains"]) == -1:
             runTestsMtLogMutex.acquire()
             log.error("Unexpected output for test %s", testName)
-            print("{}Output should contains:{}".format(COLOR_GREEN, COLOR_RESET))
+            print(
+                "{}Output should contains:{}".format(COLOR_GREEN, COLOR_RESET)
+            )
             print(testConfig["outputContains"])
             print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
             print(testOutput)
@@ -555,7 +562,9 @@ def check_test_output(testName, testOutput, testConfig):
         if testOutput != expectedOutput:
             runTestsMtLogMutex.acquire()
             log.error("Unexpected output for test %s", testName)
-            print("{}Expected printer output:{}".format(COLOR_GREEN, COLOR_RESET))
+            print(
+                "{}Expected printer output:{}".format(COLOR_GREEN, COLOR_RESET)
+            )
             print(expectedOutput)
             print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
             print(testOutput)
@@ -670,7 +679,8 @@ def run_tests(buildConfig):
     success = True
 
     if runTestsMt:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=numberOfCpus) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=numberOfCpus) \
+            as executor:
             futureTests = {
                 executor.submit(run_test_mt, testName, buildConfig ) : testName
                     for testName in testsArray
@@ -683,7 +693,9 @@ def run_tests(buildConfig):
                     numberOfFailedTests += 1
                     success = False
                     if stopOnTestCaseError:
-                        log.fatal("Exiting because stop on test case error is set")
+                        log.fatal(
+                            "Exiting because stop on test case error is set"
+                        )
                 elif status == 0:
                     continue
                 else:
@@ -715,7 +727,11 @@ def run_tests(buildConfig):
         color = COLOR_GREEN
 
     if success:
-        log.info("%sRun tests completed successfully%s", COLOR_GREEN, COLOR_RESET)
+        log.info(
+            "%sRun tests completed successfully%s",
+            COLOR_GREEN,
+            COLOR_RESET
+        )
     else:
         log.error("%sRun tests failed%s", COLOR_RED, COLOR_RESET)
 
@@ -867,7 +883,9 @@ def build_and_run_tests_by_compiler(compiler, standard, platform,
                         if stopOnTestCaseError:
                             return False, False, True
                         elif stopOnTestError:
-                            log.fatal("Exiting because stop on test error is set")
+                            log.fatal(
+                                "Exiting because stop on test error is set"
+                            )
                             return False, False, True
                         else:
                             continue
@@ -1136,7 +1154,8 @@ if __name__ == '__main__':
         '-t',
         '--tests',
         help='a list of tests that will be run. If this parameter is set then\
-        only these tests will be run. The tests name should be separated by \';\'',
+        only these tests will be run. The tests name should be separated\
+        by \';\'',
         default=''
     )
 
@@ -1198,8 +1217,8 @@ if __name__ == '__main__':
     parser.add_argument(
         '-san',
         '--sanitizer',
-        help='if it is set then the sanitizers will be enabled. Possible values:\
-        <all>, address, thread, leak, ub',
+        help='if it is set then the sanitizers will be enabled. Possible\
+        values: <all>, address, thread, leak, ub',
         default=''
     )
 
