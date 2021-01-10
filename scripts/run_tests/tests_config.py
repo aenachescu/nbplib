@@ -25,11 +25,6 @@
 
 testsConfig = [
     {
-        "name": "tmp2",
-        "cmdline": "--version",
-        "returnCode": 1
-    },
-    {
         "name": "check_build_configuration",
         "buildConfig": [
             {
