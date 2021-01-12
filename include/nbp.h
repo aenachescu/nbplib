@@ -25,8 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_LIBRARY
-#define _H_NBP_LIBRARY
+#ifndef _H_NBP_NBP
+#define _H_NBP_NBP
 
 #define NBP_MAKE_VERSION(major, minor, rev)                                    \
     (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
@@ -42,4 +42,4 @@ SOFTWARE.
 
 #include "internal/build_configuration.h"
 
-#endif // end if _H_NBP_LIBRARY
+#endif // end if _H_NBP_NBP

@@ -25,8 +25,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_TEST_TEST_UTILS
-#define _H_TEST_TEST_UTILS
+#ifndef _H_NBP_TEST_TEST_UTILS
+#define _H_NBP_TEST_TEST_UTILS
 
 // Make sure that the nbp.h file is included before this file.
 #ifndef NBP_VERSION
@@ -35,4 +35,4 @@ SOFTWARE.
 
 #include "sanitizer_options.h"
 
-#endif // end if _H_TEST_TEST_UTILS
+#endif // end if _H_NBP_TEST_TEST_UTILS
