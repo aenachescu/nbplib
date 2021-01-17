@@ -85,7 +85,7 @@ SOFTWARE.
 #define NBP_COMPILER_GCC
 #else // no compiler detected
 #error "Failed to detect any compiler"
-#endif
+#endif // end if __clang__
 #endif // end if INTERNAL_NBP_COMPILER_DEFINED
 
 #undef INTERNAL_NBP_COMPILER_DEFINED
@@ -170,7 +170,7 @@ SOFTWARE.
 #define NBP_LANGUAGE_STANDARD_CPP03
 #else
 #error "Failed to detect language for g++ compiler"
-#endif // end if __cplusplus >= 201700
+#endif // end if __cplusplus >= 201500
 #elif defined NBP_COMPILER_CLANG
 #error "Not supported yet"
 #elif defined NBP_COMPILER_CUSTOM
@@ -303,7 +303,7 @@ SOFTWARE.
 #define NBP_OS_LINUX
 #else // no OS detected
 #error "Failed to detect any OS"
-#endif
+#endif // end if __linux__
 #endif // end if INTERNAL_NBP_OS_DEFINED
 
 #undef INTERNAL_NBP_OS_DEFINED
@@ -348,6 +348,6 @@ SOFTWARE.
  */
 #if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
 #define NBP_DEFAULT_PRINTER
-#endif // end if ! NBP_CUSTOM_PRINTER && ! NBP_DEFAULT_PRINTER
+#endif // end if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
 
 #endif // end if _H_NBP_NBP
