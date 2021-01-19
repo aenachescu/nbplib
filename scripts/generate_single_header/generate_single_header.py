@@ -46,7 +46,7 @@ rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
 def remove_license(lines):
     if not lines[0].startswith('/*'):
-        log.error("Not found licence start")
+        log.error("Not found license start")
         return False
 
     linesCopy = list(lines)
