@@ -185,7 +185,7 @@ def check_unnamed_struct(log, node, parentStructName, filePath):
         if field.kind != clang.cindex.CursorKind.FIELD_DECL:
             log.error(
                 "Unexpected field kind [%s]. File = [%s]. Line = %d",
-                field.spelling,
+                field.kind,
                 filePath,
                 field.location.line
             )
@@ -216,6 +216,48 @@ def check_unnamed_struct(log, node, parentStructName, filePath):
         )
 
     return status
+
+def check_unnamed_union(log, node, parentStructName, filePath):
+    status = True
+    expectedTypedefLine = 0
+
+    for field in node.get_children():
+        if field.kind != clang.cindex.CursorKind.FIELD_DECL:
+            log.error(
+                "Unexpected field kind [%s]. File = [%s]. Line = %d",
+                field.kind,
+                filePath,
+                field.location.line
+            )
+            status = False
+            continue
+
+        expectedFieldName = camelize_name(field.spelling, False)
+
+        if field.spelling != expectedFieldName:
+            log.error(
+                "Invalid field name. Expected = [%s]. Actual = [%s]. "
+                "Struct = %s. File = [%s]. Line = %d",
+                expectedFieldName,
+                field.spelling,
+                parentStructName,
+                filePath,
+                field.location.line
+            )
+            status = False
+            continue
+
+        log.info(
+            "Valid field name [%s]. Struct = %s. File = [%s]. Line = %d",
+            field.spelling,
+            parentStructName,
+            filePath,
+            field.location.line
+        )
+
+        expectedTypedefLine = field.location.line + 3
+
+    return status, expectedTypedefLine
 
 def check_structs(log, root, filePath):
     log.info("Checking structures... [%s]", filePath)
@@ -303,10 +345,32 @@ def check_structs(log, root, filePath):
 
                 continue
 
+            if field.kind == clang.cindex.CursorKind.UNION_DECL:
+                if field.spelling != "":
+                    log.error(
+                        "Found union declaration inside another struct. "
+                        "Union name = [%s]. Struct name = [%s]. File = [%s]. "
+                        "Line = %d",
+                        field.spelling,
+                        structName,
+                        filePath,
+                        field.location.line
+                    )
+                    fieldsStatus = False
+                    continue
+
+                st, line = check_unnamed_union(log, field, structName, filePath)
+                if not st:
+                    fieldsStatus = False
+                    continue
+
+                expectedTypedefLine = line
+                continue
+
             if field.kind != clang.cindex.CursorKind.FIELD_DECL:
                 log.error(
                     "Unexpected field kind [%s]. File = [%s]. Line = %d",
-                    field.spelling,
+                    field.kind,
                     filePath,
                     field.location.line
                 )
@@ -1450,16 +1514,20 @@ def check_braces_impl(log, func, filePath, funcName):
 
     for child in func.get_children():
         if child.kind == clang.cindex.CursorKind.IF_STMT:
-            check_if_statement_braces(log, child, filePath, funcName)
+            if not check_if_statement_braces(log, child, filePath, funcName):
+                status = False
             continue
         if child.kind == clang.cindex.CursorKind.WHILE_STMT:
-            check_while_statement_braces(log, child, filePath, funcName)
+            if not check_while_statement_braces(log, child, filePath, funcName):
+                status = False
             continue
         if child.kind == clang.cindex.CursorKind.DO_STMT:
-            check_do_statement_braces(log, child, filePath, funcName)
+            if not check_do_statement_braces(log, child, filePath, funcName):
+                status = False
             continue
         if child.kind == clang.cindex.CursorKind.FOR_STMT:
-            check_for_statement_braces(log, child, filePath, funcName)
+            if not check_for_statement_braces(log, child, filePath, funcName):
+                status = False
             continue
 
     for c in func.get_children():
