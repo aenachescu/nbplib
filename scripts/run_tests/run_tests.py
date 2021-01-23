@@ -299,6 +299,21 @@ def remove_abs_path_from_coverage_report(coverageReportPath):
 
     return True
 
+def get_gcov_tool(compiler):
+    gcovTool = ""
+    if "gcov_tool" in supportedCompilersDict[compiler]:
+        gcovTool = "--gcov-tool "
+        if ("gcov_tool_absolute_path" in supportedCompilersDict[compiler] and
+            supportedCompilersDict[compiler]["gcov_tool_absolute_path"]):
+            gcovTool += os.path.join(
+                rootPath,
+                supportedCompilersDict[compiler]["gcov_tool"]
+            )
+        else:
+            gcovTool += supportedCompilersDict[compiler]["gcov_tool"]
+
+    return gcovTool
+
 def generate_coverage_report(compiler):
     global coverageFileId
 
@@ -310,9 +325,7 @@ def generate_coverage_report(compiler):
 
     if compiler != "":
         if compiler in supportedCompilersDict:
-            if "gcov_tool" in supportedCompilersDict[compiler]:
-                gcovTool = ("--gcov-tool "
-                    + supportedCompilersDict[compiler]["gcov_tool"])
+            gcovTool = get_gcov_tool(compiler)
         else:
             log.error("Unknown compiler %s", compiler)
             return False

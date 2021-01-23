@@ -88,7 +88,7 @@ SOFTWARE.
 #elif defined NBP_COMPILER_GXX
 #define NBP_COMPILER_VERSION __GNUG__
 #elif defined NBP_COMPILER_CLANG
-#error "Not supported yet"
+#define NBP_COMPILER_VERSION __clang_major__
 #elif defined NBP_COMPILER_CUSTOM
 #error "Cannot detect compiler version when a custom compiler is used"
 #else
@@ -157,10 +157,16 @@ SOFTWARE.
 #elif __cplusplus >= 199700
 #define NBP_LANGUAGE_STANDARD_CPP03
 #else
-#error "Failed to detect language for g++ compiler"
+#error "Failed to detect language standard for g++ compiler"
 #endif // end if __cplusplus >= 201500
 #elif defined NBP_COMPILER_CLANG
-#error "Not supported yet"
+#if __STDC_VERSION__ == 201112
+#define NBP_LANGUAGE_STANDARD_C11
+#elif __STDC_VERSION__ == 199901
+#define NBP_LANGUAGE_STANDARD_C99
+#else
+#error "Failed to detect language standard for clang compiler"
+#endif // end if __STDC_VERSION__ == 201112
 #elif defined NBP_COMPILER_CUSTOM
 #error "Cannot detect language standard when a custom compiler is used"
 #else
@@ -205,17 +211,17 @@ SOFTWARE.
  */
 #undef INTERNAL_NBP_PLATFORM_DEFINED
 
-#ifdef NBP_PLATFORM_32BIT
+#ifdef NBP_PLATFORM_32_BIT
 #define INTERNAL_NBP_PLATFORM_DEFINED
-#endif // end if NBP_PLATFORM_32BIT
+#endif // end if NBP_PLATFORM_32_BIT
 
-#ifdef NBP_PLATFORM_64BIT
+#ifdef NBP_PLATFORM_64_BIT
 #ifndef INTERNAL_NBP_PLATFORM_DEFINED
 #define INTERNAL_NBP_PLATFORM_DEFINED
 #else // INTERNAL_NBP_PLATFORM_DEFINED is defined
 #error "More NBP_PLATFORM_* macros are defined"
 #endif // end if INTERNAL_NBP_PLATFORM_DEFINED
-#endif // end if NBP_PLATFORM_64BIT
+#endif // end if NBP_PLATFORM_64_BIT
 
 /*
  * If there is no platform defined then try to detect the platform
@@ -224,23 +230,30 @@ SOFTWARE.
 #ifdef NBP_COMPILER_GCC
 #include <stdint.h>
 #if UINTPTR_MAX == 0xffffffff
-#define NBP_PLATFORM_32BIT
+#define NBP_PLATFORM_32_BIT
 #elif UINTPTR_MAX == 0xffffffffffffffff
-#define NBP_PLATFORM_64BIT
+#define NBP_PLATFORM_64_BIT
 #else
 #error "Failed to detect platform for gcc compiler"
 #endif // end if UINTPTR_MAX == 0xffffffff
 #elif defined NBP_COMPILER_GXX
 #include <stdint.h>
 #if UINTPTR_MAX == 0xffffffff
-#define NBP_PLATFORM_32BIT
+#define NBP_PLATFORM_32_BIT
 #elif UINTPTR_MAX == 0xffffffffffffffff
-#define NBP_PLATFORM_64BIT
+#define NBP_PLATFORM_64_BIT
 #else
 #error "Failed to detect platform for g++ compiler"
 #endif // end if UINTPTR_MAX == 0xffffffff
 #elif defined NBP_COMPILER_CLANG
-#error "Not supported yet"
+#include <stdint.h>
+#if UINTPTR_MAX == 0xffffffff
+#define NBP_PLATFORM_32_BIT
+#elif UINTPTR_MAX == 0xffffffffffffffff
+#define NBP_PLATFORM_64_BIT
+#else
+#error "Failed to detect platform for clang compiler"
+#endif // end if UINTPTR_MAX == 0xffffffff
 #elif defined NBP_COMPILER_CUSTOM
 #error "Cannot detect platform when a custom compiler is used"
 #else

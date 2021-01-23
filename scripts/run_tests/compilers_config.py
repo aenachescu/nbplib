@@ -74,4 +74,34 @@ supportedCompilersDict = {
         "platforms": [ "-m32", "-m64"],
         "gcov_tool": "gcov-9"
     },
+    "clang-5.0": {
+        "standards": [ "-std=c99", "-std=c11" ],
+        "platforms": [ "-m32", "-m64" ],
+        "gcov_tool": "scripts/clang_cov/clang_cov_5.sh",
+        "gcov_tool_absolute_path": True
+    },
+    "clang-6.0": {
+        "standards": [ "-std=c99", "-std=c11" ],
+        "platforms": [ "-m32", "-m64" ],
+        "gcov_tool": "scripts/clang_cov/clang_cov_6.sh",
+        "gcov_tool_absolute_path": True
+    },
+    "clang-7": {
+        "standards": [ "-std=c99", "-std=c11" ],
+        "platforms": [ "-m32", "-m64" ],
+        "gcov_tool": "scripts/clang_cov/clang_cov_7.sh",
+        "gcov_tool_absolute_path": True
+    },
+    "clang-8": {
+        "standards": [ "-std=c99", "-std=c11" ],
+        "platforms": [ "-m32", "-m64" ],
+        "gcov_tool": "scripts/clang_cov/clang_cov_8.sh",
+        "gcov_tool_absolute_path": True
+    },
+    "clang-9": {
+        "standards": [ "-std=c99", "-std=c11" ],
+        "platforms": [ "-m32", "-m64" ],
+        "gcov_tool": "scripts/clang_cov/clang_cov_9.sh",
+        "gcov_tool_absolute_path": True
+    },
 }

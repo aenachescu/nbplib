@@ -74,6 +74,9 @@ void initialize_build_configuration()
 
 #ifdef NBP_COMPILER_CLANG
     gCompiler = 3;
+#ifdef NBP_COMPILER_VERSION
+    gCompilerVersion = NBP_COMPILER_VERSION;
+#endif // end if NBP_COMPILER_VERSION
 #endif // end if NBP_COMPILER_CLANG
 
 #ifdef NBP_COMPILER_CUSTOM
@@ -104,13 +107,13 @@ void initialize_build_configuration()
     gStandard = 6;
 #endif // end if NBP_LANGUAGE_STANDARD_CPP17
 
-#ifdef NBP_PLATFORM_32BIT
+#ifdef NBP_PLATFORM_32_BIT
     gPlatform = 1;
-#endif // end if NBP_PLATFORM_32BIT
+#endif // end if NBP_PLATFORM_32_BIT
 
-#ifdef NBP_PLATFORM_64BIT
+#ifdef NBP_PLATFORM_64_BIT
     gPlatform = 2;
-#endif // end if NBP_PLATFORM_64BIT
+#endif // end if NBP_PLATFORM_64_BIT
 
 #ifdef NBP_TEST_MODE_ADDRESS_SANITIZER_ENABLED
     gSanitizer = 1;
@@ -173,6 +176,17 @@ int main()
         }
     } else if (gCompiler == 3) {
         printf("clang-");
+        if (gCompilerVersion == 5) {
+            printf("5.0 ");
+        } else if (gCompilerVersion == 6) {
+            printf("6.0 ");
+        } else if (gCompilerVersion == 7) {
+            printf("7 ");
+        } else if (gCompilerVersion == 8) {
+            printf("8 ");
+        } else if (gCompilerVersion == 9) {
+            printf("9 ");
+        }
     } else if (gCompiler == 4) {
         printf("custom");
     }

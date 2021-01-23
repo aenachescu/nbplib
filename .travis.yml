@@ -182,3 +182,47 @@ matrix:
         # only UB and address sanitizers are available on 32bits
         - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "g++-9" -san "address" -rtmt -v -sote -sobe
         - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<-m32>" -comp "g++-9" -san "ub" -rtmt -v -sote -sobe
+
+    #
+    # clang
+    #
+    - os: linux
+      dist: xenial
+      env:
+        - DESCRIPTION="linux clang"
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - deadsnakes
+          packages:
+            - clang-5.0
+            - clang-6.0
+            - clang-7
+            - clang-8
+            - clang-9
+            - llvm-5.0
+            - llvm-6.0
+            - llvm-7
+            - llvm-8
+            - llvm-9
+            - python3.6
+            - python3-pip
+      before_install:
+        - gem install coveralls-lcov
+      install:
+        - python3.6 -m pip install pexpect colorlog
+      script:
+        # install cmake 3.17
+        - mkdir -p cmake-3.17 && wget -qO- "https://cmake.org/files/v3.17/cmake-3.17.1-Linux-x86_64.tar.gz" | tar --strip-components=1 -xz -C cmake-3.17
+        - export PATH=`pwd`/cmake-3.17/bin:$PATH
+        # install lcov 1.15
+        - mkdir lcov
+        - cd lcov
+        - wget https://github.com/linux-test-project/lcov/archive/v1.15.tar.gz
+        - tar xfvz v1.15.tar.gz
+        - cd lcov-1.15
+        - sudo make install
+        - cd ../../
+
+        - python3.6 scripts/run_tests/run_tests.py -std "<all>" -p "<all>" -comp "clang-5.0;clang-6.0;clang-7;clang-8;clang-9" -rtmt -v -sote -sobe -rcov
