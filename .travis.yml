@@ -212,6 +212,11 @@ matrix:
             - llvm-7
             - llvm-8
             - llvm-9
+            - gcc-5-multilib
+            - gcc-6-multilib
+            - gcc-7-multilib
+            - gcc-8-multilib
+            - gcc-9-multilib
             - python3.6
             - python3-pip
       before_install:
