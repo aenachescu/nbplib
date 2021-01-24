@@ -138,6 +138,31 @@ def generate_single_header():
 
     return True
 
+def format_single_header():
+    log.info("Formatting single header...")
+
+    filePath = os.path.join(rootPath, "single_header/nbp.h")
+
+    proc = subprocess.Popen(
+        [ 'clang-format-10', '--style=file', filePath, "-i" ],
+        stdout=subprocess.PIPE
+    )
+
+    output = proc.communicate()[0]
+    if proc.returncode != 0:
+        log.error(
+            "Failed to format single header: %d",
+            proc.returncode
+        )
+
+        reset_file(filePath)
+
+        return False
+
+    log.info("Single header was formatted successfully")
+
+    return True
+
 def add_single_header():
     proc = subprocess.Popen(
         ['git', 'add', 'single_header/nbp.h'],
@@ -247,6 +272,9 @@ if __name__ == '__main__':
         if not stash_unstaged_changes():
             sys.exit(1)
         if not generate_single_header():
+            stash_pop()
+            sys.exit(1)
+        if not format_single_header():
             stash_pop()
             sys.exit(1)
         if not add_single_header():
