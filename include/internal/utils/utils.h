@@ -25,22 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_NBP
-#define _H_NBP_NBP
+#ifndef _H_NBP_INTERNAL_UTILS_UTILS
+#define _H_NBP_INTERNAL_UTILS_UTILS
 
-#define NBP_MAKE_VERSION(major, minor, rev)                                    \
-    (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
+#include "compiler.h"
+#include "preprocessor.h"
 
-#define NBP_VERSION_MAJOR    1
-#define NBP_VERSION_MINOR    0
-#define NBP_VERSION_REVISION 0
-
-#define NBP_VERSION_STR "1.0.0"
-
-#define NBP_VERSION                                                            \
-    NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
-
-#include "internal/build_configuration.h"
-#include "internal/utils/utils.h"
-
-#endif // end if _H_NBP_NBP
+#endif // end if _H_NBP_INTERNAL_UTILS_UTILS

@@ -25,22 +25,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_NBP
-#define _H_NBP_NBP
+#ifndef _H_NBP_INTERNAL_UTILS_COMPILER
+#define _H_NBP_INTERNAL_UTILS_COMPILER
 
-#define NBP_MAKE_VERSION(major, minor, rev)                                    \
-    (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
+#include "../build_configuration.h"
 
-#define NBP_VERSION_MAJOR    1
-#define NBP_VERSION_MINOR    0
-#define NBP_VERSION_REVISION 0
+#ifdef NBP_COMPILER_GCC
+#define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+#endif // end if NBP_COMPILER_GCC
 
-#define NBP_VERSION_STR "1.0.0"
+#ifdef NBP_COMPILER_GXX
+#define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+#endif // end if NBP_COMPILER_GXX
 
-#define NBP_VERSION                                                            \
-    NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
+#ifdef NBP_COMPILER_CLANG
+#define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+#endif // end if NBP_COMPILER_CLANG
 
-#include "internal/build_configuration.h"
-#include "internal/utils/utils.h"
+#ifndef NBP_MAYBE_UNUSED_PARAMETER
+#define NBP_MAYBE_UNUSED_PARAMETER
+#error "NBP_MAYBE_UNUSED_PARAMETER is not defined!"
+#endif // end if NBP_MAYBE_UNUSED_PARAMETER
 
-#endif // end if _H_NBP_NBP
+#endif // end if _H_NBP_INTERNAL_UTILS_COMPILER
