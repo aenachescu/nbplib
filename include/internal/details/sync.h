@@ -25,37 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_NBP
-#define _H_NBP_NBP
+#ifndef _H_NBP_INTERNAL_DETAILS_SYNC
+#define _H_NBP_INTERNAL_DETAILS_SYNC
 
-#define NBP_MAKE_VERSION(major, minor, rev)                                    \
-    (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
+#include "../build_configuration.h"
 
-#define NBP_VERSION_MAJOR    1
-#define NBP_VERSION_MINOR    0
-#define NBP_VERSION_REVISION 0
+#ifdef NBP_MT_SUPPORT
 
-#define NBP_VERSION_STR "1.0.0"
+#ifdef NBP_OS_LINUX
+#include "sync_linux.h"
+#endif // end if NBP_OS_LINUX
 
-#define NBP_VERSION                                                            \
-    NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
+#endif // end if NBP_MT_SUPPORT
 
-// keep this order
-#include "internal/build_configuration.h"
-
-// keep this order
-#include "internal/utils/utils.h"
-
-// keep this order
-#include "internal/types/types.h"
-
-// keep this order
-#include "internal/details/details.h"
-
-// keep this order
-#include "internal/api/api.h"
-
-// keep this order
-#include "internal/impl/impl.h"
-
-#endif // end if _H_NBP_NBP
+#endif // end if _H_NBP_INTERNAL_DETAILS_SYNC
