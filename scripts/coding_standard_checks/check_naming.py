@@ -1574,10 +1574,13 @@ def check_naming(log, filePath):
 
     status = True
 
+    includePath = "-I" + os.path.join(rootPath, "include", "")
+
     index = clang.cindex.Index.create()
     translationUnit = index.parse(
         filePath,
-        options=clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD
+        options=clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD,
+        args=[ includePath ]
     )
 
     st, structs = check_structs(log, translationUnit.cursor, filePath)
