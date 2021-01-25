@@ -31,20 +31,45 @@ SOFTWARE.
 #include "../build_configuration.h"
 
 #ifdef NBP_COMPILER_GCC
+
 #define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+
+#define NBP_SOURCE_FILE __FILE__
+#define NBP_SOURCE_LINE __LINE__
+
 #endif // end if NBP_COMPILER_GCC
 
 #ifdef NBP_COMPILER_GXX
+
 #define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+
+#define NBP_SOURCE_FILE __FILE__
+#define NBP_SOURCE_LINE __LINE__
+
 #endif // end if NBP_COMPILER_GXX
 
 #ifdef NBP_COMPILER_CLANG
+
 #define NBP_MAYBE_UNUSED_PARAMETER __attribute__((unused))
+
+#define NBP_SOURCE_FILE __FILE__
+#define NBP_SOURCE_LINE __LINE__
+
 #endif // end if NBP_COMPILER_CLANG
 
 #ifndef NBP_MAYBE_UNUSED_PARAMETER
 #define NBP_MAYBE_UNUSED_PARAMETER
 #error "NBP_MAYBE_UNUSED_PARAMETER is not defined!"
 #endif // end if NBP_MAYBE_UNUSED_PARAMETER
+
+#ifndef NBP_SOURCE_FILE
+#define NBP_SOURCE_FILE "not defined"
+#error "NBP_SOURCE_FILE is not defined!"
+#endif // end if NBP_SOURCE_FILE
+
+#ifndef NBP_SOURCE_LINE
+#define NBP_SOURCE_LINE 0
+#error "NBP_SOURCE_LINE is not defined!"
+#endif // end if NBP_SOURCE_LINE
 
 #endif // end if _H_NBP_INTERNAL_UTILS_COMPILER
