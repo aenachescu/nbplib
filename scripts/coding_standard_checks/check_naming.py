@@ -1037,6 +1037,16 @@ def check_expected_typedef_enum(log, filePath, expectedTypedefEnums,
 
     return status
 
+def get_typedef_location_line(typedef):
+    for token in typedef.get_tokens():
+        if token.kind != clang.cindex.TokenKind.KEYWORD:
+            continue
+        if token.spelling != "typedef":
+            continue
+        return token.location.line
+
+    return typedef.location.line
+
 def check_typedefs(log, root, filePath, structs, enums):
     log.info("Checking typedefs... [%s]", filePath)
 
@@ -1058,11 +1068,13 @@ def check_typedefs(log, root, filePath, structs, enums):
             status = False
             continue
 
+        locationLine = get_typedef_location_line(typedef)
+
         if typedefType == TypedefType.POINTER_TO_FUNC:
             st = check_typedef_pfn(
                 log,
                 filePath,
-                typedef.location.line,
+                locationLine,
                 details[0]
             )
             if not st:
@@ -1072,7 +1084,7 @@ def check_typedefs(log, root, filePath, structs, enums):
             st = check_typedef_enum(
                 log,
                 filePath,
-                typedef.location.line,
+                locationLine,
                 details[1]
             )
             if not st:
@@ -1080,14 +1092,14 @@ def check_typedefs(log, root, filePath, structs, enums):
                 continue
 
             typedefEnums.append(
-                tuple((details[1], typedef.location.line, details[0]))
+                tuple((details[1], locationLine, details[0]))
             )
             continue
         elif typedefType == TypedefType.STRUCT:
             st = check_typedef_struct(
                 log,
                 filePath,
-                typedef.location.line,
+                locationLine,
                 details[1]
             )
             if not st:
@@ -1095,7 +1107,7 @@ def check_typedefs(log, root, filePath, structs, enums):
                 continue
 
             typedefStructs.append(
-                tuple((details[1], typedef.location.line, details[0]))
+                tuple((details[1], locationLine, details[0]))
             )
             continue
 
