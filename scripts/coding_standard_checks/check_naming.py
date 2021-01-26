@@ -621,7 +621,7 @@ def check_enum_fields(log, enum, filePath, prefix, enumName):
             isValidPrefix, usedBy = is_valid_enum_field_value_prefix(
                 enumFieldValuePrefix
             )
-            if not isValidPrefix:
+            if not isValidPrefix and usedBy != enumName:
                 log.error(
                     "Enum field value prefix already used. Prefix = %s. "
                     "Used by = %s. Enum = %s. File = [%s]. Line = %d",
