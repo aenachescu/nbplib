@@ -733,9 +733,9 @@ typedef struct nbp_error_t nbp_error_t;
 
 #endif // end if NBP_MT_SUPPORT
 
-struct nbp_module_instance_t;
+struct nbp_module_t;
 
-struct nbp_test_suite_instance_t;
+struct nbp_test_suite_t;
 
 struct nbp_test_case_details_t;
 struct nbp_test_case_instance_t;
@@ -824,8 +824,8 @@ struct nbp_test_case_instance_t
 
     nbp_test_case_instance_state_e state;
 
-    struct nbp_module_instance_t*     module;
-    struct nbp_test_suite_instance_t* testSuite;
+    struct nbp_module_t*     module;
+    struct nbp_test_suite_t* testSuite;
 
     nbp_test_case_setup_details_t*    setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;
