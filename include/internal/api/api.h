@@ -29,6 +29,7 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_API_API
 
 #include "memory.h"
+#include "module.h"
 #include "test_case.h"
 #include "test_suite.h"
 

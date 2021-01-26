@@ -584,155 +584,6 @@ struct nbp_error_t
 };
 typedef struct nbp_error_t nbp_error_t;
 
-#ifdef NBP_MT_SUPPORT
-
-#ifdef NBP_OS_LINUX
-#include <semaphore.h>
-
-/*
- * Atomic unsigned int wrapper
- */
-
-#define NBP_ATOMIC_UINT_TYPE unsigned int
-
-#define NBP_ATOMIC_UINT_INIT(val) val
-
-#define NBP_ATOMIC_UINT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
-
-#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value)                              \
-    __sync_add_and_fetch((ptr), (value))
-
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
-    __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
-
-/*
- * Event wrapper
- */
-
-#define NBP_SYNC_EVENT_TYPE sem_t
-
-#define NBP_SYNC_EVENT_DEFAULT_VALUE                                           \
-    {                                                                          \
-        .__align = 0                                                           \
-    }
-
-#define NBP_SYNC_EVENT_INIT(ev) internal_nbp_linux_sync_event_init(&ev)
-
-#define NBP_SYNC_EVENT_UNINIT(ev) internal_nbp_linux_sync_event_uninit(&ev)
-
-#define NBP_SYNC_EVENT_WAIT(ev) internal_nbp_linux_sync_event_wait(&ev)
-
-#define NBP_SYNC_EVENT_NOTIFY(ev) internal_nbp_linux_sync_event_notify(&ev)
-
-#endif // end if NBP_OS_LINUX
-
-#ifdef NBP_OS_WINDOWS
-#error "Not supported"
-#endif // end if NBP_OS_WINDOWS
-
-#ifdef NBP_OS_MAC
-#error "Not supported"
-#endif // end if NBP_OS_MAC
-
-#ifdef NBP_OS_CUSTOM
-#error "Not supported"
-#endif // end if NBP_OS_CUSTOM
-
-/*
- * Check if atomic uint wrapper is defined, otherwise define a dummy atomic uint
- * wrapper.
- * If NBP_OS_* is not defined then the atomic uint wrapper will not be defined
- * so the compiler will generate a lot of errors and the error message that
- * says that there is no NBP_OS_* defined is hard to see.
- */
-
-#ifndef NBP_ATOMIC_UINT_TYPE
-#define NBP_ATOMIC_UINT_TYPE unsigned int
-#endif // end if NBP_ATOMIC_UINT_TYPE
-
-#ifndef NBP_ATOMIC_UINT_INIT
-#define NBP_ATOMIC_UINT_INIT(val) val
-#endif // end if NBP_ATOMIC_UINT_INIT
-
-#ifndef NBP_ATOMIC_UINT_LOAD
-#define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
-#endif // end if NBP_ATOMIC_UINT_LOAD
-
-#ifndef NBP_ATOMIC_UINT_ADD_AND_FETCH
-#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
-#endif // end if NBP_ATOMIC_UINT_ADD_AND_FETCH
-
-#ifndef NBP_ATOMIC_UINT_CAS
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
-    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
-#endif // end if NBP_ATOMIC_UINT_CAS
-
-/*
- * Check if event wrapper is defined, otherwise define a dummy event wrapper.
- * If NBP_OS_* is not defined then the event wrapper will not be defined so the
- * compiler will generate a lot of errors and the error message that says that
- * there is no NBP_OS_* defined is hard to see.
- */
-
-#ifndef NBP_SYNC_EVENT_TYPE
-#define NBP_SYNC_EVENT_TYPE int
-#endif // end if NBP_SYNC_EVENT_TYPE
-
-#ifndef NBP_SYNC_EVENT_DEFAULT_VALUE
-#define NBP_SYNC_EVENT_DEFAULT_VALUE 0
-#endif // end if NBP_SYNC_EVENT_DEFAULT_VALUE
-
-#ifndef NBP_SYNC_EVENT_INIT
-#define NBP_SYNC_EVENT_INIT(ev) ec_success
-#endif // end if NBP_SYNC_EVENT_INIT
-
-#ifndef NBP_SYNC_EVENT_UNINIT
-#define NBP_SYNC_EVENT_UNINIT(ev) ec_success
-#endif // end if NBP_SYNC_EVENT_UNINIT
-
-#ifndef NBP_SYNC_EVENT_WAIT
-#define NBP_SYNC_EVENT_WAIT(ev) ec_success
-#endif // end if NBP_SYNC_EVENT_WAIT
-
-#ifndef NBP_SYNC_EVENT_NOTIFY
-#define NBP_SYNC_EVENT_NOTIFY(ev) ec_success
-#endif // end if NBP_SYNC_EVENT_NOTIFY
-
-#else
-
-/*
- * Atomic unsigned int wrapper
- */
-
-#define NBP_ATOMIC_UINT_TYPE unsigned int
-
-#define NBP_ATOMIC_UINT_INIT(val) val
-
-#define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
-
-#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
-
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
-    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
-
-/*
- * Event wrapper
- */
-
-#define NBP_SYNC_EVENT_TYPE int
-
-#define NBP_SYNC_EVENT_DEFAULT_VALUE 0
-
-#define NBP_SYNC_EVENT_INIT(ev) ec_success
-
-#define NBP_SYNC_EVENT_UNINIT(ev) ec_success
-
-#define NBP_SYNC_EVENT_WAIT(ev) ec_success
-
-#define NBP_SYNC_EVENT_NOTIFY(ev) ec_success
-
-#endif // end if NBP_MT_SUPPORT
-
 struct nbp_module_t;
 
 struct nbp_test_suite_t;
@@ -960,6 +811,269 @@ struct nbp_test_suite_t
 };
 typedef struct nbp_test_suite_t nbp_test_suite_t;
 
+struct nbp_module_details_t;
+struct nbp_module_instance_t;
+struct nbp_module_t;
+
+typedef void (*nbp_module_setup_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule */);
+
+typedef void (*nbp_module_teardown_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_mdoule_config_pfn_t)(
+    struct nbp_module_details_t* /* module */
+);
+
+typedef void (*nbp_module_pfn_t)(struct nbp_module_t* /* nbpParamModule*/);
+
+enum nbp_module_instance_state_e
+{
+    mis_ready   = 0x40000000,
+    mis_running = 0x40000001,
+    mis_passed  = 0x40000002,
+    mis_failed  = 0x40000003,
+    mis_skipped = 0x40000004,
+};
+typedef enum nbp_module_instance_state_e nbp_module_instance_state_e;
+
+enum nbp_module_state_e
+{
+    ms_ready   = 0x41000000,
+    ms_running = 0x41000001,
+    ms_passed  = 0x41000002,
+    ms_failed  = 0x41000003,
+    ms_skipped = 0x41000004,
+};
+typedef enum nbp_module_state_e nbp_module_state_e;
+
+struct nbp_module_setup_details_t
+{
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    nbp_module_setup_pfn_t function;
+};
+typedef struct nbp_module_setup_details_t nbp_module_setup_details_t;
+
+struct nbp_module_teardown_details_t
+{
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    nbp_module_teardown_pfn_t function;
+};
+typedef struct nbp_module_teardown_details_t nbp_module_teardown_details_t;
+
+struct nbp_module_details_t
+{
+    const char* name;
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    int isConfigured;
+
+    nbp_mdoule_config_pfn_t configFunction;
+    nbp_module_pfn_t        function;
+
+    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_teardown_details_t* teardownDetails;
+};
+typedef struct nbp_module_details_t nbp_module_details_t;
+
+struct nbp_module_instance_t
+{
+    nbp_module_details_t* moduleDetails;
+
+    nbp_module_instance_state_e state;
+
+    struct nbp_module_t* parent;
+    unsigned int         depth;
+
+    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_teardown_details_t* teardownDetails;
+
+    struct nbp_module_t* runs;
+    unsigned int         numberOfRuns;
+
+    struct nbp_module_instance_t* next;
+    struct nbp_module_instance_t* prev;
+};
+typedef struct nbp_module_instance_t nbp_module_instance_t;
+
+struct nbp_module_t
+{
+    nbp_module_instance_t* moduleInstance;
+
+    nbp_module_state_e state;
+
+    nbp_test_case_instance_t* firstTestCaseInstance;
+    nbp_test_case_instance_t* lastTestCaseInstance;
+
+    nbp_test_suite_instance_t* firstTestSuiteInstance;
+    nbp_test_suite_instance_t* lastTestSuiteInstance;
+
+    nbp_module_instance_t* firstModuleInstance;
+    nbp_module_instance_t* lastModuleInstance;
+};
+typedef struct nbp_module_t nbp_module_t;
+
+#ifdef NBP_MT_SUPPORT
+
+#ifdef NBP_OS_LINUX
+#include <semaphore.h>
+
+/*
+ * Atomic unsigned int wrapper
+ */
+
+#define NBP_ATOMIC_UINT_TYPE unsigned int
+
+#define NBP_ATOMIC_UINT_INIT(val) val
+
+#define NBP_ATOMIC_UINT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
+
+#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value)                              \
+    __sync_add_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+    __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
+
+/*
+ * Event wrapper
+ */
+
+#define NBP_SYNC_EVENT_TYPE sem_t
+
+#define NBP_SYNC_EVENT_DEFAULT_VALUE                                           \
+    {                                                                          \
+        .__align = 0                                                           \
+    }
+
+#define NBP_SYNC_EVENT_INIT(ev) internal_nbp_linux_sync_event_init(&ev)
+
+#define NBP_SYNC_EVENT_UNINIT(ev) internal_nbp_linux_sync_event_uninit(&ev)
+
+#define NBP_SYNC_EVENT_WAIT(ev) internal_nbp_linux_sync_event_wait(&ev)
+
+#define NBP_SYNC_EVENT_NOTIFY(ev) internal_nbp_linux_sync_event_notify(&ev)
+
+#endif // end if NBP_OS_LINUX
+
+#ifdef NBP_OS_WINDOWS
+#error "Not supported"
+#endif // end if NBP_OS_WINDOWS
+
+#ifdef NBP_OS_MAC
+#error "Not supported"
+#endif // end if NBP_OS_MAC
+
+#ifdef NBP_OS_CUSTOM
+#error "Not supported"
+#endif // end if NBP_OS_CUSTOM
+
+/*
+ * Check if atomic uint wrapper is defined, otherwise define a dummy atomic uint
+ * wrapper.
+ * If NBP_OS_* is not defined then the atomic uint wrapper will not be defined
+ * so the compiler will generate a lot of errors and the error message that
+ * says that there is no NBP_OS_* defined is hard to see.
+ */
+
+#ifndef NBP_ATOMIC_UINT_TYPE
+#define NBP_ATOMIC_UINT_TYPE unsigned int
+#endif // end if NBP_ATOMIC_UINT_TYPE
+
+#ifndef NBP_ATOMIC_UINT_INIT
+#define NBP_ATOMIC_UINT_INIT(val) val
+#endif // end if NBP_ATOMIC_UINT_INIT
+
+#ifndef NBP_ATOMIC_UINT_LOAD
+#define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
+#endif // end if NBP_ATOMIC_UINT_LOAD
+
+#ifndef NBP_ATOMIC_UINT_ADD_AND_FETCH
+#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
+#endif // end if NBP_ATOMIC_UINT_ADD_AND_FETCH
+
+#ifndef NBP_ATOMIC_UINT_CAS
+#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
+#endif // end if NBP_ATOMIC_UINT_CAS
+
+/*
+ * Check if event wrapper is defined, otherwise define a dummy event wrapper.
+ * If NBP_OS_* is not defined then the event wrapper will not be defined so the
+ * compiler will generate a lot of errors and the error message that says that
+ * there is no NBP_OS_* defined is hard to see.
+ */
+
+#ifndef NBP_SYNC_EVENT_TYPE
+#define NBP_SYNC_EVENT_TYPE int
+#endif // end if NBP_SYNC_EVENT_TYPE
+
+#ifndef NBP_SYNC_EVENT_DEFAULT_VALUE
+#define NBP_SYNC_EVENT_DEFAULT_VALUE 0
+#endif // end if NBP_SYNC_EVENT_DEFAULT_VALUE
+
+#ifndef NBP_SYNC_EVENT_INIT
+#define NBP_SYNC_EVENT_INIT(ev) ec_success
+#endif // end if NBP_SYNC_EVENT_INIT
+
+#ifndef NBP_SYNC_EVENT_UNINIT
+#define NBP_SYNC_EVENT_UNINIT(ev) ec_success
+#endif // end if NBP_SYNC_EVENT_UNINIT
+
+#ifndef NBP_SYNC_EVENT_WAIT
+#define NBP_SYNC_EVENT_WAIT(ev) ec_success
+#endif // end if NBP_SYNC_EVENT_WAIT
+
+#ifndef NBP_SYNC_EVENT_NOTIFY
+#define NBP_SYNC_EVENT_NOTIFY(ev) ec_success
+#endif // end if NBP_SYNC_EVENT_NOTIFY
+
+#else
+
+/*
+ * Atomic unsigned int wrapper
+ */
+
+#define NBP_ATOMIC_UINT_TYPE unsigned int
+
+#define NBP_ATOMIC_UINT_INIT(val) val
+
+#define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
+
+#define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
+
+#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
+
+/*
+ * Event wrapper
+ */
+
+#define NBP_SYNC_EVENT_TYPE int
+
+#define NBP_SYNC_EVENT_DEFAULT_VALUE 0
+
+#define NBP_SYNC_EVENT_INIT(ev) ec_success
+
+#define NBP_SYNC_EVENT_UNINIT(ev) ec_success
+
+#define NBP_SYNC_EVENT_WAIT(ev) ec_success
+
+#define NBP_SYNC_EVENT_NOTIFY(ev) ec_success
+
+#endif // end if NBP_MT_SUPPORT
+
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -1013,6 +1127,128 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #endif // end if NBP_MEMORY_FREE
 
 #endif // end if NBP_CUSTOM_MEMORY_ALLOCATOR
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_SETUP(func)                                                 \
+    void nbp_module_setup_function_##func(                                     \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
+    nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func = {        \
+        .functionName = #func,                                                 \
+        .fileName     = NBP_SOURCE_FILE,                                       \
+        .line         = NBP_SOURCE_LINE,                                       \
+        .function     = nbp_module_setup_function_##func,                      \
+    };                                                                         \
+    void nbp_module_setup_function_##func(                                     \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_TEARDOWN(func)                                              \
+    void nbp_module_teardown_function_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
+    nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func = {  \
+        .functionName = #func,                                                 \
+        .fileName     = NBP_SOURCE_FILE,                                       \
+        .line         = NBP_SOURCE_LINE,                                       \
+        .function     = nbp_module_teardown_function_##func,                   \
+    };                                                                         \
+    void nbp_module_teardown_function_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE(func, ...)                                                  \
+    void nbp_module_config_function_##func(                                    \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_details_t* moduleDetails)        \
+    {                                                                          \
+        if (moduleDetails->isConfigured == 1) {                                \
+            return;                                                            \
+        } else {                                                               \
+            moduleDetails->isConfigured = 1;                                   \
+        }                                                                      \
+        INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(P_##__VA_ARGS__)          \
+    }                                                                          \
+    void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
+    nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
+        .name            = #func,                                              \
+        .functionName    = #func,                                              \
+        .fileName        = NBP_SOURCE_FILE,                                    \
+        .line            = NBP_SOURCE_LINE,                                    \
+        .isConfigured    = 0,                                                  \
+        .configFunction  = nbp_module_config_function_##func,                  \
+        .function        = nbp_module_function_##func,                         \
+        .setupDetails    = NBP_NULLPTR,                                        \
+        .teardownDetails = NBP_NULLPTR,                                        \
+    };                                                                         \
+    void nbp_module_function_##func(                                           \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_NAME(name)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_FIXTURES(setup, teardown)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_MODULE_SETUP(func)                                         \
+    extern nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_MODULE_SETUP(func)                                  \
+    &gInternalNbpModuleSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_MODULE_TEARDOWN(func)                                      \
+    extern nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_MODULE_TEARDOWN(func)                               \
+    &gInternalNbpModuleTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_MODULE(func)                                               \
+    extern nbp_module_details_t gInternalNbpModuleDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_MODULE_DETAILS(func) &gInternalNbpModuleDetails##func
+
+#define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
+    (P##__VA_ARGS__)
+
+#define NBP_PP_PARSE_PP_NBP_MODULE_NAME(newName) moduleDetails->name = newName;
+
+#define NBP_PP_PARSE_PP_NBP_MODULE_SETUP(func)                                 \
+    NBP_INCLUDE_MODULE_SETUP(func);                                            \
+    moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
+
+#define NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(func)                              \
+    NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
+    moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
+
+#define NBP_PP_PARSE_PP_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)           \
+    NBP_PP_PARSE_PP_NBP_MODULE_SETUP(setupFunc)                                \
+    NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(teardownFunc)
 
 /**
  * TODO: add docs

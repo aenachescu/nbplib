@@ -29,6 +29,7 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_TYPES_TYPES
 
 #include "error.h"
+#include "module.h"
 #include "sync.h"
 #include "test_case.h"
 #include "test_suite.h"
