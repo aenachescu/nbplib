@@ -846,6 +846,120 @@ struct nbp_test_case_t
 };
 typedef struct nbp_test_case_t nbp_test_case_t;
 
+struct nbp_module_t;
+
+struct nbp_test_suite_details_t;
+struct nbp_test_suite_instance_t;
+struct nbp_test_suite_t;
+
+typedef void (*nbp_test_suite_setup_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */
+);
+
+typedef void (*nbp_test_suite_teardown_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */
+);
+
+typedef void (*nbp_test_suite_config_pfn_t)(
+    struct nbp_test_suite_details_t* /* testSuiteDetails */
+);
+
+typedef void (*nbp_test_suite_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */
+);
+
+enum nbp_test_suite_instance_state_e
+{
+    tsis_ready   = 0x30000000,
+    tsis_running = 0x30000001,
+    tsis_passed  = 0x30000002,
+    tsis_failed  = 0x30000003,
+    tsis_skipped = 0x30000004,
+};
+typedef enum nbp_test_suite_instance_state_e nbp_test_suite_instance_state_e;
+
+enum nbp_test_suite_state_e
+{
+    tss_ready   = 0x31000000,
+    tss_running = 0x31000001,
+    tss_passed  = 0x31000002,
+    tss_failed  = 0x31000003,
+    tss_skipped = 0x31000004,
+};
+typedef enum nbp_test_suite_state_e nbp_test_suite_state_e;
+
+struct nbp_test_suite_setup_details_t
+{
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    nbp_test_suite_setup_pfn_t function;
+};
+typedef struct nbp_test_suite_setup_details_t nbp_test_suite_setup_details_t;
+
+struct nbp_test_suite_teardown_details_t
+{
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    nbp_test_suite_teardown_pfn_t function;
+};
+typedef struct nbp_test_suite_teardown_details_t
+    nbp_test_suite_teardown_details_t;
+
+struct nbp_test_suite_details_t
+{
+    const char* name;
+    const char* functionName;
+
+    const char* fileName;
+    int         line;
+
+    int isConfigured;
+
+    nbp_test_suite_config_pfn_t configFunction;
+    nbp_test_suite_pfn_t        function;
+
+    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_teardown_details_t* teardownDetails;
+};
+typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
+
+struct nbp_test_suite_instance_t
+{
+    nbp_test_suite_details_t* testSuiteDetails;
+
+    nbp_test_suite_instance_state_e state;
+
+    struct nbp_module_t* module;
+    unsigned int         depth;
+
+    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_teardown_details_t* teardownDetails;
+
+    struct nbp_test_suite_t* runs;
+    unsigned int             numberOfRuns;
+
+    struct nbp_test_suite_instance_t* next;
+    struct nbp_test_suite_instance_t* prev;
+};
+typedef struct nbp_test_suite_instance_t nbp_test_suite_instance_t;
+
+struct nbp_test_suite_t
+{
+    nbp_test_suite_instance_t* testSuiteInstance;
+
+    nbp_test_suite_state_e state;
+
+    nbp_test_case_instance_t* firstTestCaseInstance;
+    nbp_test_case_instance_t* lastTestCaseInstance;
+};
+typedef struct nbp_test_suite_t nbp_test_suite_t;
+
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -1026,6 +1140,134 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #define NBP_PP_PARSE_PP_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)        \
     NBP_PP_PARSE_PP_NBP_TEST_CASE_SETUP(setupFunc)                             \
     NBP_PP_PARSE_PP_NBP_TEST_CASE_TEARDOWN(teardownFunc)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_SETUP(func)                                             \
+    void nbp_test_suite_setup_function_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
+    nbp_test_suite_setup_details_t gInternalNbpTestSuiteSetupDetails##func = { \
+        .functionName = #func,                                                 \
+        .fileName     = NBP_SOURCE_FILE,                                       \
+        .line         = NBP_SOURCE_LINE,                                       \
+        .function     = nbp_test_suite_setup_function_##func,                  \
+    };                                                                         \
+    void nbp_test_suite_setup_function_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_TEARDOWN(func)                                          \
+    void nbp_test_suite_teardown_function_##func(                              \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
+    nbp_test_suite_teardown_details_t                                          \
+        gInternalNbpTestSuiteTeardownDetails##func = {                         \
+            .functionName = #func,                                             \
+            .fileName     = NBP_SOURCE_FILE,                                   \
+            .line         = NBP_SOURCE_LINE,                                   \
+            .function     = nbp_test_suite_teardown_function_##func,           \
+    };                                                                         \
+    void nbp_test_suite_teardown_function_##func(                              \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE(func, ...)                                              \
+    void nbp_test_suite_config_function_##func(                                \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_details_t* testSuiteDetails) \
+    {                                                                          \
+        if (testSuiteDetails->isConfigured == 1) {                             \
+            return;                                                            \
+        } else {                                                               \
+            testSuiteDetails->isConfigured = 1;                                \
+        }                                                                      \
+        INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(P_##__VA_ARGS__)      \
+    }                                                                          \
+    void nbp_test_suite_function_##func(nbp_test_suite_t* nbpParamTestSuite);  \
+    nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
+        .name            = #func,                                              \
+        .functionName    = #func,                                              \
+        .fileName        = NBP_SOURCE_FILE,                                    \
+        .line            = NBP_SOURCE_LINE,                                    \
+        .isConfigured    = 0,                                                  \
+        .configFunction  = nbp_test_suite_config_function_##func,              \
+        .function        = nbp_test_suite_function_##func,                     \
+        .setupDetails    = NBP_NULLPTR,                                        \
+        .teardownDetails = NBP_NULLPTR,                                        \
+    };                                                                         \
+    void nbp_test_suite_function_##func(                                       \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_NAME(name)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_FIXTURES(setup, teardown)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_SUITE_SETUP(func)                                     \
+    extern nbp_test_suite_setup_details_t                                      \
+        gInternalNbpTestSuiteSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func)                              \
+    &gInternalNbpTestSuiteSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_SUITE_TEARDOWN(func)                                  \
+    extern nbp_test_suite_teardown_details_t                                   \
+        gInternalNbpTestSuiteTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func)                           \
+    &gInternalNbpTestSuiteTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_SUITE(func)                                           \
+    extern nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func)                            \
+    &gInternalNbpTestSuiteDetails##func
+
+#define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
+    (P##__VA_ARGS__)
+
+#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_NAME(newName)                           \
+    testSuiteDetails->name = newName;
+
+#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(func)                             \
+    NBP_INCLUDE_TEST_SUITE_SETUP(func);                                        \
+    testSuiteDetails->setupDetails = NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func);
+
+#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(func)                          \
+    NBP_INCLUDE_TEST_SUITE_TEARDOWN(func);                                     \
+    testSuiteDetails->teardownDetails =                                        \
+        NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func);
+
+#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)       \
+    NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(setupFunc)                            \
+    NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
 
 #ifdef NBP_MT_SUPPORT
 

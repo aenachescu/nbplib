@@ -31,5 +31,6 @@ SOFTWARE.
 #include "error.h"
 #include "sync.h"
 #include "test_case.h"
+#include "test_suite.h"
 
 #endif // end if _H_NBP_INTERNAL_TYPES_TYPES

@@ -28,7 +28,8 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_API
 #define _H_NBP_INTERNAL_API_API
 
-#include "api.h"
+#include "memory.h"
 #include "test_case.h"
+#include "test_suite.h"
 
 #endif // end if _H_NBP_INTERNAL_API_API
