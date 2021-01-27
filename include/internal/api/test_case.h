@@ -139,6 +139,16 @@ SOFTWARE.
 #define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
     &gInternalNbpTestCaseDetails##func
 
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE nbpParamTestCase
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
+
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
     (P##__VA_ARGS__)

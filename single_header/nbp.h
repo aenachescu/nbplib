@@ -1232,6 +1232,16 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_GET_POINTER_TO_MODULE_DETAILS(func) &gInternalNbpModuleDetails##func
 
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_MODULE nbpParamModule
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_MODULE_INSTANCE nbpParamModuleInstance
+
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
     (P##__VA_ARGS__)
@@ -1356,6 +1366,16 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
     &gInternalNbpTestCaseDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE nbpParamTestCase
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
@@ -1484,6 +1504,16 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func)                            \
     &gInternalNbpTestSuiteDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_SUITE nbpParamTestSuite
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \

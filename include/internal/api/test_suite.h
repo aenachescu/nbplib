@@ -140,6 +140,16 @@ SOFTWARE.
 #define NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func)                            \
     &gInternalNbpTestSuiteDetails##func
 
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_SUITE nbpParamTestSuite
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
+
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
     (P##__VA_ARGS__)
