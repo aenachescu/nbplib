@@ -30,6 +30,7 @@ SOFTWARE.
 
 #include "error.h"
 #include "module.h"
+#include "printer.h"
 #include "sync.h"
 #include "test_case.h"
 #include "test_suite.h"

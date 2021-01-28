@@ -105,6 +105,9 @@ SOFTWARE.
         2,                                                                     \
         1, )
 
+// This macro is generated when a variadic macro is used with no parameters
+#define NBP_PP_PARSE_PP_
+
 #define NBP_PP_PARSE_PARAMETER_1(parameter) NBP_PP_PARSE_##parameter
 #define NBP_PP_PARSE_PARAMETER_2(parameter, ...)                               \
     NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_1(PP_##__VA_ARGS__)
