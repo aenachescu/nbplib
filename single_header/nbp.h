@@ -639,14 +639,14 @@ typedef enum nbp_error_code_e nbp_error_code_e;
 struct nbp_error_t
 {
     nbp_error_code_e errorCode;
-    int              line;
-    const char*      filename;
+    int line;
+    const char* filename;
 
     nbp_error_context_type_e contextType;
     union
     {
         const char* contextString;
-        void*       contextCustom;
+        void* contextCustom;
     };
 };
 typedef struct nbp_error_t nbp_error_t;
@@ -700,7 +700,7 @@ struct nbp_test_case_setup_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_case_setup_pfn_t function;
 };
@@ -711,7 +711,7 @@ struct nbp_test_case_teardown_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_case_teardown_pfn_t function;
 };
@@ -724,14 +724,14 @@ struct nbp_test_case_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     int isConfigured;
 
     nbp_test_case_config_pfn_t configFunction;
-    nbp_test_case_pfn_t        function;
+    nbp_test_case_pfn_t function;
 
-    nbp_test_case_setup_details_t*    setupDetails;
+    nbp_test_case_setup_details_t* setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;
 };
 typedef struct nbp_test_case_details_t nbp_test_case_details_t;
@@ -742,14 +742,14 @@ struct nbp_test_case_instance_t
 
     nbp_test_case_instance_state_e state;
 
-    struct nbp_module_t*     module;
+    struct nbp_module_t* module;
     struct nbp_test_suite_t* testSuite;
 
-    nbp_test_case_setup_details_t*    setupDetails;
+    nbp_test_case_setup_details_t* setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;
 
     struct nbp_test_case_t* runs;
-    unsigned int            numberOfRuns;
+    unsigned int numberOfRuns;
 
     struct nbp_test_case_instance_t* next;
     struct nbp_test_case_instance_t* prev;
@@ -811,7 +811,7 @@ struct nbp_test_suite_setup_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_suite_setup_pfn_t function;
 };
@@ -822,7 +822,7 @@ struct nbp_test_suite_teardown_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_suite_teardown_pfn_t function;
 };
@@ -835,14 +835,14 @@ struct nbp_test_suite_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     int isConfigured;
 
     nbp_test_suite_config_pfn_t configFunction;
-    nbp_test_suite_pfn_t        function;
+    nbp_test_suite_pfn_t function;
 
-    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_setup_details_t* setupDetails;
     nbp_test_suite_teardown_details_t* teardownDetails;
 };
 typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
@@ -854,13 +854,13 @@ struct nbp_test_suite_instance_t
     nbp_test_suite_instance_state_e state;
 
     struct nbp_module_t* module;
-    unsigned int         depth;
+    unsigned int depth;
 
-    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_setup_details_t* setupDetails;
     nbp_test_suite_teardown_details_t* teardownDetails;
 
     struct nbp_test_suite_t* runs;
-    unsigned int             numberOfRuns;
+    unsigned int numberOfRuns;
 
     struct nbp_test_suite_instance_t* next;
     struct nbp_test_suite_instance_t* prev;
@@ -920,7 +920,7 @@ struct nbp_module_setup_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_module_setup_pfn_t function;
 };
@@ -931,7 +931,7 @@ struct nbp_module_teardown_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_module_teardown_pfn_t function;
 };
@@ -943,14 +943,14 @@ struct nbp_module_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     int isConfigured;
 
     nbp_mdoule_config_pfn_t configFunction;
-    nbp_module_pfn_t        function;
+    nbp_module_pfn_t function;
 
-    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_setup_details_t* setupDetails;
     nbp_module_teardown_details_t* teardownDetails;
 };
 typedef struct nbp_module_details_t nbp_module_details_t;
@@ -962,13 +962,13 @@ struct nbp_module_instance_t
     nbp_module_instance_state_e state;
 
     struct nbp_module_t* parent;
-    unsigned int         depth;
+    unsigned int depth;
 
-    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_setup_details_t* setupDetails;
     nbp_module_teardown_details_t* teardownDetails;
 
     struct nbp_module_t* runs;
-    unsigned int         numberOfRuns;
+    unsigned int numberOfRuns;
 
     struct nbp_module_instance_t* next;
     struct nbp_module_instance_t* prev;
@@ -1104,14 +1104,14 @@ typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
 
 struct nbp_printer_interface_t
 {
-    const char*              printerName;
+    const char* printerName;
     nbp_printer_config_pfn_t configFunction;
 
-    nbp_printer_callback_init_pfn_t   initCbk;
+    nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
 
     nbp_printer_callback_on_error_pfn_t errorCbk;
-    nbp_printer_callback_on_exit_pfn_t  exitCbk;
+    nbp_printer_callback_on_exit_pfn_t exitCbk;
 
     nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
 
@@ -1125,21 +1125,21 @@ struct nbp_printer_interface_t
     nbp_printer_callback_on_instantiate_module_completed_pfn_t
         instantiateModuleCompletedCbk;
 
-    nbp_printer_callback_on_test_case_started_pfn_t   testCaseStartedCbk;
+    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
     nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
     nbp_printer_callback_on_test_case_instance_started_pfn_t
         testCaseInstanceStartedCbk;
     nbp_printer_callback_on_test_case_instance_completed_pfn_t
         testCaseInstanceCompletedCbk;
 
-    nbp_printer_callback_on_test_suite_started_pfn_t   testSuiteStartedCbk;
+    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
     nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
     nbp_printer_callback_on_test_suite_instance_started_pfn_t
         testSuiteInstanceStartedCbk;
     nbp_printer_callback_on_test_suite_instance_completed_pfn_t
         testSuiteInstanceCompletedCbk;
 
-    nbp_printer_callback_on_module_started_pfn_t   moduleStartedCbk;
+    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
     nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
     nbp_printer_callback_on_module_instance_started_pfn_t
         moduleInstanceStartedCbk;
@@ -1499,156 +1499,175 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_ON_ERROR(func)                                    \
-    static void nbp_printer_callback_##func(nbp_error_t nbpParamError)
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_ON_EXIT(func)                                     \
-    static void nbp_printer_callback_##func(nbp_error_code_e nbpParamErrorCode)
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_error_code_e nbpParamErrorCode)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                       \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_case_instance_t* nbpParamTestCaseInstance,                    \
-        nbp_test_suite_t*         nbpParamTestSuite,                           \
-        nbp_module_t*             nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)              \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)            \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                  \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_instance_t* nbpParamModuleInstance,                         \
-        nbp_module_t*          nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance,                                            \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)                \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_instance_t* nbpParamModuleInstance,                         \
-        nbp_module_t*          nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance,                                            \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)                           \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_case_t*          nbpParamTestCase,                            \
-        nbp_test_case_instance_t* nbpParamTestCaseInstance,                    \
-        nbp_test_suite_t*         nbpParamTestSuite,                           \
-        nbp_module_t*             nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)                         \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_case_t*          nbpParamTestCase,                            \
-        nbp_test_case_instance_t* nbpParamTestCaseInstance,                    \
-        nbp_test_suite_t*         nbpParamTestSuite,                           \
-        nbp_module_t*             nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                  \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_case_instance_t* nbpParamTestCaseInstance,                    \
-        nbp_test_suite_t*         nbpParamTestSuite,                           \
-        nbp_module_t*             nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)                \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_case_instance_t* nbpParamTestCaseInstance,                    \
-        nbp_test_suite_t*         nbpParamTestSuite,                           \
-        nbp_module_t*             nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)                          \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_t*          nbpParamTestSuite,                          \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)                        \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_t*          nbpParamTestSuite,                          \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                 \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)               \
     static void nbp_printer_callback_##func(                                   \
-        nbp_test_suite_instance_t* nbpParamTestSuiteInstance,                  \
-        nbp_module_t*              nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_MODULE_STARTED(func)                              \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_t*          nbpParamModule,                                 \
-        nbp_module_instance_t* nbpParamModuleInstance)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)                            \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_t*          nbpParamModule,                                 \
-        nbp_module_instance_t* nbpParamModuleInstance)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                     \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_instance_t* nbpParamModuleInstance)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
 #define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                   \
     static void nbp_printer_callback_##func(                                   \
-        nbp_module_instance_t* nbpParamModuleInstance)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance)
 
 /**
  * TODO: add docs
@@ -1668,6 +1687,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_printer_interface_t nbpPrinter##name = {                               \
         .printerName    = #name,                                               \
         .configFunction = INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name),  \
+        .isInitialized  = 0,                                                   \
         .initCbk        = NBP_NULLPTR,                                         \
         .uninitCbk      = NBP_NULLPTR,                                         \
         .errorCbk       = NBP_NULLPTR,                                         \
