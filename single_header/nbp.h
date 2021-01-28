@@ -546,6 +546,70 @@ SOFTWARE.
 #define NBP_PP_PARSE_PARAMETER_32(parameter, ...)                              \
     NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_31(PP_##__VA_ARGS__)
 
+#define NBP_PP_PARSE_PARAMETER_2_1(parameter) NBP_PP_PARSE_##parameter
+#define NBP_PP_PARSE_PARAMETER_2_2(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_1(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_3(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_2(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_4(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_3(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_5(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_4(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_6(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_5(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_7(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_6(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_8(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_7(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_9(parameter, ...)                             \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_8(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_10(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_9(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_11(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_10(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_12(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_11(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_13(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_12(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_14(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_13(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_15(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_14(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_16(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_15(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_17(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_16(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_18(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_17(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_19(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_18(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_20(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_19(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_21(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_20(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_22(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_21(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_23(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_22(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_24(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_23(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_25(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_24(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_26(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_25(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_27(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_26(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_28(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_27(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_29(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_28(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_30(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_29(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_31(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_30(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_32(parameter, ...)                            \
+    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_31(PP_##__VA_ARGS__)
+
 /**
  * TODO: add docs
  */
