@@ -50,6 +50,10 @@ fieldValueExceptions = [
     "nbp_error_code_e"
 ]
 
+macroNameExceptions = [
+    "NBP_PP_PARSE_PP_"
+]
+
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
@@ -1183,6 +1187,9 @@ def check_macros(log, root, filePath):
                 filePath,
                 macro.location.line
             )
+            continue
+
+        if macro.spelling in macroNameExceptions:
             continue
 
         if (not is_test_file(filePath) and
