@@ -246,7 +246,14 @@ def build_tests(compiler = "", standard = "", platform = "", sanitizer=""):
         print_process_output(output, False, "cmake")
 
         # run make
-        makeCmdline = "make -C {} -j{}".format(cmakeFilesPath, numberOfCpus)
+        tests = ""
+        for t in testsArray:
+            tests += " " + t
+        makeCmdline = "make -C {} -j{} {}".format(
+            cmakeFilesPath,
+            numberOfCpus,
+            tests
+        )
         output, rc = pexpect.runu(makeCmdline, withexitstatus=1, timeout=-1)
 
         if rc != 0:
@@ -997,23 +1004,6 @@ def run_tests_mode():
     }
 
     while True:
-        if not load_tests():
-            log.fatal("Failed to load tests")
-            error = True
-            break
-
-        if len(requestedTests) > 0:
-            for t in requestedTests:
-                if not t in testsArray:
-                    log.critical("Unknown test [%s]", t)
-                    error = True
-                    break
-
-            if error:
-                break
-
-            testsArray = requestedTests
-
         if not run_tests(buildConfig):
             error = True
             break
@@ -1070,23 +1060,6 @@ def build_and_run_tests_mode(compiler, standard, platform):
     error = False
 
     while True:
-        if not load_tests():
-            log.fatal("Failed to load tests")
-            error = True
-            break
-
-        if len(requestedTests) > 0:
-            for t in requestedTests:
-                if not t in testsArray:
-                    log.critical("Unknown test %s", t)
-                    error = True
-                    break
-
-            if error:
-                break
-
-            testsArray = requestedTests
-
         if not build_and_run_tests(compiler, standard, platform, True):
             error = True
             break
@@ -1356,6 +1329,18 @@ if __name__ == '__main__':
             sys.exit(1)
         else:
             os.mkdir(coveragePath)
+
+    if not load_tests():
+        log.fatal("Failed to load tests")
+        sys.exit(1)
+
+    if len(requestedTests) > 0:
+        for t in requestedTests:
+            if not t in testsArray:
+                log.fatal("Unknown test %s", t)
+                sys.exit(1)
+
+        testsArray = requestedTests
 
     if args.run_tests:
         run_tests_mode()
