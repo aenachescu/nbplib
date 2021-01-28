@@ -1107,6 +1107,8 @@ struct nbp_printer_interface_t
     const char* printerName;
     nbp_printer_config_pfn_t configFunction;
 
+    int isInitialized;
+
     nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
 
@@ -1296,6 +1298,61 @@ typedef struct nbp_printer_interface_t nbp_printer_interface_t;
 #define NBP_SYNC_EVENT_NOTIFY(ev) ec_success
 
 #endif // end if NBP_MT_SUPPORT
+
+void internal_nbp_notify_printer_init();
+
+void internal_nbp_notify_printer_uninit();
+
+void internal_nbp_notify_printer_on_error(nbp_error_t error);
+
+void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
+
+void internal_nbp_notify_printer_instantiate_test_case(
+    nbp_test_case_instance_t* testCaseInstance);
+
+void internal_nbp_notify_printer_instantiate_test_suite_started(
+    nbp_test_suite_instance_t* testSuiteInstance);
+
+void internal_nbp_notify_printer_instantiate_test_suite_completed(
+    nbp_test_suite_instance_t* testSuiteInstance);
+
+void internal_nbp_notify_printer_instantiate_module_started(
+    nbp_module_instance_t* moduleInstance);
+
+void internal_nbp_notify_printer_instantiate_module_completed(
+    nbp_module_instance_t* moduleInstance);
+
+void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase);
+
+void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase);
+
+void internal_nbp_notify_printer_test_case_instance_started(
+    nbp_test_case_instance_t* testCaseInstance);
+
+void internal_nbp_notify_printer_test_case_instance_completed(
+    nbp_test_case_instance_t* testCaseInstance);
+
+void internal_nbp_notify_printer_test_suite_started(
+    nbp_test_suite_t* testSuite);
+
+void internal_nbp_notify_printer_test_suite_completed(
+    nbp_test_suite_t* testSuite);
+
+void internal_nbp_notify_printer_test_suite_instance_started(
+    nbp_test_suite_instance_t* testSuiteInstance);
+
+void internal_nbp_notify_printer_test_suite_instance_completed(
+    nbp_test_suite_instance_t* testSuiteInstance);
+
+void internal_nbp_notify_printer_module_started(nbp_module_t* module);
+
+void internal_nbp_notify_printer_module_completed(nbp_module_t* module);
+
+void internal_nbp_notify_printer_module_instance_started(
+    nbp_module_instance_t* moduleInstance);
+
+void internal_nbp_notify_printer_module_instance_completed(
+    nbp_module_instance_t* moduleInstance);
 
 #ifdef NBP_MT_SUPPORT
 
@@ -2050,6 +2107,322 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(setupFunc)                            \
     NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
 
+#ifdef NBP_LIBRARY_MAIN
+
+extern nbp_printer_interface_t* gInternalNbpPrinterInterfaces[];
+extern unsigned int gInternalNbpPrinterInterfacesSize;
+
+#define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
+    gInternalNbpPrinterInterfaces[i]->cbk != NBP_NULLPTR
+
+void internal_nbp_notify_printer_init()
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        gInternalNbpPrinterInterfaces[i]->configFunction(
+            gInternalNbpPrinterInterfaces[i]);
+        if (INTERNAL_NBP_CALLBACK_IS_SET(initCbk)) {
+            gInternalNbpPrinterInterfaces[i]->initCbk();
+        }
+        gInternalNbpPrinterInterfaces[i]->isInitialized = 1;
+    }
+}
+
+void internal_nbp_notify_printer_uninit()
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(uninitCbk)) {
+            gInternalNbpPrinterInterfaces[i]->uninitCbk();
+        }
+        gInternalNbpPrinterInterfaces[i]->isInitialized = 0;
+    }
+}
+
+void internal_nbp_notify_printer_on_error(nbp_error_t error)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
+            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(exitCbk)) {
+            gInternalNbpPrinterInterfaces[i]->exitCbk(errorCode);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_instantiate_test_case(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestCaseCbk)) {
+            gInternalNbpPrinterInterfaces[i]->instantiateTestCaseCbk(
+                testCaseInstance,
+                testCaseInstance->testSuite,
+                testCaseInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_instantiate_test_suite_started(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->instantiateTestSuiteStartedCbk(
+                testSuiteInstance,
+                testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_instantiate_test_suite_completed(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->instantiateTestSuiteCompletedCbk(
+                testSuiteInstance,
+                testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_instantiate_module_started(
+    nbp_module_instance_t* moduleInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->instantiateModuleStartedCbk(
+                moduleInstance,
+                moduleInstance->parent);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_instantiate_module_completed(
+    nbp_module_instance_t* moduleInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->instantiateModuleCompletedCbk(
+                moduleInstance,
+                moduleInstance->parent);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testCaseStartedCbk(
+                testCase,
+                testCase->testCaseInstance,
+                testCase->testCaseInstance->testSuite,
+                testCase->testCaseInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testCaseCompletedCbk(
+                testCase,
+                testCase->testCaseInstance,
+                testCase->testCaseInstance->testSuite,
+                testCase->testCaseInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_case_instance_started(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseInstanceStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testCaseInstanceStartedCbk(
+                testCaseInstance,
+                testCaseInstance->testSuite,
+                testCaseInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_case_instance_completed(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseInstanceCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testCaseInstanceCompletedCbk(
+                testCaseInstance,
+                testCaseInstance->testSuite,
+                testCaseInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_suite_started(nbp_test_suite_t* testSuite)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testSuiteStartedCbk(
+                testSuite,
+                testSuite->testSuiteInstance,
+                testSuite->testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_suite_completed(
+    nbp_test_suite_t* testSuite)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testSuiteCompletedCbk(
+                testSuite,
+                testSuite->testSuiteInstance,
+                testSuite->testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_suite_instance_started(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteInstanceStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testSuiteInstanceStartedCbk(
+                testSuiteInstance,
+                testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_test_suite_instance_completed(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteInstanceCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->testSuiteInstanceCompletedCbk(
+                testSuiteInstance,
+                testSuiteInstance->module);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_module_started(nbp_module_t* module)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(moduleStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->moduleStartedCbk(
+                module,
+                module->moduleInstance);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_module_completed(nbp_module_t* module)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(moduleCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->moduleCompletedCbk(
+                module,
+                module->moduleInstance);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_module_instance_started(
+    nbp_module_instance_t* moduleInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(moduleInstanceStartedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->moduleInstanceStartedCbk(
+                moduleInstance);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_module_instance_completed(
+    nbp_module_instance_t* moduleInstance)
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(moduleInstanceCompletedCbk)) {
+            gInternalNbpPrinterInterfaces[i]->moduleInstanceCompletedCbk(
+                moduleInstance);
+        }
+    }
+}
+
+#undef INTERNAL_NBP_CALLBACK_IS_SET
+
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -2096,5 +2469,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 #endif // end if NBP_OS_LINUX
 
 #endif // end if NBP_MT_SUPPORT
+
+#endif // end if NBP_LIBRARY_MAIN
 
 #endif // end if _H_NBP_NBP

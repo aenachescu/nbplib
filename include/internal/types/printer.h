@@ -148,6 +148,8 @@ struct nbp_printer_interface_t
     const char* printerName;
     nbp_printer_config_pfn_t configFunction;
 
+    int isInitialized;
+
     nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
 

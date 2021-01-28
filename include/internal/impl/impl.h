@@ -28,6 +28,11 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_IMPL_IMPL
 #define _H_NBP_INTERNAL_IMPL_IMPL
 
+#ifdef NBP_LIBRARY_MAIN
+
+#include "printer_notifier.h"
 #include "sync.h"
+
+#endif // end if NBP_LIBRARY_MAIN
 
 #endif // end if _H_NBP_INTERNAL_IMPL_IMPL
