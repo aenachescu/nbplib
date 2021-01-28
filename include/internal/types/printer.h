@@ -145,14 +145,14 @@ typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
 
 struct nbp_printer_interface_t
 {
-    const char*              printerName;
+    const char* printerName;
     nbp_printer_config_pfn_t configFunction;
 
-    nbp_printer_callback_init_pfn_t   initCbk;
+    nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
 
     nbp_printer_callback_on_error_pfn_t errorCbk;
-    nbp_printer_callback_on_exit_pfn_t  exitCbk;
+    nbp_printer_callback_on_exit_pfn_t exitCbk;
 
     nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
 
@@ -166,21 +166,21 @@ struct nbp_printer_interface_t
     nbp_printer_callback_on_instantiate_module_completed_pfn_t
         instantiateModuleCompletedCbk;
 
-    nbp_printer_callback_on_test_case_started_pfn_t   testCaseStartedCbk;
+    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
     nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
     nbp_printer_callback_on_test_case_instance_started_pfn_t
         testCaseInstanceStartedCbk;
     nbp_printer_callback_on_test_case_instance_completed_pfn_t
         testCaseInstanceCompletedCbk;
 
-    nbp_printer_callback_on_test_suite_started_pfn_t   testSuiteStartedCbk;
+    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
     nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
     nbp_printer_callback_on_test_suite_instance_started_pfn_t
         testSuiteInstanceStartedCbk;
     nbp_printer_callback_on_test_suite_instance_completed_pfn_t
         testSuiteInstanceCompletedCbk;
 
-    nbp_printer_callback_on_module_started_pfn_t   moduleStartedCbk;
+    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
     nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
     nbp_printer_callback_on_module_instance_started_pfn_t
         moduleInstanceStartedCbk;

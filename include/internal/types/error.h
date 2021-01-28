@@ -54,14 +54,14 @@ typedef enum nbp_error_code_e nbp_error_code_e;
 struct nbp_error_t
 {
     nbp_error_code_e errorCode;
-    int              line;
-    const char*      filename;
+    int line;
+    const char* filename;
 
     nbp_error_context_type_e contextType;
     union
     {
         const char* contextString;
-        void*       contextCustom;
+        void* contextCustom;
     };
 };
 typedef struct nbp_error_t nbp_error_t;

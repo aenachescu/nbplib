@@ -77,7 +77,7 @@ struct nbp_test_suite_setup_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_suite_setup_pfn_t function;
 };
@@ -88,7 +88,7 @@ struct nbp_test_suite_teardown_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_test_suite_teardown_pfn_t function;
 };
@@ -101,14 +101,14 @@ struct nbp_test_suite_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     int isConfigured;
 
     nbp_test_suite_config_pfn_t configFunction;
-    nbp_test_suite_pfn_t        function;
+    nbp_test_suite_pfn_t function;
 
-    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_setup_details_t* setupDetails;
     nbp_test_suite_teardown_details_t* teardownDetails;
 };
 typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
@@ -120,13 +120,13 @@ struct nbp_test_suite_instance_t
     nbp_test_suite_instance_state_e state;
 
     struct nbp_module_t* module;
-    unsigned int         depth;
+    unsigned int depth;
 
-    nbp_test_suite_setup_details_t*    setupDetails;
+    nbp_test_suite_setup_details_t* setupDetails;
     nbp_test_suite_teardown_details_t* teardownDetails;
 
     struct nbp_test_suite_t* runs;
-    unsigned int             numberOfRuns;
+    unsigned int numberOfRuns;
 
     struct nbp_test_suite_instance_t* next;
     struct nbp_test_suite_instance_t* prev;

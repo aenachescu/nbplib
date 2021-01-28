@@ -52,8 +52,8 @@ void* thread_func(void* param)
 int main()
 {
     pthread_t threads[NUMBER_OF_THREADS];
-    int       numberOfIterations[NUMBER_OF_THREADS];
-    int       err;
+    int numberOfIterations[NUMBER_OF_THREADS];
+    int err;
 
     for (int i = 0; i < NUMBER_OF_THREADS; i++) {
         numberOfIterations[i] = 1000;

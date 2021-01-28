@@ -73,7 +73,7 @@ struct nbp_module_setup_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_module_setup_pfn_t function;
 };
@@ -84,7 +84,7 @@ struct nbp_module_teardown_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     nbp_module_teardown_pfn_t function;
 };
@@ -96,14 +96,14 @@ struct nbp_module_details_t
     const char* functionName;
 
     const char* fileName;
-    int         line;
+    int line;
 
     int isConfigured;
 
     nbp_mdoule_config_pfn_t configFunction;
-    nbp_module_pfn_t        function;
+    nbp_module_pfn_t function;
 
-    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_setup_details_t* setupDetails;
     nbp_module_teardown_details_t* teardownDetails;
 };
 typedef struct nbp_module_details_t nbp_module_details_t;
@@ -115,13 +115,13 @@ struct nbp_module_instance_t
     nbp_module_instance_state_e state;
 
     struct nbp_module_t* parent;
-    unsigned int         depth;
+    unsigned int depth;
 
-    nbp_module_setup_details_t*    setupDetails;
+    nbp_module_setup_details_t* setupDetails;
     nbp_module_teardown_details_t* teardownDetails;
 
     struct nbp_module_t* runs;
-    unsigned int         numberOfRuns;
+    unsigned int numberOfRuns;
 
     struct nbp_module_instance_t* next;
     struct nbp_module_instance_t* prev;
