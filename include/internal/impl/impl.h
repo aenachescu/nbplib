@@ -30,6 +30,7 @@ SOFTWARE.
 
 #ifdef NBP_LIBRARY_MAIN
 
+#include "main.h"
 #include "printer_notifier.h"
 #include "sync.h"
 

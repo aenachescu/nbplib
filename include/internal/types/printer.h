@@ -43,6 +43,8 @@ typedef void (*nbp_printer_callback_init_pfn_t)(void);
 
 typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
 
+typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
+
 typedef void (*nbp_printer_callback_on_error_pfn_t)(
     nbp_error_t /* nbpParamError */
 );
@@ -152,6 +154,8 @@ struct nbp_printer_interface_t
 
     nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
+
+    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
 
     nbp_printer_callback_on_error_pfn_t errorCbk;
     nbp_printer_callback_on_exit_pfn_t exitCbk;

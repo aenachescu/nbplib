@@ -629,10 +629,13 @@ typedef enum nbp_error_context_type_e nbp_error_context_type_e;
  */
 enum nbp_error_code_e
 {
-    ec_success       = 0,
-    ec_tests_failed  = 1,
-    ec_out_of_memory = 2,
-    ec_sync_error    = 3
+    ec_success                     = 0,
+    ec_tests_failed                = 1,
+    ec_out_of_memory               = 2,
+    ec_sync_error                  = 3,
+    ec_invalid_command_line        = 4,
+    ec_not_all_tests_were_run      = 5,
+    ec_invalid_scheduler_interface = 6,
 };
 typedef enum nbp_error_code_e nbp_error_code_e;
 
@@ -1002,6 +1005,8 @@ typedef void (*nbp_printer_callback_init_pfn_t)(void);
 
 typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
 
+typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
+
 typedef void (*nbp_printer_callback_on_error_pfn_t)(
     nbp_error_t /* nbpParamError */
 );
@@ -1111,6 +1116,8 @@ struct nbp_printer_interface_t
 
     nbp_printer_callback_init_pfn_t initCbk;
     nbp_printer_callback_uninit_pfn_t uninitCbk;
+
+    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
 
     nbp_printer_callback_on_error_pfn_t errorCbk;
     nbp_printer_callback_on_exit_pfn_t exitCbk;
@@ -1302,6 +1309,8 @@ typedef struct nbp_printer_interface_t nbp_printer_interface_t;
 void internal_nbp_notify_printer_init();
 
 void internal_nbp_notify_printer_uninit();
+
+void internal_nbp_notify_printer_handle_version_command();
 
 void internal_nbp_notify_printer_on_error(
     nbp_error_code_e errorCode,
@@ -1656,6 +1665,12 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 /**
  * TODO: add docs
  */
+#define NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                      \
+    static void nbp_printer_callback_##func()
+
+/**
+ * TODO: add docs
+ */
 #define NBP_PRINTER_CALLBACK_ON_ERROR(func)                                    \
     static void nbp_printer_callback_##func(                                   \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
@@ -1848,8 +1863,9 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         .isInitialized  = 0,                                                   \
         .initCbk        = NBP_NULLPTR,                                         \
         .uninitCbk      = NBP_NULLPTR,                                         \
-        .errorCbk       = NBP_NULLPTR,                                         \
-        .exitCbk        = NBP_NULLPTR,                                         \
+        .handleVersionCommandCbk          = NBP_NULLPTR,                       \
+        .errorCbk                         = NBP_NULLPTR,                       \
+        .exitCbk                          = NBP_NULLPTR,                       \
         .instantiateTestCaseCbk           = NBP_NULLPTR,                       \
         .instantiateTestSuiteStartedCbk   = NBP_NULLPTR,                       \
         .instantiateTestSuiteCompletedCbk = NBP_NULLPTR,                       \
@@ -1884,6 +1900,8 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     printerInterface->initCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
     printerInterface->uninitCbk = nbp_printer_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
+    printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
     printerInterface->errorCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
@@ -2210,7 +2228,63 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 #ifdef NBP_LIBRARY_MAIN
 
-extern nbp_printer_interface_t* gInternalNbpPrinterInterfaces[];
+extern nbp_module_t* gInternalNbpMainModule;
+
+extern nbp_printer_interface_t gInternalNbpPrinterInterfacenbpDefaultPrinter;
+
+nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
+    &gInternalNbpPrinterInterfacenbpDefaultPrinter};
+
+nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
+unsigned int gInternalNbpPrinterInterfacesSize          = 0;
+
+int gInternalNbpSchedulerRunEnabled = 0;
+
+static int internal_nbp_string_equal(const char* a, const char* b)
+{
+    while (*a == *b && *a != '\0') {
+        a++;
+        b++;
+    }
+
+    return *a != *b ? 0 : 1;
+}
+
+static int internal_nbp_command_run_all()
+{
+    return (int) ec_success;
+}
+
+static int internal_nbp_command_version()
+{
+    internal_nbp_notify_printer_init();
+    internal_nbp_notify_printer_handle_version_command();
+    internal_nbp_notify_printer_uninit();
+
+    return (int) ec_success;
+}
+
+int main(int argc, const char** argv)
+{
+    if (argc < 1) {
+        return (int) ec_invalid_command_line;
+    }
+
+    gInternalNbpPrinterInterfaces     = gInternalNbpDefaultPrinterInterfaces;
+    gInternalNbpPrinterInterfacesSize = 1;
+
+    if (argc == 1) {
+        return internal_nbp_command_run_all();
+    }
+
+    if (internal_nbp_string_equal(argv[1], "--version") == 1) {
+        return internal_nbp_command_version();
+    }
+
+    return (int) ec_invalid_command_line;
+}
+
+extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;
 extern unsigned int gInternalNbpPrinterInterfacesSize;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
@@ -2238,6 +2312,18 @@ void internal_nbp_notify_printer_uninit()
             gInternalNbpPrinterInterfaces[i]->uninitCbk();
         }
         gInternalNbpPrinterInterfaces[i]->isInitialized = 0;
+    }
+}
+
+void internal_nbp_notify_printer_handle_version_command()
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(handleVersionCommandCbk)) {
+            gInternalNbpPrinterInterfaces[i]->handleVersionCommandCbk();
+        }
     }
 }
 
@@ -2630,5 +2716,66 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 #endif // end if NBP_MT_SUPPORT
 
 #endif // end if NBP_LIBRARY_MAIN
+
+#ifdef NBP_DEFAULT_PRINTER
+
+#ifdef NBP_LIBRARY_MAIN
+
+/*
+ * Default nbp printer for Linux
+ */
+#ifdef NBP_OS_LINUX
+
+#include <stdio.h>
+
+NBP_PRINTER_CALLBACK_INIT(nbp_dp_init)
+{
+    printf("init\n");
+}
+
+NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit)
+{
+    printf("uninit\n");
+}
+
+NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
+{
+    printf("nbp version: %s\n", NBP_VERSION_STR);
+}
+
+NBP_PRINTER(
+    nbpDefaultPrinter,
+    NBP_PRINTER_CALLBACKS(
+        NBP_PRINTER_CALLBACK_INIT(nbp_dp_init),
+        NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit),
+        NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(
+            nbp_dp_handle_version_command)));
+
+#endif // end if NBP_OS_LINUX
+
+/*
+ * Default nbp printer for Windows
+ */
+#ifdef NBP_OS_WINDOWS
+#error "Not supported yet"
+#endif // end if NBP_OS_WINDOWS
+
+/*
+ * Default nbp printer for Mac
+ */
+#ifdef NBP_OS_MAC
+#error "Not supported yet"
+#endif // end if NBP_OS_MAC
+
+/*
+ * We don't have default printer for custom OS
+ */
+#ifdef NBP_OS_CUSTOM
+#error "Default printer is not supported on custom OS"
+#endif // end if NBP_OS_CUSTOM
+
+#endif // end if NBP_LIBRARY_MAIN
+
+#endif // end if NBP_DEFAULT_PRINTER
 
 #endif // end if _H_NBP_NBP

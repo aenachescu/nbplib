@@ -25,48 +25,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_ERROR
-#define _H_NBP_INTERNAL_TYPES_ERROR
+#ifndef _H_NBP_INTERNAL_PRINTERS_PRINTERS
+#define _H_NBP_INTERNAL_PRINTERS_PRINTERS
 
-/**
- * TODO: add docs
+#ifdef NBP_DEFAULT_PRINTER
+
+#ifdef NBP_LIBRARY_MAIN
+
+/*
+ * Default nbp printer for Linux
  */
-enum nbp_error_context_type_e
-{
-    ect_empty  = 0x10000000,
-    ect_string = 0x10000001,
-    ect_custom = 0x10000002
-};
-typedef enum nbp_error_context_type_e nbp_error_context_type_e;
+#ifdef NBP_OS_LINUX
+#include "linux_default_printer.h"
+#endif // end if NBP_OS_LINUX
 
-/**
- * TODO: add docs
+/*
+ * Default nbp printer for Windows
  */
-enum nbp_error_code_e
-{
-    ec_success                     = 0,
-    ec_tests_failed                = 1,
-    ec_out_of_memory               = 2,
-    ec_sync_error                  = 3,
-    ec_invalid_command_line        = 4,
-    ec_not_all_tests_were_run      = 5,
-    ec_invalid_scheduler_interface = 6,
-};
-typedef enum nbp_error_code_e nbp_error_code_e;
+#ifdef NBP_OS_WINDOWS
+#error "Not supported yet"
+#endif // end if NBP_OS_WINDOWS
 
-struct nbp_error_t
-{
-    nbp_error_code_e errorCode;
-    int line;
-    const char* file;
+/*
+ * Default nbp printer for Mac
+ */
+#ifdef NBP_OS_MAC
+#error "Not supported yet"
+#endif // end if NBP_OS_MAC
 
-    nbp_error_context_type_e contextType;
-    union
-    {
-        const char* contextString;
-        void* contextCustom;
-    };
-};
-typedef struct nbp_error_t nbp_error_t;
+/*
+ * We don't have default printer for custom OS
+ */
+#ifdef NBP_OS_CUSTOM
+#error "Default printer is not supported on custom OS"
+#endif // end if NBP_OS_CUSTOM
 
-#endif // end if _H_NBP_INTERNAL_TYPES_ERROR
+#endif // end if NBP_LIBRARY_MAIN
+
+#endif // end if NBP_DEFAULT_PRINTER
+
+#endif // end if _H_NBP_INTERNAL_PRINTERS_PRINTERS

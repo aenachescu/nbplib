@@ -31,7 +31,7 @@ SOFTWARE.
 #include "../api/memory.h"
 #include "../details/printer_notifier.h"
 
-extern nbp_printer_interface_t* gInternalNbpPrinterInterfaces[];
+extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;
 extern unsigned int gInternalNbpPrinterInterfacesSize;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
@@ -59,6 +59,18 @@ void internal_nbp_notify_printer_uninit()
             gInternalNbpPrinterInterfaces[i]->uninitCbk();
         }
         gInternalNbpPrinterInterfaces[i]->isInitialized = 0;
+    }
+}
+
+void internal_nbp_notify_printer_handle_version_command()
+{
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(handleVersionCommandCbk)) {
+            gInternalNbpPrinterInterfaces[i]->handleVersionCommandCbk();
+        }
     }
 }
 

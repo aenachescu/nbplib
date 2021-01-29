@@ -28,17 +28,8 @@ SOFTWARE.
 #ifndef _H_NBP_NBP
 #define _H_NBP_NBP
 
-#define NBP_MAKE_VERSION(major, minor, rev)                                    \
-    (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
-
-#define NBP_VERSION_MAJOR    1
-#define NBP_VERSION_MINOR    0
-#define NBP_VERSION_REVISION 0
-
-#define NBP_VERSION_STR "1.0.0"
-
-#define NBP_VERSION                                                            \
-    NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
+// keep this order
+#include "internal/api/version.h"
 
 // keep this order
 #include "internal/build_configuration.h"
@@ -57,5 +48,8 @@ SOFTWARE.
 
 // keep this order
 #include "internal/impl/impl.h"
+
+// keep this order
+#include "internal/printers/printers.h"
 
 #endif // end if _H_NBP_NBP

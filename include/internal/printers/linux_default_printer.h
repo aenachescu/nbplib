@@ -25,48 +25,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_ERROR
-#define _H_NBP_INTERNAL_TYPES_ERROR
+#ifndef _H_NBP_INTERNAL_PRINTERS_LINUX_DEFAULT_PRINTER
+#define _H_NBP_INTERNAL_PRINTERS_LINUX_DEFAULT_PRINTER
 
-/**
- * TODO: add docs
- */
-enum nbp_error_context_type_e
+#include "../api/printer.h"
+#include "../api/version.h"
+
+#include <stdio.h>
+
+NBP_PRINTER_CALLBACK_INIT(nbp_dp_init)
 {
-    ect_empty  = 0x10000000,
-    ect_string = 0x10000001,
-    ect_custom = 0x10000002
-};
-typedef enum nbp_error_context_type_e nbp_error_context_type_e;
+    printf("init\n");
+}
 
-/**
- * TODO: add docs
- */
-enum nbp_error_code_e
+NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit)
 {
-    ec_success                     = 0,
-    ec_tests_failed                = 1,
-    ec_out_of_memory               = 2,
-    ec_sync_error                  = 3,
-    ec_invalid_command_line        = 4,
-    ec_not_all_tests_were_run      = 5,
-    ec_invalid_scheduler_interface = 6,
-};
-typedef enum nbp_error_code_e nbp_error_code_e;
+    printf("uninit\n");
+}
 
-struct nbp_error_t
+NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
 {
-    nbp_error_code_e errorCode;
-    int line;
-    const char* file;
+    printf("nbp version: %s\n", NBP_VERSION_STR);
+}
 
-    nbp_error_context_type_e contextType;
-    union
-    {
-        const char* contextString;
-        void* contextCustom;
-    };
-};
-typedef struct nbp_error_t nbp_error_t;
+NBP_PRINTER(
+    nbpDefaultPrinter,
+    NBP_PRINTER_CALLBACKS(
+        NBP_PRINTER_CALLBACK_INIT(nbp_dp_init),
+        NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit),
+        NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(
+            nbp_dp_handle_version_command)));
 
-#endif // end if _H_NBP_INTERNAL_TYPES_ERROR
+#endif // end if _H_NBP_INTERNAL_PRINTERS_LINUX_DEFAULT_PRINTER

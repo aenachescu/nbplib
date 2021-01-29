@@ -34,6 +34,8 @@ void internal_nbp_notify_printer_init();
 
 void internal_nbp_notify_printer_uninit();
 
+void internal_nbp_notify_printer_handle_version_command();
+
 void internal_nbp_notify_printer_on_error(
     nbp_error_code_e errorCode,
     int line,

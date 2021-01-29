@@ -47,6 +47,12 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
+#define NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                      \
+    static void nbp_printer_callback_##func()
+
+/**
+ * TODO: add docs
+ */
 #define NBP_PRINTER_CALLBACK_ON_ERROR(func)                                    \
     static void nbp_printer_callback_##func(                                   \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
@@ -239,8 +245,9 @@ SOFTWARE.
         .isInitialized  = 0,                                                   \
         .initCbk        = NBP_NULLPTR,                                         \
         .uninitCbk      = NBP_NULLPTR,                                         \
-        .errorCbk       = NBP_NULLPTR,                                         \
-        .exitCbk        = NBP_NULLPTR,                                         \
+        .handleVersionCommandCbk          = NBP_NULLPTR,                       \
+        .errorCbk                         = NBP_NULLPTR,                       \
+        .exitCbk                          = NBP_NULLPTR,                       \
         .instantiateTestCaseCbk           = NBP_NULLPTR,                       \
         .instantiateTestSuiteStartedCbk   = NBP_NULLPTR,                       \
         .instantiateTestSuiteCompletedCbk = NBP_NULLPTR,                       \
@@ -275,6 +282,8 @@ SOFTWARE.
     printerInterface->initCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
     printerInterface->uninitCbk = nbp_printer_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
+    printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
     printerInterface->errorCbk = nbp_printer_callback_##func;
 #define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \

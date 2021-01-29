@@ -25,48 +25,19 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_ERROR
-#define _H_NBP_INTERNAL_TYPES_ERROR
+#ifndef _H_NBP_INTERNAL_API_VERSION
+#define _H_NBP_INTERNAL_API_VERSION
 
-/**
- * TODO: add docs
- */
-enum nbp_error_context_type_e
-{
-    ect_empty  = 0x10000000,
-    ect_string = 0x10000001,
-    ect_custom = 0x10000002
-};
-typedef enum nbp_error_context_type_e nbp_error_context_type_e;
+#define NBP_MAKE_VERSION(major, minor, rev)                                    \
+    (((major & 0xFFFF) << 16) | ((minor & 0xFF) << 8) | ((rev & 0xFF) << 8))
 
-/**
- * TODO: add docs
- */
-enum nbp_error_code_e
-{
-    ec_success                     = 0,
-    ec_tests_failed                = 1,
-    ec_out_of_memory               = 2,
-    ec_sync_error                  = 3,
-    ec_invalid_command_line        = 4,
-    ec_not_all_tests_were_run      = 5,
-    ec_invalid_scheduler_interface = 6,
-};
-typedef enum nbp_error_code_e nbp_error_code_e;
+#define NBP_VERSION_MAJOR    1
+#define NBP_VERSION_MINOR    0
+#define NBP_VERSION_REVISION 0
 
-struct nbp_error_t
-{
-    nbp_error_code_e errorCode;
-    int line;
-    const char* file;
+#define NBP_VERSION_STR "1.0.0"
 
-    nbp_error_context_type_e contextType;
-    union
-    {
-        const char* contextString;
-        void* contextCustom;
-    };
-};
-typedef struct nbp_error_t nbp_error_t;
+#define NBP_VERSION                                                            \
+    NBP_MAKE_VERSION(NBP_VERSION_MAJOR, NBP_VERSION_MINOR, NBP_VERSION_REVISION)
 
-#endif // end if _H_NBP_INTERNAL_TYPES_ERROR
+#endif // end if _H_NBP_INTERNAL_API_VERSION
