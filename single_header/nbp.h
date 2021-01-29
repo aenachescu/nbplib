@@ -640,7 +640,7 @@ struct nbp_error_t
 {
     nbp_error_code_e errorCode;
     int line;
-    const char* filename;
+    const char* file;
 
     nbp_error_context_type_e contextType;
     union
@@ -1303,7 +1303,22 @@ void internal_nbp_notify_printer_init();
 
 void internal_nbp_notify_printer_uninit();
 
-void internal_nbp_notify_printer_on_error(nbp_error_t error);
+void internal_nbp_notify_printer_on_error(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file);
+
+void internal_nbp_notify_printer_on_error_ctx_string(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    const char* context);
+
+void internal_nbp_notify_printer_on_error_ctx_custom(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    void* context);
 
 void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
 
@@ -1369,6 +1384,65 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #endif // end if NBP_OS_LINUX
 
 #endif // end if NBP_MT_SUPPORT
+
+/**
+ * TODO: add docs
+ */
+#define NBP_REPORT_ERROR(errCode)                                              \
+    internal_nbp_notify_printer_on_error(                                      \
+        errCode,                                                               \
+        NBP_SOURCE_LINE,                                                       \
+        NBP_SOURCE_FILE)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_REPORT_ERROR_CTX_STRING(errCode, str)                              \
+    internal_nbp_notify_printer_on_error_ctx_string(                           \
+        errCode,                                                               \
+        NBP_SOURCE_LINE,                                                       \
+        NBP_SOURCE_FILE,                                                       \
+        str)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_REPORT_ERROR_CTX_CUSTOM(errCode, ctx)                              \
+    internal_nbp_notify_printer_on_error_ctx_custom(                           \
+        errCode,                                                               \
+        NBP_SOURCE_LINE,                                                       \
+        NBP_SOURCE_FILE,                                                       \
+        ctx)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_CODE(err) err.errorCode
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_LINE(err) err.line
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_FILE(err) err.file
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_CONTEXT_TYPE(err) err.contextType
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_CONTEXT_STRING(err) err.contextString
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_ERROR_CONTEXT_CUSTOM(err) err.contextCustom
 
 #ifndef NBP_CUSTOM_EXIT
 
@@ -2167,8 +2241,66 @@ void internal_nbp_notify_printer_uninit()
     }
 }
 
-void internal_nbp_notify_printer_on_error(nbp_error_t error)
+void internal_nbp_notify_printer_on_error(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file)
 {
+    nbp_error_t error;
+
+    error.errorCode   = errorCode;
+    error.line        = line;
+    error.file        = file;
+    error.contextType = ect_empty;
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
+            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_on_error_ctx_string(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    const char* context)
+{
+    nbp_error_t error;
+
+    error.errorCode     = errorCode;
+    error.line          = line;
+    error.file          = file;
+    error.contextType   = ect_string;
+    error.contextString = context;
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
+            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_on_error_ctx_custom(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    void* context)
+{
+    nbp_error_t error;
+
+    error.errorCode     = errorCode;
+    error.line          = line;
+    error.file          = file;
+    error.contextType   = ect_custom;
+    error.contextCustom = context;
+
     for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
         if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
             continue;

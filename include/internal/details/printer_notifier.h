@@ -34,7 +34,22 @@ void internal_nbp_notify_printer_init();
 
 void internal_nbp_notify_printer_uninit();
 
-void internal_nbp_notify_printer_on_error(nbp_error_t error);
+void internal_nbp_notify_printer_on_error(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file);
+
+void internal_nbp_notify_printer_on_error_ctx_string(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    const char* context);
+
+void internal_nbp_notify_printer_on_error_ctx_custom(
+    nbp_error_code_e errorCode,
+    int line,
+    const char* file,
+    void* context);
 
 void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
 

@@ -28,6 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_API
 #define _H_NBP_INTERNAL_API_API
 
+#include "error.h"
 #include "exit.h"
 #include "memory.h"
 #include "module.h"

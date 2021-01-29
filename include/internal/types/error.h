@@ -55,7 +55,7 @@ struct nbp_error_t
 {
     nbp_error_code_e errorCode;
     int line;
-    const char* filename;
+    const char* file;
 
     nbp_error_context_type_e contextType;
     union
