@@ -1741,7 +1741,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(P_##__VA_ARGS__)         \
         return;                                                                \
     }                                                                          \
-    nbp_printer_interface_t nbpPrinter##name = {                               \
+    nbp_printer_interface_t gInternalNbpPrinterInterface##name = {             \
         .printerName    = #name,                                               \
         .configFunction = INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name),  \
         .isInitialized  = 0,                                                   \
