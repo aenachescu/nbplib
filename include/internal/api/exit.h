@@ -25,14 +25,36 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_API_API
-#define _H_NBP_INTERNAL_API_API
+#ifndef _H_NBP_INTERNAL_API_EXIT
+#define _H_NBP_INTERNAL_API_EXIT
 
-#include "exit.h"
-#include "memory.h"
-#include "module.h"
-#include "printer.h"
-#include "test_case.h"
-#include "test_suite.h"
+#include "../details/printer_notifier.h"
 
-#endif // end if _H_NBP_INTERNAL_API_API
+#ifndef NBP_CUSTOM_EXIT
+
+#include <stdlib.h>
+
+/**
+ * TODO: add docs
+ */
+#define NBP_EXIT(errorCode)                                                    \
+    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    exit((int) errorCode)
+
+#else // NBP_CUSTOM_EXIT is defined
+
+/**
+ * TODO: add docs
+ */
+#ifndef NBP_EXIT_FUNCTION
+#error "Custom exit is enabled but no exit function is provided"
+#define NBP_EXIT_FUNCTION(errorCode)
+#endif // end if NBP_EXIT_FUNCTION
+
+#define NBP_EXIT(errorCode)                                                    \
+    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    NBP_EXIT_FUNCTION(errorCode)
+
+#endif // end if NBP_CUSTOM_EXIT
+
+#endif // end if _H_NBP_INTERNAL_API_EXIT

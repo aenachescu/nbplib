@@ -1370,6 +1370,33 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 #endif // end if NBP_MT_SUPPORT
 
+#ifndef NBP_CUSTOM_EXIT
+
+#include <stdlib.h>
+
+/**
+ * TODO: add docs
+ */
+#define NBP_EXIT(errorCode)                                                    \
+    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    exit((int) errorCode)
+
+#else // NBP_CUSTOM_EXIT is defined
+
+/**
+ * TODO: add docs
+ */
+#ifndef NBP_EXIT_FUNCTION
+#error "Custom exit is enabled but no exit function is provided"
+#define NBP_EXIT_FUNCTION(errorCode)
+#endif // end if NBP_EXIT_FUNCTION
+
+#define NBP_EXIT(errorCode)                                                    \
+    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    NBP_EXIT_FUNCTION(errorCode)
+
+#endif // end if NBP_CUSTOM_EXIT
+
 /**
  * TODO: add docs
  */
