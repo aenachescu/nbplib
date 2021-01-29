@@ -76,7 +76,7 @@ struct nbp_test_suite_setup_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_suite_setup_pfn_t function;
@@ -87,7 +87,7 @@ struct nbp_test_suite_teardown_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_suite_teardown_pfn_t function;
@@ -100,7 +100,7 @@ struct nbp_test_suite_details_t
     const char* name;
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     int isConfigured;

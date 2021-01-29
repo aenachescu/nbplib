@@ -40,7 +40,7 @@ SOFTWARE.
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
     nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func = {        \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_module_setup_function_##func,                      \
     };                                                                         \
@@ -55,7 +55,7 @@ SOFTWARE.
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
     nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func = {  \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_module_teardown_function_##func,                   \
     };                                                                         \
@@ -80,7 +80,7 @@ SOFTWARE.
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
-        .fileName        = NBP_SOURCE_FILE,                                    \
+        .file            = NBP_SOURCE_FILE,                                    \
         .line            = NBP_SOURCE_LINE,                                    \
         .isConfigured    = 0,                                                  \
         .configFunction  = nbp_module_config_function_##func,                  \

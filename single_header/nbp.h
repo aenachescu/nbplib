@@ -699,7 +699,7 @@ struct nbp_test_case_setup_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_case_setup_pfn_t function;
@@ -710,7 +710,7 @@ struct nbp_test_case_teardown_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_case_teardown_pfn_t function;
@@ -723,7 +723,7 @@ struct nbp_test_case_details_t
     const char* name;
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     int isConfigured;
@@ -810,7 +810,7 @@ struct nbp_test_suite_setup_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_suite_setup_pfn_t function;
@@ -821,7 +821,7 @@ struct nbp_test_suite_teardown_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_test_suite_teardown_pfn_t function;
@@ -834,7 +834,7 @@ struct nbp_test_suite_details_t
     const char* name;
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     int isConfigured;
@@ -919,7 +919,7 @@ struct nbp_module_setup_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_module_setup_pfn_t function;
@@ -930,7 +930,7 @@ struct nbp_module_teardown_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_module_teardown_pfn_t function;
@@ -942,7 +942,7 @@ struct nbp_module_details_t
     const char* name;
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     int isConfigured;
@@ -1517,7 +1517,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
     nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func = {        \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_module_setup_function_##func,                      \
     };                                                                         \
@@ -1532,7 +1532,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
     nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func = {  \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_module_teardown_function_##func,                   \
     };                                                                         \
@@ -1557,7 +1557,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
-        .fileName        = NBP_SOURCE_FILE,                                    \
+        .file            = NBP_SOURCE_FILE,                                    \
         .line            = NBP_SOURCE_LINE,                                    \
         .isConfigured    = 0,                                                  \
         .configFunction  = nbp_module_config_function_##func,                  \
@@ -1941,7 +1941,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
     nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func = {   \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_test_case_setup_function_##func,                   \
     };                                                                         \
@@ -1957,7 +1957,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_test_case_teardown_details_t                                           \
         gInternalNbpTestCaseTeardownDetails##func = {                          \
             .functionName = #func,                                             \
-            .fileName     = NBP_SOURCE_FILE,                                   \
+            .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
             .function     = nbp_test_case_teardown_function_##func,            \
     };                                                                         \
@@ -1982,7 +1982,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
-        .fileName        = NBP_SOURCE_FILE,                                    \
+        .file            = NBP_SOURCE_FILE,                                    \
         .line            = NBP_SOURCE_LINE,                                    \
         .isConfigured    = 0,                                                  \
         .configFunction  = nbp_test_case_config_function_##func,               \
@@ -2078,7 +2078,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
     nbp_test_suite_setup_details_t gInternalNbpTestSuiteSetupDetails##func = { \
         .functionName = #func,                                                 \
-        .fileName     = NBP_SOURCE_FILE,                                       \
+        .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
         .function     = nbp_test_suite_setup_function_##func,                  \
     };                                                                         \
@@ -2094,7 +2094,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_test_suite_teardown_details_t                                          \
         gInternalNbpTestSuiteTeardownDetails##func = {                         \
             .functionName = #func,                                             \
-            .fileName     = NBP_SOURCE_FILE,                                   \
+            .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
             .function     = nbp_test_suite_teardown_function_##func,           \
     };                                                                         \
@@ -2119,7 +2119,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
-        .fileName        = NBP_SOURCE_FILE,                                    \
+        .file            = NBP_SOURCE_FILE,                                    \
         .line            = NBP_SOURCE_LINE,                                    \
         .isConfigured    = 0,                                                  \
         .configFunction  = nbp_test_suite_config_function_##func,              \

@@ -72,7 +72,7 @@ struct nbp_module_setup_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_module_setup_pfn_t function;
@@ -83,7 +83,7 @@ struct nbp_module_teardown_details_t
 {
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     nbp_module_teardown_pfn_t function;
@@ -95,7 +95,7 @@ struct nbp_module_details_t
     const char* name;
     const char* functionName;
 
-    const char* fileName;
+    const char* file;
     int line;
 
     int isConfigured;
