@@ -96,7 +96,7 @@ void internal_nbp_notify_printer_on_error(
     }
 }
 
-void internal_nbp_notify_printer_on_error_ctx_string(
+void internal_nbp_notify_printer_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -108,7 +108,7 @@ void internal_nbp_notify_printer_on_error_ctx_string(
     error.line          = line;
     error.file          = file;
     error.contextType   = ect_string;
-    error.contextString = context;
+    error.stringContext = context;
 
     for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
         if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
@@ -120,7 +120,7 @@ void internal_nbp_notify_printer_on_error_ctx_string(
     }
 }
 
-void internal_nbp_notify_printer_on_error_ctx_custom(
+void internal_nbp_notify_printer_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -132,7 +132,7 @@ void internal_nbp_notify_printer_on_error_ctx_custom(
     error.line          = line;
     error.file          = file;
     error.contextType   = ect_custom;
-    error.contextCustom = context;
+    error.customContext = context;
 
     for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
         if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {

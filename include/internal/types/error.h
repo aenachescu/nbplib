@@ -63,8 +63,8 @@ struct nbp_error_t
     nbp_error_context_type_e contextType;
     union
     {
-        const char* contextString;
-        void* contextCustom;
+        const char* stringContext;
+        void* customContext;
     };
 };
 typedef struct nbp_error_t nbp_error_t;

@@ -648,8 +648,8 @@ struct nbp_error_t
     nbp_error_context_type_e contextType;
     union
     {
-        const char* contextString;
-        void* contextCustom;
+        const char* stringContext;
+        void* customContext;
     };
 };
 typedef struct nbp_error_t nbp_error_t;
@@ -1317,13 +1317,13 @@ void internal_nbp_notify_printer_on_error(
     int line,
     const char* file);
 
-void internal_nbp_notify_printer_on_error_ctx_string(
+void internal_nbp_notify_printer_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     const char* context);
 
-void internal_nbp_notify_printer_on_error_ctx_custom(
+void internal_nbp_notify_printer_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -1406,22 +1406,22 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 /**
  * TODO: add docs
  */
-#define NBP_REPORT_ERROR_CTX_STRING(errCode, str)                              \
-    internal_nbp_notify_printer_on_error_ctx_string(                           \
+#define NBP_REPORT_ERROR_STRING_CONTEXT(errCode, context)                      \
+    internal_nbp_notify_printer_on_error_string_context(                       \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \
-        str)
+        context)
 
 /**
  * TODO: add docs
  */
-#define NBP_REPORT_ERROR_CTX_CUSTOM(errCode, ctx)                              \
-    internal_nbp_notify_printer_on_error_ctx_custom(                           \
+#define NBP_REPORT_ERROR_CUSTOM_CONTEXT(errCode, context)                      \
+    internal_nbp_notify_printer_on_error_custom_context(                       \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \
-        ctx)
+        context)
 
 /**
  * TODO: add docs
@@ -1446,12 +1446,12 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 /**
  * TODO: add docs
  */
-#define NBP_GET_ERROR_CONTEXT_STRING(err) err.contextString
+#define NBP_GET_ERROR_STRING_CONTEXT(err) err.stringContext
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_ERROR_CONTEXT_CUSTOM(err) err.contextCustom
+#define NBP_GET_ERROR_CUSTOM_CONTEXT(err) err.customContext
 
 #ifndef NBP_CUSTOM_EXIT
 
@@ -2349,7 +2349,7 @@ void internal_nbp_notify_printer_on_error(
     }
 }
 
-void internal_nbp_notify_printer_on_error_ctx_string(
+void internal_nbp_notify_printer_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -2361,7 +2361,7 @@ void internal_nbp_notify_printer_on_error_ctx_string(
     error.line          = line;
     error.file          = file;
     error.contextType   = ect_string;
-    error.contextString = context;
+    error.stringContext = context;
 
     for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
         if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
@@ -2373,7 +2373,7 @@ void internal_nbp_notify_printer_on_error_ctx_string(
     }
 }
 
-void internal_nbp_notify_printer_on_error_ctx_custom(
+void internal_nbp_notify_printer_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -2385,7 +2385,7 @@ void internal_nbp_notify_printer_on_error_ctx_custom(
     error.line          = line;
     error.file          = file;
     error.contextType   = ect_custom;
-    error.contextCustom = context;
+    error.customContext = context;
 
     for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
         if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {

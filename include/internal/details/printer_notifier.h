@@ -41,13 +41,13 @@ void internal_nbp_notify_printer_on_error(
     int line,
     const char* file);
 
-void internal_nbp_notify_printer_on_error_ctx_string(
+void internal_nbp_notify_printer_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     const char* context);
 
-void internal_nbp_notify_printer_on_error_ctx_custom(
+void internal_nbp_notify_printer_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
