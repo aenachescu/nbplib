@@ -54,6 +54,10 @@ macroNameExceptions = [
     "NBP_PP_PARSE_PP_"
 ]
 
+functionNameExceptions = [
+    "nbp_printer_interface_config_function_nbpDefaultPrinter"
+]
+
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
@@ -1233,6 +1237,9 @@ def check_macros(log, root, filePath):
 
 def check_function_name(log, filePath, func):
     if func.spelling == "main":
+        return True
+
+    if func.spelling in functionNameExceptions:
         return True
 
     if (not is_test_file(filePath) and
