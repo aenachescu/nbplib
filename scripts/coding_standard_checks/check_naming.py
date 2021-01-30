@@ -1287,6 +1287,17 @@ def check_function_params(log, filePath, func):
         if param.kind != clang.cindex.CursorKind.PARM_DECL:
             continue
 
+        if param.spelling.startswith("nbpParam") and paramNamePrefix == "":
+            log.warning(
+                "There is no prefix set, but parameter name has prefix. "
+                "Prefix = [%s]. Function = [%s]. File = [%s]. Line = %d",
+                "nbpParam",
+                func.spelling,
+                filePath,
+                param.location.line
+            )
+            status = False
+
         if param.spelling == "":
             log.error(
                 "Empty parameter name. Function = [%s]. File = [%s]. Line = %d",
