@@ -267,6 +267,11 @@ SOFTWARE.
         .moduleInstanceCompletedCbk       = NBP_NULLPTR,                       \
     }
 
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_ERROR nbpParamError
+
 #define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
     nbp_printer_interface_config_function_##name
 

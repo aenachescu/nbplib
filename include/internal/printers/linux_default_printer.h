@@ -48,12 +48,34 @@ NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
     printf("nbp version: %s\n", NBP_VERSION_STR);
 }
 
+NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
+{
+    switch (NBP_GET_ERROR_CONTEXT_TYPE(NBP_THIS_ERROR)) {
+    case ect_string:
+        printf(
+            "[error] code = %d, line = %d, file = %s, message = %s\n",
+            NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
+            NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
+            NBP_GET_ERROR_FILE(NBP_THIS_ERROR),
+            NBP_GET_ERROR_STRING_CONTEXT(NBP_THIS_ERROR));
+        break;
+    default:
+        printf(
+            "[error] code = %d, line = %d, file = %s\n",
+            NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
+            NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
+            NBP_GET_ERROR_FILE(NBP_THIS_ERROR));
+        break;
+    }
+}
+
 NBP_PRINTER(
     nbpDefaultPrinter,
     NBP_PRINTER_CALLBACKS(
         NBP_PRINTER_CALLBACK_INIT(nbp_dp_init),
         NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit),
         NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(
-            nbp_dp_handle_version_command)));
+            nbp_dp_handle_version_command),
+        NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)));
 
 #endif // end if _H_NBP_INTERNAL_PRINTERS_LINUX_DEFAULT_PRINTER
