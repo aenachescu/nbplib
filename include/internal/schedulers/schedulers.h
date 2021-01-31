@@ -25,12 +25,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_DETAILS
-#define _H_NBP_INTERNAL_DETAILS_DETAILS
+#ifndef _H_NBP_INTERNAL_SCHEDULERS_SCHEDULERS
+#define _H_NBP_INTERNAL_SCHEDULERS_SCHEDULERS
 
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
+/*
+ * if custom scheduler is not used then use a default scheduler
+ */
+#ifndef NBP_CUSTOM_SCHEDULER
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_MT_SCHEDULER
+#error "Not supported yet"
+#endif // end if NBP_MT_SCHEDULER
+
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_BASIC_SCHEDULER
+#include "basic_scheduler.h"
+#endif // end if NBP_BASIC_SCHEDULER
+
+#endif // end if NBP_CUSTOM_SCHEDULER
+
+#endif // end if _H_NBP_INTERNAL_SCHEDULERS_SCHEDULERS

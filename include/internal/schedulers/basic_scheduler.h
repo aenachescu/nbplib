@@ -25,12 +25,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_DETAILS
-#define _H_NBP_INTERNAL_DETAILS_DETAILS
+#ifndef _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER
+#define _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER
 
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
+#include "../api/scheduler.h"
+#include "../api/test_case.h"
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS
+#include <stdio.h>
+
+NBP_SCHEDULER_CALLBACK_INIT(nbp_bs_init)
+{
+    printf("basic scheduler init\n");
+}
+
+NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit)
+{
+    printf("basic scheduler uninit\n");
+}
+
+NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run)
+{
+    printf("basic scheduler run\n");
+}
+
+NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_bs_instantiate_test_case)
+{
+    printf(
+        "instantiate test case [%s]\n",
+        NBP_THIS_TEST_CASE_INSTANCE->testCaseDetails->name);
+}
+
+NBP_SCHEDULER(
+    nbpBasicScheduler,
+    NBP_SCHEDULER_CALLBACKS(
+        NBP_SCHEDULER_CALLBACK_INIT(nbp_bs_init),
+        NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit),
+        NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run),
+        NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(
+            nbp_bs_instantiate_test_case)));
+
+#endif // end if _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER

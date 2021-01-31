@@ -1378,6 +1378,98 @@ void internal_nbp_notify_printer_module_instance_started(
 void internal_nbp_notify_printer_module_instance_completed(
     nbp_module_instance_t* moduleInstance);
 
+#define INTERNAL_NBP_INCLUDE_SCHEDULER(name)                                   \
+    extern nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name
+
+#define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
+    &gInternalNbpSchedulerInterface##name
+
+struct nbp_scheduler_interface_t;
+
+typedef void (*nbp_scheduler_config_pfn_t)(
+    struct nbp_scheduler_interface_t* /* schedulerInterface */
+);
+
+typedef void (*nbp_scheduler_callback_init_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_uninit_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_run_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_test_case_pfn_t)(
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+typedef void (*nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+
+typedef void (
+    *nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_module_started_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_module_completed_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+struct nbp_scheduler_interface_t
+{
+    const char* schedulerName;
+    nbp_scheduler_config_pfn_t configFunction;
+
+    nbp_scheduler_callback_init_pfn_t initCbk;
+    nbp_scheduler_callback_uninit_pfn_t uninitCbk;
+    nbp_scheduler_callback_run_pfn_t runCbk;
+    nbp_scheduler_callback_on_instantiate_test_case_pfn_t
+        instantiateTestCaseCbk;
+    nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t
+        instantiateTestSuiteStartedCbk;
+    nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t
+        instantiateTestSuiteCompletedCbk;
+    nbp_scheduler_callback_on_instantiate_module_started_pfn_t
+        instantiateModuleStartedCbk;
+    nbp_scheduler_callback_on_instantiate_module_completed_pfn_t
+        instantiateModuleCompletedCbk;
+};
+typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
+
+void internal_nbp_notify_scheduler_init();
+
+void internal_nbp_notify_scheduler_uninit();
+
+void internal_nbp_notify_scheduler_run();
+
+void internal_nbp_notify_scheduler_instantiate_test_case(
+    nbp_test_case_instance_t* testCaseInstance,
+    void* context);
+
+void internal_nbp_notify_scheduler_instantiate_test_suite_started(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    void* context);
+
+void internal_nbp_notify_scheduler_instantiate_test_suite_completed(
+    nbp_test_suite_instance_t* testSuiteInstance);
+
+void internal_nbp_notify_scheduler_instantiate_module_started(
+    nbp_module_instance_t* moduleInstance,
+    void* context);
+
+void internal_nbp_notify_scheduler_instantiate_module_completed(
+    nbp_module_instance_t* moduleInstance);
+
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -2243,7 +2335,20 @@ nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
 nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpPrinterInterfacesSize          = 0;
 
+unsigned int gInternalNbpNumberOfTestCases            = 0;
+NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRunTestCases = NBP_ATOMIC_UINT_INIT(0);
+
 int gInternalNbpSchedulerRunEnabled = 0;
+
+#ifdef NBP_BASIC_SCHEDULER
+INTERNAL_NBP_INCLUDE_SCHEDULER(nbpBasicScheduler);
+nbp_scheduler_interface_t* gInternalNbpSchedulerInterface =
+    INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(nbpBasicScheduler);
+#endif // end if NBP_BASIC_SCHEDULER
+
+#ifdef NBP_MT_SCHEDULER
+nbp_scheduler_interface_t* gInternalNbpSchedulerInterface = NBP_NULLPTR;
+#endif // end if NBP_MT_SCHEDULER
 
 static int internal_nbp_string_equal(const char* a, const char* b)
 {
@@ -2257,6 +2362,38 @@ static int internal_nbp_string_equal(const char* a, const char* b)
 
 static int internal_nbp_command_run_all()
 {
+    internal_nbp_notify_printer_init();
+    internal_nbp_notify_scheduler_init();
+
+    if (gInternalNbpSchedulerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
+        NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
+        NBP_EXIT(ec_invalid_scheduler_interface);
+    }
+    if (gInternalNbpSchedulerInterface->runCbk == NBP_NULLPTR) {
+        NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
+        NBP_EXIT(ec_invalid_scheduler_interface);
+    }
+
+    // TODO: instantiate the main module
+
+    // TODO: send some stats to printers about instances
+
+    internal_nbp_notify_scheduler_run();
+
+    unsigned int numberOfRunTestsCases =
+        NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRunTestCases);
+    if (numberOfRunTestsCases != gInternalNbpNumberOfTestCases) {
+        NBP_REPORT_ERROR(ec_not_all_tests_were_run);
+        NBP_EXIT(ec_not_all_tests_were_run);
+    }
+
+    // TODO: send some stats to printers about asserts, test cases etc
+
+    internal_nbp_notify_scheduler_uninit();
+    internal_nbp_notify_printer_uninit();
+
+    // TODO: return error if main module state is not passed
+
     return (int) ec_success;
 }
 
@@ -2673,6 +2810,100 @@ void internal_nbp_notify_printer_module_instance_completed(
 
 #undef INTERNAL_NBP_CALLBACK_IS_SET
 
+extern nbp_scheduler_interface_t* gInternalNbpSchedulerInterface;
+
+extern int gInternalNbpSchedulerRunEnabled;
+
+#define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
+    gInternalNbpSchedulerInterface->cbk != NBP_NULLPTR
+
+void internal_nbp_notify_scheduler_init()
+{
+    gInternalNbpSchedulerInterface->configFunction(
+        gInternalNbpSchedulerInterface);
+
+    if (INTERNAL_NBP_CALLBACK_IS_SET(initCbk)) {
+        gInternalNbpSchedulerInterface->initCbk();
+    }
+}
+
+void internal_nbp_notify_scheduler_uninit()
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(uninitCbk)) {
+        gInternalNbpSchedulerInterface->uninitCbk();
+    }
+}
+
+void internal_nbp_notify_scheduler_run()
+{
+    gInternalNbpSchedulerRunEnabled = 1;
+
+    if (INTERNAL_NBP_CALLBACK_IS_SET(runCbk)) {
+        gInternalNbpSchedulerInterface->runCbk();
+    }
+
+    gInternalNbpSchedulerRunEnabled = 0;
+}
+
+void internal_nbp_notify_scheduler_instantiate_test_case(
+    nbp_test_case_instance_t* testCaseInstance,
+    void* context)
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestCaseCbk)) {
+        gInternalNbpSchedulerInterface->instantiateTestCaseCbk(
+            testCaseInstance,
+            testCaseInstance->testSuite,
+            testCaseInstance->module,
+            context);
+    }
+}
+
+void internal_nbp_notify_scheduler_instantiate_test_suite_started(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    void* context)
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteStartedCbk)) {
+        gInternalNbpSchedulerInterface->instantiateTestSuiteStartedCbk(
+            testSuiteInstance,
+            testSuiteInstance->module,
+            context);
+    }
+}
+
+void internal_nbp_notify_scheduler_instantiate_test_suite_completed(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteCompletedCbk)) {
+        gInternalNbpSchedulerInterface->instantiateTestSuiteCompletedCbk(
+            testSuiteInstance,
+            testSuiteInstance->module);
+    }
+}
+
+void internal_nbp_notify_scheduler_instantiate_module_started(
+    nbp_module_instance_t* moduleInstance,
+    void* context)
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleStartedCbk)) {
+        gInternalNbpSchedulerInterface->instantiateModuleStartedCbk(
+            moduleInstance,
+            moduleInstance->parent,
+            context);
+    }
+}
+
+void internal_nbp_notify_scheduler_instantiate_module_completed(
+    nbp_module_instance_t* moduleInstance)
+{
+    if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleCompletedCbk)) {
+        gInternalNbpSchedulerInterface->instantiateModuleCompletedCbk(
+            moduleInstance,
+            moduleInstance->parent);
+    }
+}
+
+#undef INTERNAL_NBP_CALLBACK_IS_SET
+
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -2804,5 +3035,188 @@ NBP_PRINTER(
 #endif // end if NBP_LIBRARY_MAIN
 
 #endif // end if NBP_DEFAULT_PRINTER
+
+/*
+ * if custom scheduler is not used then use a default scheduler
+ */
+#ifndef NBP_CUSTOM_SCHEDULER
+
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_MT_SCHEDULER
+#error "Not supported yet"
+#endif // end if NBP_MT_SCHEDULER
+
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_BASIC_SCHEDULER
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INIT(func)                                      \
+    static void nbp_scheduler_callback_##func()
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_UNINIT(func)                                    \
+    static void nbp_scheduler_callback_##func()
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_RUN(func)                                       \
+    static void nbp_scheduler_callback_##func()
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(func)                     \
+    static void nbp_scheduler_callback_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
+            nbpParamTestCaseInstance,                                          \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER void* nbpParamContext)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)            \
+    static void nbp_scheduler_callback_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER void* nbpParamContext)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)          \
+    static void nbp_scheduler_callback_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
+            nbpParamTestSuiteInstance,                                         \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                \
+    static void nbp_scheduler_callback_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance,                                            \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER void* nbpParamContext)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)              \
+    static void nbp_scheduler_callback_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
+            nbpParamModuleInstance,                                            \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_CALLBACKS(...)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER(name, ...)                                               \
+    void nbp_scheduler_interface_config_function_##name(                       \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_scheduler_interface_t*                  \
+            schedulerInterface)                                                \
+    {                                                                          \
+        INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(P_##__VA_ARGS__)       \
+        return;                                                                \
+    }                                                                          \
+    nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name = {         \
+        .schedulerName  = #name,                                               \
+        .configFunction = nbp_scheduler_interface_config_function_##name,      \
+        .initCbk        = NBP_NULLPTR,                                         \
+        .uninitCbk      = NBP_NULLPTR,                                         \
+        .runCbk         = NBP_NULLPTR,                                         \
+        .instantiateTestCaseCbk           = NBP_NULLPTR,                       \
+        .instantiateTestSuiteStartedCbk   = NBP_NULLPTR,                       \
+        .instantiateTestSuiteCompletedCbk = NBP_NULLPTR,                       \
+        .instantiateModuleStartedCbk      = NBP_NULLPTR,                       \
+        .instantiateModuleCompletedCbk    = NBP_NULLPTR,                       \
+    }
+
+#define INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(...)                   \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
+    (P##__VA_ARGS__)
+
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACKS(...)                           \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PP_##__VA_ARGS__))   \
+    (PP_##__VA_ARGS__)
+
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INIT(func)                      \
+    schedulerInterface->initCbk = nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_UNINIT(func)                    \
+    schedulerInterface->uninitCbk = nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_RUN(func)                       \
+    schedulerInterface->runCbk = nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(func)     \
+    schedulerInterface->instantiateTestCaseCbk = nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED( \
+    func)                                                                      \
+    schedulerInterface->instantiateTestSuiteStartedCbk =                       \
+        nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+    func)                                                                        \
+    schedulerInterface->instantiateTestSuiteCompletedCbk =                       \
+        nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_STARTED(     \
+    func)                                                                      \
+    schedulerInterface->instantiateModuleStartedCbk =                          \
+        nbp_scheduler_callback_##func;
+#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(   \
+    func)                                                                      \
+    schedulerInterface->instantiateModuleCompletedCbk =                        \
+        nbp_scheduler_callback_##func;
+
+#include <stdio.h>
+
+NBP_SCHEDULER_CALLBACK_INIT(nbp_bs_init)
+{
+    printf("basic scheduler init\n");
+}
+
+NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit)
+{
+    printf("basic scheduler uninit\n");
+}
+
+NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run)
+{
+    printf("basic scheduler run\n");
+}
+
+NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_bs_instantiate_test_case)
+{
+    printf(
+        "instantiate test case [%s]\n",
+        NBP_THIS_TEST_CASE_INSTANCE->testCaseDetails->name);
+}
+
+NBP_SCHEDULER(
+    nbpBasicScheduler,
+    NBP_SCHEDULER_CALLBACKS(
+        NBP_SCHEDULER_CALLBACK_INIT(nbp_bs_init),
+        NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit),
+        NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run),
+        NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(
+            nbp_bs_instantiate_test_case)));
+
+#endif // end if NBP_BASIC_SCHEDULER
+
+#endif // end if NBP_CUSTOM_SCHEDULER
 
 #endif // end if _H_NBP_NBP

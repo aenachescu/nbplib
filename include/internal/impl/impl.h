@@ -32,6 +32,7 @@ SOFTWARE.
 
 #include "main.h"
 #include "printer_notifier.h"
+#include "scheduler_notifier.h"
 #include "sync.h"
 
 #endif // end if NBP_LIBRARY_MAIN

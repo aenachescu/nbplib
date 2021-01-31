@@ -52,4 +52,7 @@ SOFTWARE.
 // keep this order
 #include "internal/printers/printers.h"
 
+// keep this order
+#include "internal/schedulers/schedulers.h"
+
 #endif // end if _H_NBP_NBP

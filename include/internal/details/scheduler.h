@@ -25,12 +25,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_DETAILS
-#define _H_NBP_INTERNAL_DETAILS_DETAILS
+#ifndef _H_NBP_INTERNAL_DETAILS_SCHEDULER
+#define _H_NBP_INTERNAL_DETAILS_SCHEDULER
 
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
+#define INTERNAL_NBP_INCLUDE_SCHEDULER(name)                                   \
+    extern nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS
+#define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
+    &gInternalNbpSchedulerInterface##name
+
+#endif // end if _H_NBP_INTERNAL_DETAILS_SCHEDULER
