@@ -1306,6 +1306,12 @@ typedef struct nbp_printer_interface_t nbp_printer_interface_t;
 
 #endif // end if NBP_MT_SUPPORT
 
+#define INTERNAL_NBP_INCLUDE_PRINTER(name)                                     \
+    extern nbp_printer_interface_t gInternalNbpPrinterInterface##name
+
+#define INTERNAL_NBP_GET_POINTER_TO_PRINTER(name)                              \
+    &gInternalNbpPrinterInterface##name
+
 void internal_nbp_notify_printer_init();
 
 void internal_nbp_notify_printer_uninit();
@@ -2327,10 +2333,10 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 extern nbp_module_t* gInternalNbpMainModule;
 
-extern nbp_printer_interface_t gInternalNbpPrinterInterfacenbpDefaultPrinter;
+INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
 
 nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
-    &gInternalNbpPrinterInterfacenbpDefaultPrinter};
+    INTERNAL_NBP_GET_POINTER_TO_PRINTER(nbpDefaultPrinter)};
 
 nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpPrinterInterfacesSize          = 0;

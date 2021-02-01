@@ -32,6 +32,7 @@ SOFTWARE.
 #include "../api/exit.h"
 #include "../api/memory.h"
 #include "../build_configuration.h"
+#include "../details/printer.h"
 #include "../details/printer_notifier.h"
 #include "../details/scheduler.h"
 #include "../details/scheduler_notifier.h"
@@ -43,10 +44,10 @@ SOFTWARE.
 
 extern nbp_module_t* gInternalNbpMainModule;
 
-extern nbp_printer_interface_t gInternalNbpPrinterInterfacenbpDefaultPrinter;
+INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
 
 nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
-    &gInternalNbpPrinterInterfacenbpDefaultPrinter};
+    INTERNAL_NBP_GET_POINTER_TO_PRINTER(nbpDefaultPrinter)};
 
 nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpPrinterInterfacesSize          = 0;
