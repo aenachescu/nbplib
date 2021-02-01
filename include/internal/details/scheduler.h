@@ -28,6 +28,8 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_DETAILS_SCHEDULER
 #define _H_NBP_INTERNAL_DETAILS_SCHEDULER
 
+#include "../types/scheduler.h"
+
 #define INTERNAL_NBP_INCLUDE_SCHEDULER(name)                                   \
     extern nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name
 
