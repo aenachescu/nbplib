@@ -236,7 +236,7 @@ SOFTWARE.
     void nbp_printer_interface_config_function_##name(                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_printer_interface_t* printerInterface)  \
     {                                                                          \
-        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(P_##__VA_ARGS__)         \
+        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(F_##__VA_ARGS__)         \
         return;                                                                \
     }                                                                          \
     nbp_printer_interface_t gInternalNbpPrinterInterface##name = {             \
@@ -276,66 +276,73 @@ SOFTWARE.
     nbp_printer_interface_config_function_##name
 
 #define INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(...)                     \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GPC##__VA_ARGS__))     \
+    (GPCF_, GPC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACKS(...)                             \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PP_##__VA_ARGS__))   \
-    (PP_##__VA_ARGS__)
+#define INTERNAL_NBP_GPCF_NBP_PRINTER_CALLBACKS(...)                           \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PC_##__VA_ARGS__))   \
+    (PC_, PC_##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INIT(func)                        \
+// This macro is generated when NBP_PRINTER macro is used without parameters
+#define INTERNAL_NBP_GPCF_
+
+// This macro is generated when NBP_PRINTER_CALLBACKS macro is used without
+// parameters
+#define INTERNAL_NBP_PC_
+
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INIT(func)                        \
     printerInterface->initCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
     printerInterface->uninitCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
     printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
     printerInterface->errorCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
     printerInterface->exitCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
     printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
     printerInterface->instantiateTestSuiteStartedCbk =                         \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
     printerInterface->instantiateTestSuiteCompletedCbk =                       \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
     printerInterface->instantiateModuleStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
     func)                                                                      \
     printerInterface->instantiateModuleCompletedCbk =                          \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
     printerInterface->testCaseStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
     printerInterface->testCaseCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
     printerInterface->testCaseInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
     func)                                                                      \
     printerInterface->testCaseInstanceCompletedCbk =                           \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
     printerInterface->testSuiteStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
     printerInterface->testSuiteCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
     printerInterface->testSuiteInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
     func)                                                                      \
     printerInterface->testSuiteInstanceCompletedCbk =                          \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
     printerInterface->moduleStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
     printerInterface->moduleCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
     printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
     printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
 
 #endif // end if _H_NBP_INTERNAL_API_PRINTER

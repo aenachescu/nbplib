@@ -75,7 +75,7 @@ SOFTWARE.
         } else {                                                               \
             testSuiteDetails->isConfigured = 1;                                \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(P_##__VA_ARGS__)      \
+        INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
     void nbp_test_suite_function_##func(nbp_test_suite_t* nbpParamTestSuite);  \
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
@@ -151,23 +151,26 @@ SOFTWARE.
 #define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \
+    (GTSCF_, GTSC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_NAME(newName)                           \
+// This macro is generated when NBP_TEST_SUITE macro is used without parameters
+#define INTERNAL_NBP_GTSCF_
+
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_NAME(newName)                        \
     testSuiteDetails->name = newName;
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(func)                             \
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(func)                          \
     NBP_INCLUDE_TEST_SUITE_SETUP(func);                                        \
     testSuiteDetails->setupDetails = NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(func)                          \
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(func)                       \
     NBP_INCLUDE_TEST_SUITE_TEARDOWN(func);                                     \
     testSuiteDetails->teardownDetails =                                        \
         NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)       \
-    NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(setupFunc)                            \
-    NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
+    INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \
+    INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
 
 #endif // end if _H_NBP_INTERNAL_API_TEST_SUITE

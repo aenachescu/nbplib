@@ -74,7 +74,7 @@ SOFTWARE.
         } else {                                                               \
             moduleDetails->isConfigured = 1;                                   \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(P_##__VA_ARGS__)          \
+        INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)          \
     }                                                                          \
     void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
@@ -147,21 +147,25 @@ SOFTWARE.
 #define NBP_THIS_MODULE_INSTANCE nbpParamModuleInstance
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
+    (GMCF_, GMC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_NAME(newName) moduleDetails->name = newName;
+// This macro is generated when NBP_MODULE macro is used without parameters
+#define INTERNAL_NBP_GMCF_
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_SETUP(func)                                 \
+#define INTERNAL_NBP_GMCF_NBP_MODULE_NAME(newName)                             \
+    moduleDetails->name = newName;
+
+#define INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(func)                               \
     NBP_INCLUDE_MODULE_SETUP(func);                                            \
     moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(func)                              \
+#define INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(func)                            \
     NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
     moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)           \
-    NBP_PP_PARSE_PP_NBP_MODULE_SETUP(setupFunc)                                \
-    NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)         \
+    INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(setupFunc)                              \
+    INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(teardownFunc)
 
 #endif // end if _H_NBP_INTERNAL_API_MODULE

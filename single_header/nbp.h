@@ -482,136 +482,257 @@ SOFTWARE.
         2,                                                                     \
         1, )
 
-// This macro is generated when a variadic macro is used with no parameters
-#define NBP_PP_PARSE_PP_
+#define NBP_PP_PARSE_PARAMETER_1(prefix, parameter) INTERNAL_NBP_##parameter
+#define NBP_PP_PARSE_PARAMETER_2(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_1(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_3(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_4(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_3(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_5(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_4(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_6(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_5(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_7(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_6(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_8(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_7(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_9(prefix, parameter, ...)                       \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_8(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_10(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_9(                         \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_11(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_10(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_12(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_11(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_13(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_12(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_14(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_13(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_15(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_14(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_16(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_15(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_17(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_16(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_18(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_17(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_19(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_18(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_20(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_19(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_21(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_20(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_22(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_21(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_23(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_22(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_24(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_23(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_25(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_24(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_26(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_25(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_27(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_26(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_28(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_27(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_29(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_28(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_30(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_29(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_31(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_30(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_32(prefix, parameter, ...)                      \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_31(                        \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PARAMETER_1(parameter) NBP_PP_PARSE_##parameter
-#define NBP_PP_PARSE_PARAMETER_2(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_1(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_3(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_4(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_3(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_5(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_4(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_6(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_5(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_7(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_6(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_8(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_7(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_9(parameter, ...)                               \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_8(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_10(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_9(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_11(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_10(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_12(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_11(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_13(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_12(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_14(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_13(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_15(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_14(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_16(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_15(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_17(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_16(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_18(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_17(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_19(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_18(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_20(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_19(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_21(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_20(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_22(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_21(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_23(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_22(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_24(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_23(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_25(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_24(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_26(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_25(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_27(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_26(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_28(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_27(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_29(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_28(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_30(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_29(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_31(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_30(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_32(parameter, ...)                              \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_31(PP_##__VA_ARGS__)
-
-#define NBP_PP_PARSE_PARAMETER_2_1(parameter) NBP_PP_PARSE_##parameter
-#define NBP_PP_PARSE_PARAMETER_2_2(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_1(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_3(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_2(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_4(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_3(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_5(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_4(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_6(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_5(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_7(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_6(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_8(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_7(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_9(parameter, ...)                             \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_8(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_10(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_9(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_11(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_10(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_12(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_11(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_13(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_12(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_14(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_13(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_15(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_14(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_16(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_15(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_17(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_16(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_18(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_17(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_19(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_18(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_20(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_19(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_21(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_20(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_22(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_21(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_23(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_22(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_24(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_23(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_25(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_24(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_26(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_25(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_27(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_26(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_28(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_27(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_29(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_28(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_30(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_29(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_31(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_30(PP_##__VA_ARGS__)
-#define NBP_PP_PARSE_PARAMETER_2_32(parameter, ...)                            \
-    NBP_PP_PARSE_##parameter NBP_PP_PARSE_PARAMETER_2_31(PP_##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_1(prefix, parameter) INTERNAL_NBP_##parameter
+#define NBP_PP_PARSE_PARAMETER_2_2(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_1(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_3(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_2(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_4(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_3(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_5(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_4(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_6(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_5(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_7(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_6(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_8(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_7(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_9(prefix, parameter, ...)                     \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_8(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_10(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_9(                       \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_11(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_10(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_12(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_11(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_13(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_12(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_14(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_13(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_15(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_14(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_16(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_15(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_17(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_16(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_18(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_17(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_19(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_18(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_20(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_19(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_21(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_20(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_22(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_21(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_23(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_22(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_24(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_23(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_25(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_24(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_26(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_25(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_27(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_26(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_28(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_27(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_29(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_28(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_30(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_29(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_31(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_30(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
+#define NBP_PP_PARSE_PARAMETER_2_32(prefix, parameter, ...)                    \
+    INTERNAL_NBP_##parameter NBP_PP_PARSE_PARAMETER_2_31(                      \
+        prefix,                                                                \
+        prefix##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -1658,7 +1779,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         } else {                                                               \
             moduleDetails->isConfigured = 1;                                   \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(P_##__VA_ARGS__)          \
+        INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)          \
     }                                                                          \
     void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
@@ -1731,22 +1852,26 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #define NBP_THIS_MODULE_INSTANCE nbpParamModuleInstance
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
+    (GMCF_, GMC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_NAME(newName) moduleDetails->name = newName;
+// This macro is generated when NBP_MODULE macro is used without parameters
+#define INTERNAL_NBP_GMCF_
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_SETUP(func)                                 \
+#define INTERNAL_NBP_GMCF_NBP_MODULE_NAME(newName)                             \
+    moduleDetails->name = newName;
+
+#define INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(func)                               \
     NBP_INCLUDE_MODULE_SETUP(func);                                            \
     moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(func)                              \
+#define INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(func)                            \
     NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
     moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)           \
-    NBP_PP_PARSE_PP_NBP_MODULE_SETUP(setupFunc)                                \
-    NBP_PP_PARSE_PP_NBP_MODULE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)         \
+    INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(setupFunc)                              \
+    INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(teardownFunc)
 
 /**
  * TODO: add docs
@@ -1952,7 +2077,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     void nbp_printer_interface_config_function_##name(                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_printer_interface_t* printerInterface)  \
     {                                                                          \
-        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(P_##__VA_ARGS__)         \
+        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(F_##__VA_ARGS__)         \
         return;                                                                \
     }                                                                          \
     nbp_printer_interface_t gInternalNbpPrinterInterface##name = {             \
@@ -1992,66 +2117,73 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
     nbp_printer_interface_config_function_##name
 
 #define INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(...)                     \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GPC##__VA_ARGS__))     \
+    (GPCF_, GPC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACKS(...)                             \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PP_##__VA_ARGS__))   \
-    (PP_##__VA_ARGS__)
+#define INTERNAL_NBP_GPCF_NBP_PRINTER_CALLBACKS(...)                           \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PC_##__VA_ARGS__))   \
+    (PC_, PC_##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INIT(func)                        \
+// This macro is generated when NBP_PRINTER macro is used without parameters
+#define INTERNAL_NBP_GPCF_
+
+// This macro is generated when NBP_PRINTER_CALLBACKS macro is used without
+// parameters
+#define INTERNAL_NBP_PC_
+
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INIT(func)                        \
     printerInterface->initCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
     printerInterface->uninitCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
     printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
     printerInterface->errorCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
     printerInterface->exitCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
     printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
     printerInterface->instantiateTestSuiteStartedCbk =                         \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
     printerInterface->instantiateTestSuiteCompletedCbk =                       \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
     printerInterface->instantiateModuleStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
     func)                                                                      \
     printerInterface->instantiateModuleCompletedCbk =                          \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
     printerInterface->testCaseStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
     printerInterface->testCaseCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
     printerInterface->testCaseInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
     func)                                                                      \
     printerInterface->testCaseInstanceCompletedCbk =                           \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
     printerInterface->testSuiteStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
     printerInterface->testSuiteCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
     printerInterface->testSuiteInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
     func)                                                                      \
     printerInterface->testSuiteInstanceCompletedCbk =                          \
         nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
     printerInterface->moduleStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
     printerInterface->moduleCompletedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
     printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
     printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
 
 /**
@@ -2097,7 +2229,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         } else {                                                               \
             testCaseDetails->isConfigured = 1;                                 \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(P_##__VA_ARGS__)       \
+        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
     }                                                                          \
     void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
     nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
@@ -2172,24 +2304,27 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
+    (GTCCF_, GTCC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_NAME(newName)                            \
+// This macro is generated when NBP_TEST_CASE macro is used without parameters
+#define INTERNAL_NBP_GTCCF_
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
     testCaseDetails->name = newName;
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_SETUP(func)                              \
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
     NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
     testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_TEARDOWN(func)                           \
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
     NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
     testCaseDetails->teardownDetails =                                         \
         NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)        \
-    NBP_PP_PARSE_PP_NBP_TEST_CASE_SETUP(setupFunc)                             \
-    NBP_PP_PARSE_PP_NBP_TEST_CASE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
 /**
  * TODO: add docs
@@ -2234,7 +2369,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
         } else {                                                               \
             testSuiteDetails->isConfigured = 1;                                \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(P_##__VA_ARGS__)      \
+        INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
     void nbp_test_suite_function_##func(nbp_test_suite_t* nbpParamTestSuite);  \
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
@@ -2310,24 +2445,27 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \
+    (GTSCF_, GTSC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_NAME(newName)                           \
+// This macro is generated when NBP_TEST_SUITE macro is used without parameters
+#define INTERNAL_NBP_GTSCF_
+
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_NAME(newName)                        \
     testSuiteDetails->name = newName;
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(func)                             \
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(func)                          \
     NBP_INCLUDE_TEST_SUITE_SETUP(func);                                        \
     testSuiteDetails->setupDetails = NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(func)                          \
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(func)                       \
     NBP_INCLUDE_TEST_SUITE_TEARDOWN(func);                                     \
     testSuiteDetails->teardownDetails =                                        \
         NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)       \
-    NBP_PP_PARSE_PP_NBP_TEST_SUITE_SETUP(setupFunc)                            \
-    NBP_PP_PARSE_PP_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
+    INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \
+    INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
 
 #ifdef NBP_LIBRARY_MAIN
 
@@ -3139,7 +3277,7 @@ NBP_PRINTER(
         NBP_MAYBE_UNUSED_PARAMETER nbp_scheduler_interface_t*                  \
             schedulerInterface)                                                \
     {                                                                          \
-        INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(P_##__VA_ARGS__)       \
+        INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
         return;                                                                \
     }                                                                          \
     nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name = {         \
@@ -3156,34 +3294,41 @@ NBP_PRINTER(
     }
 
 #define INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(...)                   \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GSC##__VA_ARGS__))     \
+    (GSCF_, GSC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACKS(...)                           \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PP_##__VA_ARGS__))   \
-    (PP_##__VA_ARGS__)
+#define INTERNAL_NBP_GSCF_NBP_SCHEDULER_CALLBACKS(...)                         \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(SC_##__VA_ARGS__))   \
+    (SC_, SC_##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INIT(func)                      \
+// This macro is generated when NBP_SCHEDULER macro is used without parameters
+#define INTERNAL_NBP_GSCF_
+
+// This macro is generated when NBP_SCHEDULER_CALLBACKS macro is used without
+// parameters
+#define INTERNAL_NBP_SC_
+
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INIT(func)                      \
     schedulerInterface->initCbk = nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_UNINIT(func)                    \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_UNINIT(func)                    \
     schedulerInterface->uninitCbk = nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_RUN(func)                       \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_RUN(func)                       \
     schedulerInterface->runCbk = nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(func)     \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(func)     \
     schedulerInterface->instantiateTestCaseCbk = nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED( \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED( \
     func)                                                                      \
     schedulerInterface->instantiateTestSuiteStartedCbk =                       \
         nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                        \
     schedulerInterface->instantiateTestSuiteCompletedCbk =                       \
         nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_STARTED(     \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_STARTED(     \
     func)                                                                      \
     schedulerInterface->instantiateModuleStartedCbk =                          \
         nbp_scheduler_callback_##func;
-#define NBP_PP_PARSE_PP_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(   \
+#define INTERNAL_NBP_SC_NBP_SCHEDULER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(   \
     func)                                                                      \
     schedulerInterface->instantiateModuleCompletedCbk =                        \
         nbp_scheduler_callback_##func;

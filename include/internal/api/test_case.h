@@ -75,7 +75,7 @@ SOFTWARE.
         } else {                                                               \
             testCaseDetails->isConfigured = 1;                                 \
         }                                                                      \
-        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(P_##__VA_ARGS__)       \
+        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
     }                                                                          \
     void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
     nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
@@ -150,23 +150,26 @@ SOFTWARE.
 #define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(P##__VA_ARGS__))       \
-    (P##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
+    (GTCCF_, GTCC##__VA_ARGS__)
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_NAME(newName)                            \
+// This macro is generated when NBP_TEST_CASE macro is used without parameters
+#define INTERNAL_NBP_GTCCF_
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
     testCaseDetails->name = newName;
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_SETUP(func)                              \
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
     NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
     testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_TEARDOWN(func)                           \
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
     NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
     testCaseDetails->teardownDetails =                                         \
         NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
 
-#define NBP_PP_PARSE_PP_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)        \
-    NBP_PP_PARSE_PP_NBP_TEST_CASE_SETUP(setupFunc)                             \
-    NBP_PP_PARSE_PP_NBP_TEST_CASE_TEARDOWN(teardownFunc)
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
 #endif // end if _H_NBP_INTERNAL_API_TEST_CASE
