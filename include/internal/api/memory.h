@@ -50,6 +50,16 @@ SOFTWARE.
  */
 #define NBP_MEMORY_FREE(ptr) free(ptr)
 
+/**
+ * TODO: add docs
+ */
+#define NBP_MEMORY_ALLOC_TAG(size, tag) malloc(size)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MEMORY_FREE_TAG(ptr, tag) free(ptr)
+
 #else // if custom memory allocator is enabled
 
 #ifndef NBP_NULLPTR
@@ -63,6 +73,15 @@ SOFTWARE.
 #ifndef NBP_MEMORY_FREE
 #error "Custom memory allocator is enabled but NBP_MEMORY_FREE is undefined"
 #endif // end if NBP_MEMORY_FREE
+
+#ifndef NBP_MEMORY_ALLOC_TAG
+#error                                                                         \
+    "Custom memory allocator is enabled but NBP_MEMORY_ALLOC_TAG is undefined"
+#endif // end if NBP_MEMORY_ALLOC_TAG
+
+#ifndef NBP_MEMORY_FREE_TAG
+#error "Custom memory allocator is enabled but NBP_MEMORY_FREE_TAG is undefined"
+#endif // end if NBP_MEMORY_FREE_TAG
 
 #endif // end if NBP_CUSTOM_MEMORY_ALLOCATOR
 

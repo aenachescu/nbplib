@@ -25,16 +25,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_TYPES
-#define _H_NBP_INTERNAL_TYPES_TYPES
+#ifndef _H_NBP_INTERNAL_TYPES_MEMORY
+#define _H_NBP_INTERNAL_TYPES_MEMORY
 
-#include "error.h"
-#include "memory.h"
-#include "module.h"
-#include "printer.h"
-#include "scheduler.h"
-#include "sync.h"
-#include "test_case.h"
-#include "test_suite.h"
+enum nbp_memory_tag_e
+{
+    mt_test_case_instance  = 0x4E425000,
+    mt_test_case           = 0x4E425001,
+    mt_test_suite_instance = 0x4E425002,
+    mt_test_suite          = 0x4E425003,
+    mt_module_instance     = 0x4E425004,
+    mt_module              = 0x4E425005,
+    mt_default_printer     = 0x4E425006,
+    mt_basic_scheduler     = 0x4E425007,
+};
+typedef enum nbp_memory_tag_e nbp_memory_tag_e;
 
-#endif // end if _H_NBP_INTERNAL_TYPES_TYPES
+#endif // end if _H_NBP_INTERNAL_TYPES_MEMORY

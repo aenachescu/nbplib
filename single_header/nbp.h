@@ -775,6 +775,19 @@ struct nbp_error_t
 };
 typedef struct nbp_error_t nbp_error_t;
 
+enum nbp_memory_tag_e
+{
+    mt_test_case_instance  = 0x4E425000,
+    mt_test_case           = 0x4E425001,
+    mt_test_suite_instance = 0x4E425002,
+    mt_test_suite          = 0x4E425003,
+    mt_module_instance     = 0x4E425004,
+    mt_module              = 0x4E425005,
+    mt_default_printer     = 0x4E425006,
+    mt_basic_scheduler     = 0x4E425007,
+};
+typedef enum nbp_memory_tag_e nbp_memory_tag_e;
+
 struct nbp_module_t;
 
 struct nbp_test_suite_t;
@@ -1721,6 +1734,16 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_MEMORY_FREE(ptr) free(ptr)
 
+/**
+ * TODO: add docs
+ */
+#define NBP_MEMORY_ALLOC_TAG(size, tag) malloc(size)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MEMORY_FREE_TAG(ptr, tag) free(ptr)
+
 #else // if custom memory allocator is enabled
 
 #ifndef NBP_NULLPTR
@@ -1734,6 +1757,15 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #ifndef NBP_MEMORY_FREE
 #error "Custom memory allocator is enabled but NBP_MEMORY_FREE is undefined"
 #endif // end if NBP_MEMORY_FREE
+
+#ifndef NBP_MEMORY_ALLOC_TAG
+#error                                                                         \
+    "Custom memory allocator is enabled but NBP_MEMORY_ALLOC_TAG is undefined"
+#endif // end if NBP_MEMORY_ALLOC_TAG
+
+#ifndef NBP_MEMORY_FREE_TAG
+#error "Custom memory allocator is enabled but NBP_MEMORY_FREE_TAG is undefined"
+#endif // end if NBP_MEMORY_FREE_TAG
 
 #endif // end if NBP_CUSTOM_MEMORY_ALLOCATOR
 
