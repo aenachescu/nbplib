@@ -1883,6 +1883,18 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_THIS_MODULE_INSTANCE nbpParamModuleInstance
 
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_MODULE_INSTANCE_NAME(moduleInstance)                           \
+    moduleInstance->moduleDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_MODULE_NAME(module)                                            \
+    NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
     (GMCF_, GMC##__VA_ARGS__)
@@ -2335,6 +2347,18 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  */
 #define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
 
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
+    testCaseInstance->testCaseDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
+    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
     (GTCCF_, GTCC##__VA_ARGS__)
@@ -2475,6 +2499,18 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
  * TODO: add docs
  */
 #define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuiteInstance)                    \
+    testSuiteInstance->testSuiteDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
+    NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \

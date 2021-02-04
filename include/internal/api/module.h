@@ -146,6 +146,18 @@ SOFTWARE.
  */
 #define NBP_THIS_MODULE_INSTANCE nbpParamModuleInstance
 
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_MODULE_INSTANCE_NAME(moduleInstance)                           \
+    moduleInstance->moduleDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_MODULE_NAME(module)                                            \
+    NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
     (GMCF_, GMC##__VA_ARGS__)

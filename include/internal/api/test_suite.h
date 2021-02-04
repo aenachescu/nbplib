@@ -150,6 +150,18 @@ SOFTWARE.
  */
 #define NBP_THIS_TEST_SUITE_INSTANCE nbpParamTestSuiteInstance
 
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuiteInstance)                    \
+    testSuiteInstance->testSuiteDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
+    NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \
     (GTSCF_, GTSC##__VA_ARGS__)

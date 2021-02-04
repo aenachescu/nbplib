@@ -149,6 +149,18 @@ SOFTWARE.
  */
 #define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
 
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
+    testCaseInstance->testCaseDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
+    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
     (GTCCF_, GTCC##__VA_ARGS__)
