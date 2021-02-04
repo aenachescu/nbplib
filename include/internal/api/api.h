@@ -36,4 +36,8 @@ SOFTWARE.
 #include "test_case.h"
 #include "test_suite.h"
 
+#ifdef NBP_LIBRARY_MAIN
+#include "main.h"
+#endif // end if NBP_LIBRARY_MAIN
+
 #endif // end if _H_NBP_INTERNAL_API_API
