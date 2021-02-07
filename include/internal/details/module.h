@@ -25,19 +25,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_IMPL_IMPL
-#define _H_NBP_INTERNAL_IMPL_IMPL
+#ifndef _H_NBP_INTERNAL_DETAILS_MODULE
+#define _H_NBP_INTERNAL_DETAILS_MODULE
 
-#ifdef NBP_LIBRARY_MAIN
+#include "../types/module.h"
 
-#include "main.h"
-#include "module.h"
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
-#include "test_case.h"
+nbp_module_instance_t* internal_nbp_instantiate_module(
+    nbp_module_details_t* moduleDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context);
 
-#endif // end if NBP_LIBRARY_MAIN
-
-#endif // end if _H_NBP_INTERNAL_IMPL_IMPL
+#endif // end if _H_NBP_INTERNAL_DETAILS_MODULE

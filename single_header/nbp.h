@@ -1506,6 +1506,12 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 
 #endif // end if NBP_MT_SUPPORT
 
+nbp_module_instance_t* internal_nbp_instantiate_module(
+    nbp_module_details_t* moduleDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context);
+
 #define INTERNAL_NBP_INCLUDE_PRINTER(name)                                     \
     extern nbp_printer_interface_t gInternalNbpPrinterInterface##name
 
@@ -1908,6 +1914,17 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
  */
 #define NBP_GET_MODULE_NAME(module)                                            \
     NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_MODULE(func, ...)                                      \
+    NBP_INCLUDE_MODULE(func);                                                  \
+    internal_nbp_instantiate_module(                                           \
+        NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
+        NBP_THIS_MODULE,                                                       \
+        1,                                                                     \
+        NBP_NULLPTR)
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
@@ -2719,6 +2736,108 @@ int main(int argc, const char** argv)
     }
 
     return (int) ec_invalid_command_line;
+}
+
+extern nbp_module_details_t* gInternalNbpMainModuleDetails;
+
+nbp_module_instance_t* internal_nbp_instantiate_module(
+    nbp_module_details_t* moduleDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context)
+{
+    if (numberOfRuns == 0) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_number_of_runs,
+            "the number of runs must be greater than 0");
+        NBP_EXIT(ec_invalid_number_of_runs);
+        return NBP_NULLPTR;
+    }
+
+    if (parentModule == NBP_NULLPTR
+        && moduleDetails != gInternalNbpMainModuleDetails) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_parent,
+            "module instance has no parent");
+        NBP_EXIT(ec_invalid_parent);
+        return NBP_NULLPTR;
+    }
+
+    nbp_module_instance_t* moduleInstance = (nbp_module_instance_t*)
+        NBP_MEMORY_ALLOC_TAG(sizeof(nbp_module_instance_t), mt_module_instance);
+
+    if (moduleInstance == NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate module instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    nbp_module_t* runs = (nbp_module_t*) NBP_MEMORY_ALLOC_TAG(
+        numberOfRuns * sizeof(nbp_module_t),
+        mt_module);
+
+    if (runs == NBP_NULLPTR) {
+        NBP_MEMORY_FREE_TAG(moduleInstance, mt_module_instance);
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate the runs for module instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    for (unsigned int i = 0; i < numberOfRuns; i++) {
+        runs[i].moduleInstance         = moduleInstance;
+        runs[i].state                  = ms_ready;
+        runs[i].firstTestCaseInstance  = NBP_NULLPTR;
+        runs[i].lastTestCaseInstance   = NBP_NULLPTR;
+        runs[i].firstTestSuiteInstance = NBP_NULLPTR;
+        runs[i].lastTestSuiteInstance  = NBP_NULLPTR;
+        runs[i].firstModuleInstance    = NBP_NULLPTR;
+        runs[i].lastModuleInstance     = NBP_NULLPTR;
+    }
+
+    moduleInstance->moduleDetails   = moduleDetails;
+    moduleInstance->state           = mis_ready;
+    moduleInstance->parent          = parentModule;
+    moduleInstance->depth           = 0;
+    moduleInstance->setupDetails    = moduleDetails->setupDetails;
+    moduleInstance->teardownDetails = moduleDetails->teardownDetails;
+    moduleInstance->runs            = runs;
+    moduleInstance->numberOfRuns    = numberOfRuns;
+    moduleInstance->next            = NBP_NULLPTR;
+    moduleInstance->prev            = NBP_NULLPTR;
+
+    if (parentModule != NBP_NULLPTR) {
+        moduleInstance->depth = parentModule->moduleInstance->depth + 1;
+
+        if (parentModule->firstModuleInstance == NBP_NULLPTR) {
+            parentModule->firstModuleInstance = moduleInstance;
+            parentModule->lastModuleInstance  = moduleInstance;
+        } else {
+            moduleInstance->prev = parentModule->lastModuleInstance;
+            parentModule->lastModuleInstance->next = moduleInstance;
+            parentModule->lastModuleInstance       = moduleInstance;
+        }
+    }
+
+    internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
+
+    internal_nbp_notify_scheduler_instantiate_module_started(
+        moduleInstance,
+        context);
+
+    for (unsigned int i = 0; i < numberOfRuns; i++) {
+        moduleInstance->moduleDetails->function(&moduleInstance->runs[i]);
+    }
+
+    internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);
+
+    internal_nbp_notify_printer_instantiate_module_completed(moduleInstance);
+
+    return moduleInstance;
 }
 
 extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;

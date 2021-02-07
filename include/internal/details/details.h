@@ -28,6 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_DETAILS_DETAILS
 #define _H_NBP_INTERNAL_DETAILS_DETAILS
 
+#include "module.h"
 #include "printer.h"
 #include "printer_notifier.h"
 #include "scheduler.h"

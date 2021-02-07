@@ -28,6 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_MODULE
 #define _H_NBP_INTERNAL_API_MODULE
 
+#include "../details/module.h"
 #include "../types/module.h"
 #include "../utils/utils.h"
 #include "memory.h"
@@ -157,6 +158,17 @@ SOFTWARE.
  */
 #define NBP_GET_MODULE_NAME(module)                                            \
     NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_MODULE(func, ...)                                      \
+    NBP_INCLUDE_MODULE(func);                                                  \
+    internal_nbp_instantiate_module(                                           \
+        NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
+        NBP_THIS_MODULE,                                                       \
+        1,                                                                     \
+        NBP_NULLPTR)
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
