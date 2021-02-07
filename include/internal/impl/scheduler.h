@@ -31,8 +31,11 @@ SOFTWARE.
 #include "../api/error.h"
 #include "../api/exit.h"
 #include "../details/scheduler.h"
+#include "../types/sync.h"
 
 extern int gInternalNbpSchedulerRunEnabled;
+
+extern NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases;
 
 void internal_nbp_run_test_case(nbp_test_case_t* testCase)
 {
@@ -45,6 +48,8 @@ void internal_nbp_run_test_case(nbp_test_case_t* testCase)
     }
 
     testCase->testCaseInstance->testCaseDetails->function(testCase);
+
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&gInternalNbpNumberOfRanTestCases, 1);
 }
 
 void internal_nbp_run_test_case_instance(

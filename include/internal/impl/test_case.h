@@ -35,7 +35,7 @@ SOFTWARE.
 #include "../details/scheduler_notifier.h"
 #include "../details/test_case.h"
 
-#include <stdio.h>
+extern unsigned int gInternalNbpNumberOfTestCases;
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
@@ -94,6 +94,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         NBP_EXIT(ec_out_of_memory);
         return NBP_NULLPTR;
     }
+
+    gInternalNbpNumberOfTestCases += numberOfRuns;
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;

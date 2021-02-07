@@ -54,7 +54,7 @@ nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpPrinterInterfacesSize          = 0;
 
 unsigned int gInternalNbpNumberOfTestCases            = 0;
-NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRunTestCases = NBP_ATOMIC_UINT_INIT(0);
+NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases = NBP_ATOMIC_UINT_INIT(0);
 
 int gInternalNbpSchedulerRunEnabled = 0;
 
@@ -109,7 +109,7 @@ static int internal_nbp_command_run_all()
     internal_nbp_notify_scheduler_run();
 
     unsigned int numberOfRunTestsCases =
-        NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRunTestCases);
+        NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);
     if (numberOfRunTestsCases != gInternalNbpNumberOfTestCases) {
         NBP_REPORT_ERROR(ec_not_all_tests_were_run);
         NBP_EXIT(ec_not_all_tests_were_run);

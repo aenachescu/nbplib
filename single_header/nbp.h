@@ -2648,7 +2648,7 @@ nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpPrinterInterfacesSize          = 0;
 
 unsigned int gInternalNbpNumberOfTestCases            = 0;
-NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRunTestCases = NBP_ATOMIC_UINT_INIT(0);
+NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases = NBP_ATOMIC_UINT_INIT(0);
 
 int gInternalNbpSchedulerRunEnabled = 0;
 
@@ -2703,7 +2703,7 @@ static int internal_nbp_command_run_all()
     internal_nbp_notify_scheduler_run();
 
     unsigned int numberOfRunTestsCases =
-        NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRunTestCases);
+        NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);
     if (numberOfRunTestsCases != gInternalNbpNumberOfTestCases) {
         NBP_REPORT_ERROR(ec_not_all_tests_were_run);
         NBP_EXIT(ec_not_all_tests_were_run);
@@ -3239,6 +3239,8 @@ void internal_nbp_notify_printer_module_instance_completed(
 
 extern int gInternalNbpSchedulerRunEnabled;
 
+extern NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases;
+
 void internal_nbp_run_test_case(nbp_test_case_t* testCase)
 {
     if (gInternalNbpSchedulerRunEnabled != 1) {
@@ -3250,6 +3252,8 @@ void internal_nbp_run_test_case(nbp_test_case_t* testCase)
     }
 
     testCase->testCaseInstance->testCaseDetails->function(testCase);
+
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&gInternalNbpNumberOfRanTestCases, 1);
 }
 
 void internal_nbp_run_test_case_instance(
@@ -3410,7 +3414,7 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 
 #endif // end if NBP_MT_SUPPORT
 
-#include <stdio.h>
+extern unsigned int gInternalNbpNumberOfTestCases;
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
@@ -3469,6 +3473,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         NBP_EXIT(ec_out_of_memory);
         return NBP_NULLPTR;
     }
+
+    gInternalNbpNumberOfTestCases += numberOfRuns;
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;
