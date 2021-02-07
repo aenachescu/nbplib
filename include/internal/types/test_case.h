@@ -121,6 +121,7 @@ struct nbp_test_case_instance_t
 
     struct nbp_module_t* module;
     struct nbp_test_suite_t* testSuite;
+    unsigned int depth;
 
     nbp_test_case_setup_details_t* setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;

@@ -885,6 +885,7 @@ struct nbp_test_case_instance_t
 
     struct nbp_module_t* module;
     struct nbp_test_suite_t* testSuite;
+    unsigned int depth;
 
     nbp_test_case_setup_details_t* setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;
@@ -3485,6 +3486,7 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->state           = tcis_ready;
     testCaseInstance->module          = parentModule;
     testCaseInstance->testSuite       = parentTestSuite;
+    testCaseInstance->depth           = 0;
     testCaseInstance->setupDetails    = testCaseDetails->setupDetails;
     testCaseInstance->teardownDetails = testCaseDetails->teardownDetails;
     testCaseInstance->runs            = runs;
@@ -3493,6 +3495,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->prev            = NBP_NULLPTR;
 
     if (parentModule != NBP_NULLPTR) {
+        testCaseInstance->depth = parentModule->moduleInstance->depth + 1;
+
         if (parentModule->firstTestCaseInstance == NBP_NULLPTR) {
             parentModule->firstTestCaseInstance = testCaseInstance;
             parentModule->lastTestCaseInstance  = testCaseInstance;
@@ -3504,6 +3508,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     }
 
     if (parentTestSuite != NBP_NULLPTR) {
+        testCaseInstance->depth = parentTestSuite->testSuiteInstance->depth + 1;
+
         if (parentTestSuite->firstTestCaseInstance == NBP_NULLPTR) {
             parentTestSuite->firstTestCaseInstance = testCaseInstance;
             parentTestSuite->lastTestCaseInstance  = testCaseInstance;
