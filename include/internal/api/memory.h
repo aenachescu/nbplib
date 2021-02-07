@@ -28,6 +28,8 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_MEMORY
 #define _H_NBP_INTERNAL_API_MEMORY
 
+#include "../types/memory.h"
+
 /**
  * TODO: add docs
  */
