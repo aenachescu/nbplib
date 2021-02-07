@@ -32,6 +32,7 @@ SOFTWARE.
 #include "../api/exit.h"
 #include "../api/memory.h"
 #include "../build_configuration.h"
+#include "../details/module.h"
 #include "../details/printer.h"
 #include "../details/printer_notifier.h"
 #include "../details/scheduler.h"
@@ -42,7 +43,7 @@ SOFTWARE.
 #include "../types/scheduler.h"
 #include "../types/sync.h"
 
-extern nbp_module_t* gInternalNbpMainModule;
+extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
 INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
 
@@ -85,13 +86,23 @@ static int internal_nbp_command_run_all()
     if (gInternalNbpSchedulerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
         NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
         NBP_EXIT(ec_invalid_scheduler_interface);
+        return ec_invalid_scheduler_interface;
     }
     if (gInternalNbpSchedulerInterface->runCbk == NBP_NULLPTR) {
         NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
         NBP_EXIT(ec_invalid_scheduler_interface);
+        return ec_invalid_scheduler_interface;
     }
 
-    // TODO: instantiate the main module
+    nbp_module_instance_t* mainModuleInstance = internal_nbp_instantiate_module(
+        gInternalNbpMainModuleDetails,
+        NBP_NULLPTR,
+        1,
+        NBP_NULLPTR);
+
+    if (mainModuleInstance == NBP_NULLPTR) {
+        return ec_out_of_memory;
+    }
 
     // TODO: send some stats to printers about instances
 
@@ -102,6 +113,7 @@ static int internal_nbp_command_run_all()
     if (numberOfRunTestsCases != gInternalNbpNumberOfTestCases) {
         NBP_REPORT_ERROR(ec_not_all_tests_were_run);
         NBP_EXIT(ec_not_all_tests_were_run);
+        return ec_not_all_tests_were_run;
     }
 
     // TODO: send some stats to printers about asserts, test cases etc
@@ -110,6 +122,8 @@ static int internal_nbp_command_run_all()
     internal_nbp_notify_printer_uninit();
 
     // TODO: return error if main module state is not passed
+
+    // TODO: free data!!!
 
     return (int) ec_success;
 }
