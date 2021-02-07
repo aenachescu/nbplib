@@ -3457,6 +3457,12 @@ NBP_PRINTER(
         .instantiateModuleCompletedCbk    = NBP_NULLPTR,                       \
     }
 
+/**
+ * TODO: add docs
+ */
+#define NBP_SCHEDULER_RUN_TEST_CASE_INSTANCE(testCaseInstance)                 \
+    internal_nbp_run_test_case_instance(testCaseInstance)
+
 #define INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GSC##__VA_ARGS__))     \
     (GSCF_, GSC##__VA_ARGS__)
