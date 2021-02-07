@@ -1586,6 +1586,9 @@ void internal_nbp_notify_printer_module_instance_completed(
 #define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
     &gInternalNbpSchedulerInterface##name
 
+void internal_nbp_run_test_case_instance(
+    nbp_test_case_instance_t* testCaseInstance);
+
 void internal_nbp_notify_scheduler_init();
 
 void internal_nbp_notify_scheduler_uninit();
@@ -3078,6 +3081,38 @@ void internal_nbp_notify_printer_module_instance_completed(
 }
 
 #undef INTERNAL_NBP_CALLBACK_IS_SET
+
+extern int gInternalNbpSchedulerRunEnabled;
+
+void internal_nbp_run_test_case(nbp_test_case_t* testCase)
+{
+    if (gInternalNbpSchedulerRunEnabled != 1) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_scheduler_run_is_disabled,
+            "a test case can be run only from scheduler's run callback");
+        NBP_EXIT(ec_scheduler_run_is_disabled);
+        return;
+    }
+
+    testCase->testCaseInstance->testCaseDetails->function(testCase);
+}
+
+void internal_nbp_run_test_case_instance(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    if (gInternalNbpSchedulerRunEnabled != 1) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_scheduler_run_is_disabled,
+            "a test case instance can be run only from scheduler's run "
+            "callback");
+        NBP_EXIT(ec_scheduler_run_is_disabled);
+        return;
+    }
+
+    for (unsigned int i = 0; i < testCaseInstance->numberOfRuns; i++) {
+        internal_nbp_run_test_case(&testCaseInstance->runs[i]);
+    }
+}
 
 extern nbp_scheduler_interface_t* gInternalNbpSchedulerInterface;
 
