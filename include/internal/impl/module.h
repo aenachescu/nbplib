@@ -127,7 +127,12 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        moduleInstance->moduleDetails->function(&moduleInstance->runs[i]);
+        moduleInstance->moduleDetails->function(
+            &moduleInstance->runs[i],
+            NBP_NULLPTR,
+            &moduleInstance->runs[i],
+            &moduleInstance->runs[i],
+            &moduleInstance->runs[i]);
     }
 
     internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);

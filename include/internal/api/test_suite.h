@@ -77,7 +77,10 @@ SOFTWARE.
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
-    void nbp_test_suite_function_##func(nbp_test_suite_t* nbpParamTestSuite);  \
+    void nbp_test_suite_function_##func(                                       \
+        nbp_test_suite_t* nbpParamTestSuite,                                   \
+        nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
+        nbp_module_t* nbpParamTciParentModule);                                \
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -90,7 +93,10 @@ SOFTWARE.
         .teardownDetails = NBP_NULLPTR,                                        \
     };                                                                         \
     void nbp_test_suite_function_##func(                                       \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
+            nbpParamTciParentTestSuite,                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule)
 
 /**
  * TODO: add docs

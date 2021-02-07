@@ -925,7 +925,9 @@ typedef void (*nbp_test_suite_config_pfn_t)(
 );
 
 typedef void (*nbp_test_suite_pfn_t)(
-    struct nbp_test_suite_t* /* nbpParamTestSuite */
+    struct nbp_test_suite_t* /* nbpParamTestSuite */,
+    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
+    struct nbp_module_t* /*nbpParamTciParentModule */
 );
 
 enum nbp_test_suite_instance_state_e
@@ -1032,10 +1034,16 @@ typedef void (*nbp_module_teardown_pfn_t)(
 );
 
 typedef void (*nbp_mdoule_config_pfn_t)(
-    struct nbp_module_details_t* /* module */
+    struct nbp_module_details_t* /* moduleDetails */
 );
 
-typedef void (*nbp_module_pfn_t)(struct nbp_module_t* /* nbpParamModule*/);
+typedef void (*nbp_module_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule*/,
+    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
+    struct nbp_module_t* /* nbpParamTciParentModule */,
+    struct nbp_module_t* /* nbpParamTsiParentModule */,
+    struct nbp_module_t* /* nbpParamMiParentModule */
+);
 
 enum nbp_module_instance_state_e
 {
@@ -1834,7 +1842,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         }                                                                      \
         INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)          \
     }                                                                          \
-    void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
+    void nbp_module_function_##func(                                           \
+        nbp_module_t* nbpParamModule,                                          \
+        nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
+        nbp_module_t* nbpParamTciParentModule,                                 \
+        nbp_module_t* nbpParamTsiParentModule,                                 \
+        nbp_module_t* nbpParamMiParentModule);                                 \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -1847,7 +1860,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         .teardownDetails = NBP_NULLPTR,                                        \
     };                                                                         \
     void nbp_module_function_##func(                                           \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
+            nbpParamTciParentTestSuite,                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
 
 /**
  * TODO: add docs
@@ -1923,7 +1941,7 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     NBP_INCLUDE_MODULE(func);                                                  \
     internal_nbp_instantiate_module(                                           \
         NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
-        NBP_THIS_MODULE,                                                       \
+        nbpParamMiParentModule,                                                \
         1,                                                                     \
         NBP_NULLPTR)
 
@@ -2307,7 +2325,10 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
-    void nbp_test_suite_function_##func(nbp_test_suite_t* nbpParamTestSuite);  \
+    void nbp_test_suite_function_##func(                                       \
+        nbp_test_suite_t* nbpParamTestSuite,                                   \
+        nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
+        nbp_module_t* nbpParamTciParentModule);                                \
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -2320,7 +2341,10 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         .teardownDetails = NBP_NULLPTR,                                        \
     };                                                                         \
     void nbp_test_suite_function_##func(                                       \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
+            nbpParamTciParentTestSuite,                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule)
 
 /**
  * TODO: add docs
@@ -2551,8 +2575,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     NBP_INCLUDE_TEST_CASE(func);                                               \
     internal_nbp_instantiate_test_case(                                        \
         NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
-        NBP_THIS_MODULE,                                                       \
-        NBP_NULLPTR,                                                           \
+        nbpParamTciParentModule,                                               \
+        nbpParamTciParentTestSuite,                                            \
         1,                                                                     \
         NBP_NULLPTR)
 
@@ -2595,7 +2619,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         }                                                                      \
         INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)     \
     }                                                                          \
-    void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
+    void nbp_module_function_##func(                                           \
+        nbp_module_t* nbpParamModule,                                          \
+        nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
+        nbp_module_t* nbpParamTciParentModule,                                 \
+        nbp_module_t* nbpParamTsiParentModule,                                 \
+        nbp_module_t* nbpParamMiParentModule);                                 \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -2610,7 +2639,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_module_details_t* gInternalNbpMainModuleDetails =                      \
         &gInternalNbpModuleDetails##func;                                      \
     void nbp_module_function_##func(                                           \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
+            nbpParamTciParentTestSuite,                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
 
 #define INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(...)                 \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMMC##__VA_ARGS__))    \
@@ -2844,7 +2878,12 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        moduleInstance->moduleDetails->function(&moduleInstance->runs[i]);
+        moduleInstance->moduleDetails->function(
+            &moduleInstance->runs[i],
+            NBP_NULLPTR,
+            &moduleInstance->runs[i],
+            &moduleInstance->runs[i],
+            &moduleInstance->runs[i]);
     }
 
     internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);

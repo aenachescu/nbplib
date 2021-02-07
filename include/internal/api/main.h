@@ -47,7 +47,12 @@ SOFTWARE.
         }                                                                      \
         INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)     \
     }                                                                          \
-    void nbp_module_function_##func(nbp_module_t* nbpParamModule);             \
+    void nbp_module_function_##func(                                           \
+        nbp_module_t* nbpParamModule,                                          \
+        nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
+        nbp_module_t* nbpParamTciParentModule,                                 \
+        nbp_module_t* nbpParamTsiParentModule,                                 \
+        nbp_module_t* nbpParamMiParentModule);                                 \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -62,7 +67,12 @@ SOFTWARE.
     nbp_module_details_t* gInternalNbpMainModuleDetails =                      \
         &gInternalNbpModuleDetails##func;                                      \
     void nbp_module_function_##func(                                           \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
+            nbpParamTciParentTestSuite,                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
 
 #define INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(...)                 \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMMC##__VA_ARGS__))    \

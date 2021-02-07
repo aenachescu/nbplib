@@ -43,10 +43,16 @@ typedef void (*nbp_module_teardown_pfn_t)(
 );
 
 typedef void (*nbp_mdoule_config_pfn_t)(
-    struct nbp_module_details_t* /* module */
+    struct nbp_module_details_t* /* moduleDetails */
 );
 
-typedef void (*nbp_module_pfn_t)(struct nbp_module_t* /* nbpParamModule*/);
+typedef void (*nbp_module_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule*/,
+    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
+    struct nbp_module_t* /* nbpParamTciParentModule */,
+    struct nbp_module_t* /* nbpParamTsiParentModule */,
+    struct nbp_module_t* /* nbpParamMiParentModule */
+);
 
 enum nbp_module_instance_state_e
 {

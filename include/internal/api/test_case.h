@@ -171,8 +171,8 @@ SOFTWARE.
     NBP_INCLUDE_TEST_CASE(func);                                               \
     internal_nbp_instantiate_test_case(                                        \
         NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
-        NBP_THIS_MODULE,                                                       \
-        NBP_NULLPTR,                                                           \
+        nbpParamTciParentModule,                                               \
+        nbpParamTciParentTestSuite,                                            \
         1,                                                                     \
         NBP_NULLPTR)
 
