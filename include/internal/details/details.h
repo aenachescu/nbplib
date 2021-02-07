@@ -33,5 +33,6 @@ SOFTWARE.
 #include "scheduler.h"
 #include "scheduler_notifier.h"
 #include "sync.h"
+#include "test_case.h"
 
 #endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS

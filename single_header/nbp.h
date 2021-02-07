@@ -1633,6 +1633,13 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 #endif // end if NBP_MT_SUPPORT
 
+nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
+    nbp_test_case_details_t* testCaseDetails,
+    nbp_module_t* parentModule,
+    nbp_test_suite_t* parentTestSuite,
+    unsigned int numberOfRuns,
+    void* context);
+
 /**
  * TODO: add docs
  */
@@ -2240,158 +2247,6 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_SETUP(func)                                              \
-    void nbp_test_case_setup_function_##func(                                  \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func = {   \
-        .functionName = #func,                                                 \
-        .file         = NBP_SOURCE_FILE,                                       \
-        .line         = NBP_SOURCE_LINE,                                       \
-        .function     = nbp_test_case_setup_function_##func,                   \
-    };                                                                         \
-    void nbp_test_case_setup_function_##func(                                  \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_TEARDOWN(func)                                           \
-    void nbp_test_case_teardown_function_##func(                               \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_teardown_details_t                                           \
-        gInternalNbpTestCaseTeardownDetails##func = {                          \
-            .functionName = #func,                                             \
-            .file         = NBP_SOURCE_FILE,                                   \
-            .line         = NBP_SOURCE_LINE,                                   \
-            .function     = nbp_test_case_teardown_function_##func,            \
-    };                                                                         \
-    void nbp_test_case_teardown_function_##func(                               \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE(func, ...)                                               \
-    void nbp_test_case_config_function_##func(                                 \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_details_t* testCaseDetails)   \
-    {                                                                          \
-        if (testCaseDetails->isConfigured == 1) {                              \
-            return;                                                            \
-        } else {                                                               \
-            testCaseDetails->isConfigured = 1;                                 \
-        }                                                                      \
-        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
-    }                                                                          \
-    void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
-    nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_test_case_config_function_##func,               \
-        .function        = nbp_test_case_function_##func,                      \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
-    };                                                                         \
-    void nbp_test_case_function_##func(                                        \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_NAME(name)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_FIXTURES(setup, teardown)
-
-/**
- * TODO: add docs
- */
-#define NBP_INCLUDE_TEST_CASE_SETUP(func)                                      \
-    extern nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_GET_POINTER_TO_TEST_CASE_SETUP(func)                               \
-    &gInternalNbpTestCaseSetupDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_INCLUDE_TEST_CASE_TEARDOWN(func)                                   \
-    extern nbp_test_case_teardown_details_t                                    \
-        gInternalNbpTestCaseTeardownDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func)                            \
-    &gInternalNbpTestCaseTeardownDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_INCLUDE_TEST_CASE(func)                                            \
-    extern nbp_test_case_details_t gInternalNbpTestCaseDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
-    &gInternalNbpTestCaseDetails##func
-
-/**
- * TODO: add docs
- */
-#define NBP_THIS_TEST_CASE nbpParamTestCase
-
-/**
- * TODO: add docs
- */
-#define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
-    testCaseInstance->testCaseDetails->name
-
-/**
- * TODO: add docs
- */
-#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
-    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
-
-#define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
-    (GTCCF_, GTCC##__VA_ARGS__)
-
-// This macro is generated when NBP_TEST_CASE macro is used without parameters
-#define INTERNAL_NBP_GTCCF_
-
-#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
-    testCaseDetails->name = newName;
-
-#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
-    NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
-    testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
-
-#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
-    NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
-    testCaseDetails->teardownDetails =                                         \
-        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
-
-#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
-    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
-    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
-
-/**
- * TODO: add docs
- */
 #define NBP_TEST_SUITE_SETUP(func)                                             \
     void nbp_test_suite_setup_function_##func(                                 \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
@@ -2541,6 +2396,170 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_SETUP(func)                                              \
+    void nbp_test_case_setup_function_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
+    nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func = {   \
+        .functionName = #func,                                                 \
+        .file         = NBP_SOURCE_FILE,                                       \
+        .line         = NBP_SOURCE_LINE,                                       \
+        .function     = nbp_test_case_setup_function_##func,                   \
+    };                                                                         \
+    void nbp_test_case_setup_function_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_TEARDOWN(func)                                           \
+    void nbp_test_case_teardown_function_##func(                               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
+    nbp_test_case_teardown_details_t                                           \
+        gInternalNbpTestCaseTeardownDetails##func = {                          \
+            .functionName = #func,                                             \
+            .file         = NBP_SOURCE_FILE,                                   \
+            .line         = NBP_SOURCE_LINE,                                   \
+            .function     = nbp_test_case_teardown_function_##func,            \
+    };                                                                         \
+    void nbp_test_case_teardown_function_##func(                               \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE(func, ...)                                               \
+    void nbp_test_case_config_function_##func(                                 \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_details_t* testCaseDetails)   \
+    {                                                                          \
+        if (testCaseDetails->isConfigured == 1) {                              \
+            return;                                                            \
+        } else {                                                               \
+            testCaseDetails->isConfigured = 1;                                 \
+        }                                                                      \
+        INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
+    }                                                                          \
+    void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
+    nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
+        .name            = #func,                                              \
+        .functionName    = #func,                                              \
+        .file            = NBP_SOURCE_FILE,                                    \
+        .line            = NBP_SOURCE_LINE,                                    \
+        .isConfigured    = 0,                                                  \
+        .configFunction  = nbp_test_case_config_function_##func,               \
+        .function        = nbp_test_case_function_##func,                      \
+        .setupDetails    = NBP_NULLPTR,                                        \
+        .teardownDetails = NBP_NULLPTR,                                        \
+    };                                                                         \
+    void nbp_test_case_function_##func(                                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_NAME(name)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_FIXTURES(setup, teardown)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_CASE_SETUP(func)                                      \
+    extern nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_CASE_SETUP(func)                               \
+    &gInternalNbpTestCaseSetupDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_CASE_TEARDOWN(func)                                   \
+    extern nbp_test_case_teardown_details_t                                    \
+        gInternalNbpTestCaseTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func)                            \
+    &gInternalNbpTestCaseTeardownDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INCLUDE_TEST_CASE(func)                                            \
+    extern nbp_test_case_details_t gInternalNbpTestCaseDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
+    &gInternalNbpTestCaseDetails##func
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE nbpParamTestCase
+
+/**
+ * TODO: add docs
+ */
+#define NBP_THIS_TEST_CASE_INSTANCE nbpParamTestCaseInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
+    testCaseInstance->testCaseDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
+    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
+    NBP_INCLUDE_TEST_CASE(func);                                               \
+    internal_nbp_instantiate_test_case(                                        \
+        NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
+        NBP_THIS_MODULE,                                                       \
+        NBP_NULLPTR,                                                           \
+        1,                                                                     \
+        NBP_NULLPTR)
+
+#define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
+    (GTCCF_, GTCC##__VA_ARGS__)
+
+// This macro is generated when NBP_TEST_CASE macro is used without parameters
+#define INTERNAL_NBP_GTCCF_
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
+    testCaseDetails->name = newName;
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
+    NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
+    testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
+    NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
+    testCaseDetails->teardownDetails =                                         \
+        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
+
+#define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
+    INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
 #ifdef NBP_LIBRARY_MAIN
 
@@ -3258,6 +3277,112 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 #endif // end if NBP_OS_LINUX
 
 #endif // end if NBP_MT_SUPPORT
+
+#include <stdio.h>
+
+nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
+    nbp_test_case_details_t* testCaseDetails,
+    nbp_module_t* parentModule,
+    nbp_test_suite_t* parentTestSuite,
+    unsigned int numberOfRuns,
+    void* context)
+{
+    if (numberOfRuns == 0) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_number_of_runs,
+            "the number of runs must be greater than 0");
+        NBP_EXIT(ec_invalid_number_of_runs);
+        return NBP_NULLPTR;
+    }
+
+    if (parentModule != NBP_NULLPTR && parentTestSuite != NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_parent,
+            "a test case instance must have one single parent");
+        NBP_EXIT(ec_invalid_parent);
+        return NBP_NULLPTR;
+    }
+
+    if (parentModule == NBP_NULLPTR && parentTestSuite == NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_parent,
+            "test case instance has no parent");
+        NBP_EXIT(ec_invalid_parent);
+        return NBP_NULLPTR;
+    }
+
+    nbp_test_case_instance_t* testCaseInstance =
+        (nbp_test_case_instance_t*) NBP_MEMORY_ALLOC_TAG(
+            sizeof(nbp_test_case_instance_t),
+            mt_test_case_instance);
+
+    if (testCaseInstance == NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate test case instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    nbp_test_case_t* runs = (nbp_test_case_t*) NBP_MEMORY_ALLOC_TAG(
+        numberOfRuns * sizeof(nbp_test_case_t),
+        mt_test_case);
+
+    if (runs == NBP_NULLPTR) {
+        NBP_MEMORY_FREE_TAG(testCaseInstance, mt_test_case_instance);
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate the runs for test case instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    for (unsigned int i = 0; i < numberOfRuns; i++) {
+        runs[i].testCaseInstance = testCaseInstance;
+        runs[i].state            = tcs_ready;
+    }
+
+    testCaseInstance->testCaseDetails = testCaseDetails;
+    testCaseInstance->state           = tcis_ready;
+    testCaseInstance->module          = parentModule;
+    testCaseInstance->testSuite       = parentTestSuite;
+    testCaseInstance->setupDetails    = testCaseDetails->setupDetails;
+    testCaseInstance->teardownDetails = testCaseDetails->teardownDetails;
+    testCaseInstance->runs            = runs;
+    testCaseInstance->numberOfRuns    = numberOfRuns;
+    testCaseInstance->next            = NBP_NULLPTR;
+    testCaseInstance->prev            = NBP_NULLPTR;
+
+    if (parentModule != NBP_NULLPTR) {
+        if (parentModule->firstTestCaseInstance == NBP_NULLPTR) {
+            parentModule->firstTestCaseInstance = testCaseInstance;
+            parentModule->lastTestCaseInstance  = testCaseInstance;
+        } else {
+            testCaseInstance->prev = parentModule->lastTestCaseInstance;
+            parentModule->lastTestCaseInstance->next = testCaseInstance;
+            parentModule->lastTestCaseInstance       = testCaseInstance;
+        }
+    }
+
+    if (parentTestSuite != NBP_NULLPTR) {
+        if (parentTestSuite->firstTestCaseInstance == NBP_NULLPTR) {
+            parentTestSuite->firstTestCaseInstance = testCaseInstance;
+            parentTestSuite->lastTestCaseInstance  = testCaseInstance;
+        } else {
+            testCaseInstance->prev = parentTestSuite->lastTestCaseInstance;
+            parentTestSuite->lastTestCaseInstance->next = testCaseInstance;
+            parentTestSuite->lastTestCaseInstance       = testCaseInstance;
+        }
+    }
+
+    internal_nbp_notify_printer_instantiate_test_case(testCaseInstance);
+    internal_nbp_notify_scheduler_instantiate_test_case(
+        testCaseInstance,
+        context);
+
+    return testCaseInstance;
+}
 
 #endif // end if NBP_LIBRARY_MAIN
 

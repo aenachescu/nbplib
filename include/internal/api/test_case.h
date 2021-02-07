@@ -28,9 +28,12 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_TEST_CASE
 #define _H_NBP_INTERNAL_API_TEST_CASE
 
+#include "../details/test_case.h"
 #include "../types/test_case.h"
 #include "../utils/utils.h"
 #include "memory.h"
+#include "module.h"
+#include "test_suite.h"
 
 /**
  * TODO: add docs
@@ -160,6 +163,18 @@ SOFTWARE.
  */
 #define NBP_GET_TEST_CASE_NAME(testCase)                                       \
     NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
+    NBP_INCLUDE_TEST_CASE(func);                                               \
+    internal_nbp_instantiate_test_case(                                        \
+        NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
+        NBP_THIS_MODULE,                                                       \
+        NBP_NULLPTR,                                                           \
+        1,                                                                     \
+        NBP_NULLPTR)
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
