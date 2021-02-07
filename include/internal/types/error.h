@@ -51,6 +51,10 @@ enum nbp_error_code_e
     ec_invalid_command_line        = 4,
     ec_not_all_tests_were_run      = 5,
     ec_invalid_scheduler_interface = 6,
+    ec_invalid_number_of_runs      = 7,
+    ec_scheduler_run_is_disabled   = 8,
+    ec_unexpected_state            = 9,
+    ec_invalid_parent              = 10,
 };
 typedef enum nbp_error_code_e nbp_error_code_e;
 
