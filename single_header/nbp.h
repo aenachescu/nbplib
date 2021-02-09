@@ -1655,6 +1655,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     unsigned int numberOfRuns,
     void* context);
 
+nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
+    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context);
+
 /**
  * TODO: add docs
  */
@@ -2415,6 +2421,17 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
  */
 #define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
     NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
+    NBP_INCLUDE_TEST_SUITE(func);                                              \
+    internal_nbp_instantiate_test_suite(                                       \
+        NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
+        nbpParamTsiParentModule,                                               \
+        1,                                                                     \
+        NBP_NULLPTR)
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \
@@ -3565,6 +3582,105 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         context);
 
     return testCaseInstance;
+}
+
+nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
+    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context)
+{
+    if (numberOfRuns == 0) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_number_of_runs,
+            "the number of runs must be greater than 0");
+        NBP_EXIT(ec_invalid_number_of_runs);
+        return NBP_NULLPTR;
+    }
+
+    if (parentModule == NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_parent,
+            "test suite instance has no parent");
+        NBP_EXIT(ec_invalid_parent);
+        return NBP_NULLPTR;
+    }
+
+    nbp_test_suite_instance_t* testSuiteInstance =
+        (nbp_test_suite_instance_t*) NBP_MEMORY_ALLOC_TAG(
+            sizeof(nbp_test_suite_instance_t),
+            mt_test_suite_instance);
+
+    if (testSuiteInstance == NBP_NULLPTR) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate test suite instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    nbp_test_suite_t* runs = (nbp_test_suite_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_test_suite_t),
+        mt_test_suite);
+
+    if (runs == NBP_NULLPTR) {
+        NBP_MEMORY_FREE_TAG(testSuiteInstance, mt_test_suite);
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_out_of_memory,
+            "failed to allocate the runs for test suite instance");
+        NBP_EXIT(ec_out_of_memory);
+        return NBP_NULLPTR;
+    }
+
+    for (unsigned int i = 0; i < numberOfRuns; i++) {
+        runs[i].testSuiteInstance     = testSuiteInstance;
+        runs[i].state                 = tss_ready;
+        runs[i].firstTestCaseInstance = NBP_NULLPTR;
+        runs[i].lastTestCaseInstance  = NBP_NULLPTR;
+    }
+
+    testSuiteInstance->testSuiteDetails = testSuiteDetails;
+    testSuiteInstance->state            = tsis_ready;
+    testSuiteInstance->module           = parentModule;
+    testSuiteInstance->setupDetails     = testSuiteDetails->setupDetails;
+    testSuiteInstance->teardownDetails  = testSuiteDetails->teardownDetails;
+    testSuiteInstance->runs             = runs;
+    testSuiteInstance->numberOfRuns     = numberOfRuns;
+    testSuiteInstance->next             = NBP_NULLPTR;
+    testSuiteInstance->prev             = NBP_NULLPTR;
+    testSuiteInstance->depth = parentModule->moduleInstance->depth + 1;
+
+    if (parentModule->firstTestSuiteInstance == NBP_NULLPTR) {
+        parentModule->firstTestSuiteInstance = testSuiteInstance;
+        parentModule->lastTestSuiteInstance  = testSuiteInstance;
+    } else {
+        testSuiteInstance->prev = parentModule->lastTestSuiteInstance;
+        parentModule->lastTestSuiteInstance->next = testSuiteInstance;
+        parentModule->lastTestSuiteInstance       = testSuiteInstance;
+    }
+
+    internal_nbp_notify_printer_instantiate_test_suite_started(
+        testSuiteInstance);
+
+    internal_nbp_notify_scheduler_instantiate_test_suite_started(
+        testSuiteInstance,
+        context);
+
+    for (unsigned int i = 0; i < numberOfRuns; i++) {
+        testSuiteInstance->testSuiteDetails->function(
+            &testSuiteInstance->runs[i],
+            &testSuiteInstance->runs[i],
+            NBP_NULLPTR);
+    }
+
+    internal_nbp_notify_printer_instantiate_test_suite_completed(
+        testSuiteInstance);
+
+    internal_nbp_notify_scheduler_instantiate_test_suite_completed(
+        testSuiteInstance);
+
+    return testSuiteInstance;
 }
 
 #endif // end if NBP_LIBRARY_MAIN

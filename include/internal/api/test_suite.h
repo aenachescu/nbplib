@@ -28,6 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_TEST_SUITE
 #define _H_NBP_INTERNAL_API_TEST_SUITE
 
+#include "../details/test_suite.h"
 #include "../types/test_suite.h"
 #include "../utils/utils.h"
 #include "memory.h"
@@ -167,6 +168,17 @@ SOFTWARE.
  */
 #define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
     NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
+    NBP_INCLUDE_TEST_SUITE(func);                                              \
+    internal_nbp_instantiate_test_suite(                                       \
+        NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
+        nbpParamTsiParentModule,                                               \
+        1,                                                                     \
+        NBP_NULLPTR)
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \

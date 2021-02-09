@@ -25,16 +25,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_DETAILS
-#define _H_NBP_INTERNAL_DETAILS_DETAILS
+#ifndef _H_NBP_INTERNAL_DETAILS_TEST_SUITE
+#define _H_NBP_INTERNAL_DETAILS_TEST_SUITE
 
-#include "module.h"
-#include "printer.h"
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
-#include "test_case.h"
-#include "test_suite.h"
+#include "../types/test_suite.h"
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS
+nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
+    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_module_t* parentModule,
+    unsigned int numberOfRuns,
+    void* context);
+
+#endif // end if _H_NBP_INTERNAL_DETAILS_TEST_SUITE

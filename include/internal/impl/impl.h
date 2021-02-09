@@ -37,6 +37,7 @@ SOFTWARE.
 #include "scheduler_notifier.h"
 #include "sync.h"
 #include "test_case.h"
+#include "test_suite.h"
 
 #endif // end if NBP_LIBRARY_MAIN
 
