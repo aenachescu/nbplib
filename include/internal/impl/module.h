@@ -60,6 +60,28 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         return NBP_NULLPTR;
     }
 
+    if (parentModule != NBP_NULLPTR) {
+        if (parentModule->moduleInstance->moduleDetails == moduleDetails) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_invalid_parent,
+                "a module cannot self instantiate");
+            NBP_EXIT(ec_invalid_parent);
+            return NBP_NULLPTR;
+        }
+
+        nbp_module_t* p = parentModule->moduleInstance->parent;
+        while (p != NBP_NULLPTR) {
+            if (p->moduleInstance->moduleDetails == moduleDetails) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_invalid_parent,
+                    "a module cannot instantiate a parent module");
+                NBP_EXIT(ec_invalid_parent);
+                return NBP_NULLPTR;
+            }
+            p = p->moduleInstance->parent;
+        }
+    }
+
     nbp_module_instance_t* moduleInstance = (nbp_module_instance_t*)
         NBP_MEMORY_ALLOC_TAG(sizeof(nbp_module_instance_t), mt_module_instance);
 
