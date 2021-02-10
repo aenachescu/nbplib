@@ -41,6 +41,7 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,
     nbp_test_suite_t* parentTestSuite,
+    int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
@@ -102,17 +103,18 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         runs[i].state            = tcs_ready;
     }
 
-    testCaseInstance->testCaseDetails = testCaseDetails;
-    testCaseInstance->state           = tcis_ready;
-    testCaseInstance->module          = parentModule;
-    testCaseInstance->testSuite       = parentTestSuite;
-    testCaseInstance->depth           = 0;
-    testCaseInstance->setupDetails    = testCaseDetails->setupDetails;
-    testCaseInstance->teardownDetails = testCaseDetails->teardownDetails;
-    testCaseInstance->runs            = runs;
-    testCaseInstance->numberOfRuns    = numberOfRuns;
-    testCaseInstance->next            = NBP_NULLPTR;
-    testCaseInstance->prev            = NBP_NULLPTR;
+    testCaseInstance->testCaseDetails   = testCaseDetails;
+    testCaseInstance->state             = tcis_ready;
+    testCaseInstance->module            = parentModule;
+    testCaseInstance->testSuite         = parentTestSuite;
+    testCaseInstance->depth             = 0;
+    testCaseInstance->instantiationLine = instantiationLine;
+    testCaseInstance->setupDetails      = testCaseDetails->setupDetails;
+    testCaseInstance->teardownDetails   = testCaseDetails->teardownDetails;
+    testCaseInstance->runs              = runs;
+    testCaseInstance->numberOfRuns      = numberOfRuns;
+    testCaseInstance->next              = NBP_NULLPTR;
+    testCaseInstance->prev              = NBP_NULLPTR;
 
     if (parentModule != NBP_NULLPTR) {
         testCaseInstance->depth = parentModule->moduleInstance->depth + 1;

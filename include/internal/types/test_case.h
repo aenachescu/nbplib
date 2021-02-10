@@ -123,6 +123,8 @@ struct nbp_test_case_instance_t
     struct nbp_test_suite_t* testSuite;
     unsigned int depth;
 
+    int instantiationLine;
+
     nbp_test_case_setup_details_t* setupDetails;
     nbp_test_case_teardown_details_t* teardownDetails;
 

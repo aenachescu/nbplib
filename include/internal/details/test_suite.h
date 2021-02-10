@@ -33,6 +33,7 @@ SOFTWARE.
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
     nbp_module_t* parentModule,
+    int instantiationLine,
     unsigned int numberOfRuns,
     void* context);
 

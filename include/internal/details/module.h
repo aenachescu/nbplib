@@ -33,6 +33,7 @@ SOFTWARE.
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
+    int instantiationLine,
     unsigned int numberOfRuns,
     void* context);
 

@@ -123,6 +123,8 @@ struct nbp_module_instance_t
     struct nbp_module_t* parent;
     unsigned int depth;
 
+    int instantiationLine;
+
     nbp_module_setup_details_t* setupDetails;
     nbp_module_teardown_details_t* teardownDetails;
 

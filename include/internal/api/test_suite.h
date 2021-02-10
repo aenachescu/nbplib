@@ -177,6 +177,7 @@ SOFTWARE.
     internal_nbp_instantiate_test_suite(                                       \
         NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
         nbpParamTsiParentModule,                                               \
+        NBP_SOURCE_LINE,                                                       \
         1,                                                                     \
         NBP_NULLPTR)
 

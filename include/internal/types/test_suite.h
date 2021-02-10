@@ -124,6 +124,8 @@ struct nbp_test_suite_instance_t
     struct nbp_module_t* module;
     unsigned int depth;
 
+    int instantiationLine;
+
     nbp_test_suite_setup_details_t* setupDetails;
     nbp_test_suite_teardown_details_t* teardownDetails;
 

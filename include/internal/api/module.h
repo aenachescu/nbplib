@@ -177,6 +177,7 @@ SOFTWARE.
     internal_nbp_instantiate_module(                                           \
         NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
         nbpParamMiParentModule,                                                \
+        NBP_SOURCE_LINE,                                                       \
         1,                                                                     \
         NBP_NULLPTR)
 

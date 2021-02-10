@@ -40,6 +40,7 @@ extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
+    int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
@@ -118,16 +119,17 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         runs[i].lastModuleInstance     = NBP_NULLPTR;
     }
 
-    moduleInstance->moduleDetails   = moduleDetails;
-    moduleInstance->state           = mis_ready;
-    moduleInstance->parent          = parentModule;
-    moduleInstance->depth           = 0;
-    moduleInstance->setupDetails    = moduleDetails->setupDetails;
-    moduleInstance->teardownDetails = moduleDetails->teardownDetails;
-    moduleInstance->runs            = runs;
-    moduleInstance->numberOfRuns    = numberOfRuns;
-    moduleInstance->next            = NBP_NULLPTR;
-    moduleInstance->prev            = NBP_NULLPTR;
+    moduleInstance->moduleDetails     = moduleDetails;
+    moduleInstance->state             = mis_ready;
+    moduleInstance->parent            = parentModule;
+    moduleInstance->depth             = 0;
+    moduleInstance->instantiationLine = instantiationLine;
+    moduleInstance->setupDetails      = moduleDetails->setupDetails;
+    moduleInstance->teardownDetails   = moduleDetails->teardownDetails;
+    moduleInstance->runs              = runs;
+    moduleInstance->numberOfRuns      = numberOfRuns;
+    moduleInstance->next              = NBP_NULLPTR;
+    moduleInstance->prev              = NBP_NULLPTR;
 
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;

@@ -173,6 +173,7 @@ SOFTWARE.
         NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
         nbpParamTciParentModule,                                               \
         nbpParamTciParentTestSuite,                                            \
+        NBP_SOURCE_LINE,                                                       \
         1,                                                                     \
         NBP_NULLPTR)
 

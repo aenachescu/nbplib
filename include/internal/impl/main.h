@@ -97,6 +97,7 @@ static int internal_nbp_command_run_all()
     nbp_module_instance_t* mainModuleInstance = internal_nbp_instantiate_module(
         gInternalNbpMainModuleDetails,
         NBP_NULLPTR,
+        0,
         1,
         NBP_NULLPTR);
 

@@ -38,6 +38,7 @@ SOFTWARE.
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
     nbp_module_t* parentModule,
+    int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
@@ -91,15 +92,16 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         runs[i].lastTestCaseInstance  = NBP_NULLPTR;
     }
 
-    testSuiteInstance->testSuiteDetails = testSuiteDetails;
-    testSuiteInstance->state            = tsis_ready;
-    testSuiteInstance->module           = parentModule;
-    testSuiteInstance->setupDetails     = testSuiteDetails->setupDetails;
-    testSuiteInstance->teardownDetails  = testSuiteDetails->teardownDetails;
-    testSuiteInstance->runs             = runs;
-    testSuiteInstance->numberOfRuns     = numberOfRuns;
-    testSuiteInstance->next             = NBP_NULLPTR;
-    testSuiteInstance->prev             = NBP_NULLPTR;
+    testSuiteInstance->testSuiteDetails  = testSuiteDetails;
+    testSuiteInstance->state             = tsis_ready;
+    testSuiteInstance->module            = parentModule;
+    testSuiteInstance->instantiationLine = instantiationLine;
+    testSuiteInstance->setupDetails      = testSuiteDetails->setupDetails;
+    testSuiteInstance->teardownDetails   = testSuiteDetails->teardownDetails;
+    testSuiteInstance->runs              = runs;
+    testSuiteInstance->numberOfRuns      = numberOfRuns;
+    testSuiteInstance->next              = NBP_NULLPTR;
+    testSuiteInstance->prev              = NBP_NULLPTR;
     testSuiteInstance->depth = parentModule->moduleInstance->depth + 1;
 
     if (parentModule->firstTestSuiteInstance == NBP_NULLPTR) {
