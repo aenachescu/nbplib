@@ -69,7 +69,8 @@ macroNameExceptions = [
 ]
 
 functionNameExceptions = [
-    "nbp_printer_interface_config_function_nbpDefaultPrinter"
+    "nbp_printer_interface_config_function_nbpDefaultPrinter",
+    "nbp_scheduler_interface_config_function_nbpBasicScheduler",
 ]
 
 scriptPath = os.path.dirname(os.path.realpath(__file__))
