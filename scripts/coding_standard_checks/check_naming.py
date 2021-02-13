@@ -65,7 +65,14 @@ fieldValueExceptions = [
 ]
 
 macroNameExceptions = [
-    "NBP_PP_PARSE_PP_"
+    "INTERNAL_NBP_GSCF_",
+    "INTERNAL_NBP_SC_",
+    "INTERNAL_NBP_GPCF_",
+    "INTERNAL_NBP_PC_",
+    "INTERNAL_NBP_GMCF_",
+    "INTERNAL_NBP_GMMCF_",
+    "INTERNAL_NBP_GTSCF_",
+    "INTERNAL_NBP_GTCCF_",
 ]
 
 functionNameExceptions = [
