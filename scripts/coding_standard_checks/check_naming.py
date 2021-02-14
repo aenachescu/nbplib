@@ -81,6 +81,42 @@ functionNameExceptions = [
     "nbp_scheduler_interface_config_function_nbpBasicScheduler",
 ]
 
+globalVariableNameConfig = [
+    tuple((
+        "include/internal/schedulers/basic_scheduler.h",
+        [ "gInternalNbpBs" ],
+        [ "gInternalNbpSchedulerInterfacenbpBasicScheduler" ]
+    )),
+]
+
+structNameConfig = [
+    tuple((
+        "include/internal/schedulers/basic_scheduler.h",
+        [ "nbp_bs_" ]
+    )),
+]
+
+enumNameConfig = [
+    tuple((
+        "include/internal/schedulers/basic_scheduler.h",
+        [ "nbp_bs_" ]
+    )),
+]
+
+functionNameConfig = [
+    tuple((
+        "include/internal/schedulers/basic_scheduler.h",
+        [ "internal_nbp_bs_", "nbp_scheduler_callback_nbp_bs_" ]
+    )),
+]
+
+macroNameConfig = [
+    tuple((
+        "include/internal/schedulers/basic_scheduler.h",
+        [ "INTERNAL_NBP_BS_", "NBP_BS_" ]
+    )),
+]
+
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
@@ -204,6 +240,64 @@ def camelize_name(name, upperCaseFirstLetter=True):
 
     return res
 
+def get_global_variable_name_prefixes(filePath):
+    if is_test_file(filePath):
+        return [ "g" ]
+
+    for fp, p, _ in globalVariableNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "gInternalNbp" ]
+
+def get_global_variable_name_exceptions(filePath):
+    for fp, _, e in globalVariableNameConfig:
+        if filePath.endswith(fp):
+            return e
+
+    return []
+
+def get_struct_name_prefixes(filePath):
+    for fp, p in structNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "nbp_" ]
+
+def get_enum_name_prefixes(filePath):
+    for fp, p in enumNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "nbp_" ]
+
+def get_function_name_prefixes(filePath):
+    if is_test_file(filePath):
+        return [ "" ]
+
+    for fp, p in functionNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "nbp_", "internal_nbp_" ]
+
+def get_macro_name_prefixes(filePath):
+    if is_test_file(filePath):
+        return [ "" ]
+
+    for fp, p in macroNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "NBP_", "INTERNAL_NBP_" ]
+
+def starts_with_prefix(name, prefixes):
+    for p in prefixes:
+        if name.startswith(p):
+            return True, p
+
+    return False, ""
+
 def check_unnamed_struct(log, node, parentStructName, filePath):
     status = True
 
@@ -310,6 +404,7 @@ def check_structs(log, root, filePath):
 
     foundStructs = []
     status = True
+    prefixes = get_struct_name_prefixes(filePath)
 
     for child in root.get_children():
         if child.kind != clang.cindex.CursorKind.STRUCT_DECL:
@@ -326,10 +421,13 @@ def check_structs(log, root, filePath):
         expectedTypedefLine = 0
         fieldsStatus = True
 
-        if not structName.startswith("nbp_"):
+        hasPrefix, prefix = starts_with_prefix(structName, prefixes)
+
+        if not hasPrefix:
             log.error(
-                "Invalid struct name. The struct name should start with nbp_. "
+                "Invalid struct name. The struct name should start with %s. "
                 "Actual name = [%s]. File = [%s]. Line = %d",
+                prefixes,
                 structName,
                 filePath,
                 child.location.line
@@ -461,10 +559,7 @@ def check_global_variables(log, root, filePath):
     log.info("Checking global variables... [%s]", filePath)
 
     status = True
-    varNamePrefix = "gInternalNbp"
-
-    if is_test_file(filePath):
-        varNamePrefix = "g"
+    prefixes = get_global_variable_name_prefixes(filePath)
 
     for child in root.get_children():
         if child.kind != clang.cindex.CursorKind.VAR_DECL:
@@ -476,11 +571,15 @@ def check_global_variables(log, root, filePath):
         if is_auto_generated_global_variable(child.spelling):
             continue
 
-        if not child.spelling.startswith(varNamePrefix):
+        if child.spelling in get_global_variable_name_exceptions(filePath):
+            continue
+
+        hasPrefix, prefix = starts_with_prefix(child.spelling, prefixes)
+        if not hasPrefix:
             log.error(
                 "Invalid global variable name. The name should start with %s. "
                 "Name = [%s]. File = [%s]. Line = %d",
-                varNamePrefix,
+                prefixes,
                 child.spelling,
                 filePath,
                 child.location.line
@@ -488,14 +587,14 @@ def check_global_variables(log, root, filePath):
             status = False
             continue
 
-        varNameNoPrefix = child.spelling[len(varNamePrefix):]
+        varNameNoPrefix = child.spelling[len(prefix):]
         expectedVarName = camelize_name(varNameNoPrefix)
 
         if expectedVarName != varNameNoPrefix:
             log.error(
                 "Invalid global variable name. Expected = [%s%s]. "
                 "Actual = [%s]. File = [%s]. Line = %d",
-                varNamePrefix,
+                prefix,
                 expectedVarName,
                 child.spelling,
                 filePath,
@@ -712,6 +811,7 @@ def check_enums(log, root, filePath):
 
     status = True
     foundEnums = []
+    prefixes = get_enum_name_prefixes(filePath)
 
     for enum in root.get_children():
         if enum.kind != clang.cindex.CursorKind.ENUM_DECL:
@@ -722,10 +822,13 @@ def check_enums(log, root, filePath):
 
         enumName = enum.spelling
 
-        if not enumName.startswith("nbp_"):
+        hasPrefix, enumNamePrefix = starts_with_prefix(enumName, prefixes)
+
+        if not hasPrefix:
             log.error(
-                "Invalid enum name. The name should start with nbp_. "
+                "Invalid enum name. The name should start with %s. "
                 "Actual name = [%s]. File = [%s]. Line = %d",
+                prefixes,
                 enumName,
                 filePath,
                 enum.location.line
@@ -735,7 +838,7 @@ def check_enums(log, root, filePath):
 
         if not enumName.endswith("_e"):
             log.error(
-                "Invalid enum name. The name should end with _t. "
+                "Invalid enum name. The name should end with _e. "
                 "Actual name = [%s]. File = [%s]. Line = %d",
                 enumName,
                 filePath,
@@ -766,10 +869,11 @@ def check_enums(log, root, filePath):
         )
 
         prefix = ""
-        enumNameWords = enumName.split("_")
+        plainEnumName = enumName[len(enumNamePrefix):-2]
+        enumNameWords = plainEnumName.split("_")
 
-        for i in range(1, len(enumNameWords) - 1):
-            prefix += enumNameWords[i][0]
+        for w in enumNameWords:
+            prefix += w[0]
 
         enumFieldsStatus, expectedTypedefLine = check_enum_fields(
             log,
@@ -1175,6 +1279,7 @@ def check_macros(log, root, filePath):
     status = True
     firstMacro = True
     isHeader = False
+    prefixes = get_macro_name_prefixes(filePath)
 
     if os.path.splitext(filePath)[1] == ".h":
         isHeader = True
@@ -1219,12 +1324,13 @@ def check_macros(log, root, filePath):
         if macro.spelling in macroNameExceptions:
             continue
 
-        if (not is_test_file(filePath) and
-            not macro.spelling.startswith("NBP_") and
-            not macro.spelling.startswith("INTERNAL_NBP_")):
+        hasPrefix, prefix = starts_with_prefix(macro.spelling, prefixes)
+
+        if not hasPrefix:
             log.error(
-                "Invalid macro name. The name should start with NBP_ or "
-                "INTERNAL_NBP_. Name = [%s]. File = [%s]. Line = %d",
+                "Invalid macro name. The name should start with %s. "
+                "Name = [%s]. File = [%s]. Line = %d",
+                prefixes,
                 macro.spelling,
                 filePath,
                 macro.location.line
@@ -1265,12 +1371,15 @@ def check_function_name(log, filePath, func):
     if func.spelling in functionNameExceptions:
         return True
 
-    if (not is_test_file(filePath) and
-        not func.spelling.startswith("nbp_") and
-        not func.spelling.startswith("internal_nbp_")):
+    prefixes = get_function_name_prefixes(filePath)
+
+    hasPrefix, prefix = starts_with_prefix(func.spelling, prefixes)
+
+    if not hasPrefix:
         log.error(
-            "Invalid function name. The name should start with nbp_ or "
-            "internal_nbp_. Name = [%s]. File = [%s]. Line = %d",
+            "Invalid function name. The name should start with %s. "
+            "Name = [%s]. File = [%s]. Line = %d",
+            prefixes,
             func.spelling,
             filePath,
             func.location.line
@@ -1662,7 +1771,7 @@ def check_naming(log, filePath):
     translationUnit = index.parse(
         filePath,
         options=clang.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD,
-        args=[ includePath ]
+        args=[ includePath, "-DNBP_LIBRARY_MAIN" ]
     )
 
     st, structs = check_structs(log, translationUnit.cursor, filePath)
