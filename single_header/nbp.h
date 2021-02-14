@@ -1378,6 +1378,28 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 #include <semaphore.h>
 
 /*
+ * Atomic int wrapper
+ */
+
+#define NBP_ATOMIC_INT_TYPE int
+
+#define NBP_ATOMIC_INT_INIT(val) val
+
+#define NBP_ATOMIC_INT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
+
+#define NBP_ATOMIC_INT_STORE(ptr, value)                                       \
+    __atomic_store_n((ptr), (value), __ATOMIC_SEQ_CST)
+
+#define NBP_ATOMIC_INT_ADD_AND_FETCH(ptr, value)                               \
+    __sync_add_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_INT_SUB_AND_FETCH(ptr, value)                               \
+    __sync_sub_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_INT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                   \
+    __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
+
+/*
  * Atomic unsigned int wrapper
  */
 
@@ -1387,10 +1409,16 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 
 #define NBP_ATOMIC_UINT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
 
+#define NBP_ATOMIC_UINT_STORE(ptr, value)                                      \
+    __atomic_store_n((ptr), (value), __ATOMIC_SEQ_CST)
+
 #define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value)                              \
     __sync_add_and_fetch((ptr), (value))
 
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+#define NBP_ATOMIC_UINT_SUB_AND_FETCH(ptr, value)                              \
+    __sync_sub_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_UINT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                  \
     __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
 
 /*
@@ -1427,6 +1455,43 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 #endif // end if NBP_OS_CUSTOM
 
 /*
+ * Check if atomic int wrapper is defined, otherwise define a dummy atomic int
+ * wrapper.
+ * If NBP_OS_* is not defined then the atomic int wrapper will not be defined
+ * so the compiler will generate a lot of errors and the error message that
+ * says that there is no NBP_OS_* defined is hard to see.
+ */
+
+#ifndef NBP_ATOMIC_INT_TYPE
+#define NBP_ATOMIC_INT_TYPE int
+#endif // end if NBP_ATOMIC_INT_TYPE
+
+#ifndef NBP_ATOMIC_INT_INIT
+#define NBP_ATOMIC_INT_INIT(val) val
+#endif // end if NBP_ATOMIC_INT_INIT
+
+#ifndef NBP_ATOMIC_INT_LOAD
+#define NBP_ATOMIC_INT_LOAD(ptr) (*(ptr))
+#endif // end if NBP_ATOMIC_INT_LOAD
+
+#ifndef NBP_ATOMIC_INT_STORE
+#define NBP_ATOMIC_INT_STORE(ptr, value) *(ptr) = (value)
+#endif // end if NBP_ATOMIC_INT_STORE
+
+#ifndef NBP_ATOMIC_INT_ADD_AND_FETCH
+#define NBP_ATOMIC_INT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
+#endif // end if NBP_ATOMIC_INT_ADD_AND_FETCH
+
+#ifndef NBP_ATOMIC_INT_SUB_AND_FETCH
+#define NBP_ATOMIC_INT_SUB_AND_FETCH(ptr, value) ((*(ptr)) -= (value))
+#endif // end if NBP_ATOMIC_INT_SUB_AND_FETCH
+
+#ifndef NBP_ATOMIC_INT_COMPARE_AND_SWAP
+#define NBP_ATOMIC_INT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                   \
+    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
+#endif // end if NBP_ATOMIC_INT_COMPARE_AND_SWAP
+
+/*
  * Check if atomic uint wrapper is defined, otherwise define a dummy atomic uint
  * wrapper.
  * If NBP_OS_* is not defined then the atomic uint wrapper will not be defined
@@ -1446,14 +1511,22 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 #define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
 #endif // end if NBP_ATOMIC_UINT_LOAD
 
+#ifndef NBP_ATOMIC_UINT_STORE
+#define NBP_ATOMIC_UINT_STORE(ptr, value) *(ptr) = (value)
+#endif // end if NBP_ATOMIC_UINT_STORE
+
 #ifndef NBP_ATOMIC_UINT_ADD_AND_FETCH
 #define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
 #endif // end if NBP_ATOMIC_UINT_ADD_AND_FETCH
 
-#ifndef NBP_ATOMIC_UINT_CAS
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+#ifndef NBP_ATOMIC_UINT_SUB_AND_FETCH
+#define NBP_ATOMIC_UINT_SUB_AND_FETCH(ptr, value) ((*(ptr)) -= (value))
+#endif // end if NBP_ATOMIC_UINT_SUB_AND_FETCH
+
+#ifndef NBP_ATOMIC_UINT_COMPARE_AND_SWAP
+#define NBP_ATOMIC_UINT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                  \
     ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
-#endif // end if NBP_ATOMIC_UINT_CAS
+#endif // end if NBP_ATOMIC_UINT_COMPARE_AND_SWAP
 
 /*
  * Check if event wrapper is defined, otherwise define a dummy event wrapper.
@@ -1489,6 +1562,25 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 #else
 
 /*
+ * Atomic int wrapper
+ */
+
+#define NBP_ATOMIC_INT_TYPE int
+
+#define NBP_ATOMIC_INT_INIT(val) val
+
+#define NBP_ATOMIC_INT_LOAD(ptr) (*(ptr))
+
+#define NBP_ATOMIC_INT_STORE(ptr, value) *(ptr) = (value)
+
+#define NBP_ATOMIC_INT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
+
+#define NBP_ATOMIC_INT_SUB_AND_FETCH(ptr, value) ((*(ptr)) -= (value))
+
+#define NBP_ATOMIC_INT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                   \
+    ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
+
+/*
  * Atomic unsigned int wrapper
  */
 
@@ -1498,9 +1590,13 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 
 #define NBP_ATOMIC_UINT_LOAD(ptr) (*(ptr))
 
+#define NBP_ATOMIC_UINT_STORE(ptr, value) *(ptr) = (value)
+
 #define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value) ((*(ptr)) += (value))
 
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+#define NBP_ATOMIC_UINT_SUB_AND_FETCH(ptr, value) ((*(ptr)) -= (value))
+
+#define NBP_ATOMIC_UINT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                  \
     ((*(ptr)) == (oldVal) ? (*(ptr)) = (newVal), (oldVal) : (*(ptr)))
 
 /*

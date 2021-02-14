@@ -31,6 +31,28 @@ SOFTWARE.
 #include <semaphore.h>
 
 /*
+ * Atomic int wrapper
+ */
+
+#define NBP_ATOMIC_INT_TYPE int
+
+#define NBP_ATOMIC_INT_INIT(val) val
+
+#define NBP_ATOMIC_INT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
+
+#define NBP_ATOMIC_INT_STORE(ptr, value)                                       \
+    __atomic_store_n((ptr), (value), __ATOMIC_SEQ_CST)
+
+#define NBP_ATOMIC_INT_ADD_AND_FETCH(ptr, value)                               \
+    __sync_add_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_INT_SUB_AND_FETCH(ptr, value)                               \
+    __sync_sub_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_INT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                   \
+    __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
+
+/*
  * Atomic unsigned int wrapper
  */
 
@@ -40,10 +62,16 @@ SOFTWARE.
 
 #define NBP_ATOMIC_UINT_LOAD(ptr) __atomic_load_n((ptr), __ATOMIC_SEQ_CST)
 
+#define NBP_ATOMIC_UINT_STORE(ptr, value)                                      \
+    __atomic_store_n((ptr), (value), __ATOMIC_SEQ_CST)
+
 #define NBP_ATOMIC_UINT_ADD_AND_FETCH(ptr, value)                              \
     __sync_add_and_fetch((ptr), (value))
 
-#define NBP_ATOMIC_UINT_CAS(ptr, oldVal, newVal)                               \
+#define NBP_ATOMIC_UINT_SUB_AND_FETCH(ptr, value)                              \
+    __sync_sub_and_fetch((ptr), (value))
+
+#define NBP_ATOMIC_UINT_COMPARE_AND_SWAP(ptr, oldVal, newVal)                  \
     __sync_val_compare_and_swap((ptr), (oldVal), (newVal))
 
 /*
