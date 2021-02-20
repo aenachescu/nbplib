@@ -269,7 +269,7 @@ def get_enum_name_prefixes(filePath):
         if filePath.endswith(fp):
             return p
 
-    return [ "nbp_" ]
+    return [ "nbp_", "internal_nbp_" ]
 
 def get_function_name_prefixes(filePath):
     if is_test_file(filePath):
@@ -942,10 +942,15 @@ def get_typedef_type(log, filePath, typedef):
     return TypedefType.POINTER_TO_FUNC, [ typedef.spelling ]
 
 def check_typedef_enum(log, filePath, line, name):
-    if not name.startswith("nbp_"):
+    prefixes = get_enum_name_prefixes(filePath)
+
+    hasPrefix, enumNamePrefix = starts_with_prefix(name, prefixes)
+
+    if not hasPrefix:
         log.error(
-            "Invalid typedef enum name. The name should start with nbp_. "
+            "Invalid typedef enum name. The name should start with %s. "
             "Name = [%s]. File = [%s]. Line = %d",
+            prefixes,
             name,
             filePath,
             line
