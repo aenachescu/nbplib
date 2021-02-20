@@ -30,6 +30,24 @@ SOFTWARE.
 
 #include "../types/module.h"
 
+void internal_nbp_module_update_state_stats(
+    nbp_module_t* module,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState);
+
+void internal_nbp_module_instance_update_state_stats(
+    nbp_module_instance_t* moduleInstance,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state);
+
+unsigned int internal_nbp_get_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state);
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,

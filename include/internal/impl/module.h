@@ -37,6 +37,165 @@ SOFTWARE.
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+static void internal_nbp_increment_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState)
+{
+    internal_nbp_decrement_number_of_modules(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_modules(statsArray, newState, 1);
+}
+
+static void internal_nbp_increment_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState)
+{
+    internal_nbp_decrement_number_of_module_instances(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_module_instances(statsArray, newState, 1);
+}
+
+static void internal_nbp_module_instance_update_stats(
+    nbp_module_instance_t* moduleInstance)
+{
+    nbp_module_t* parent         = moduleInstance->parent;
+    unsigned int numberOfModules = moduleInstance->numberOfRuns;
+
+    internal_nbp_increment_number_of_modules(
+        moduleInstance->numberOfModules,
+        ms_ready,
+        numberOfModules);
+
+    while (parent != NBP_NULLPTR) {
+        parent->totalNumberOfModuleInstances += 1;
+        parent->totalNumberOfModules += numberOfModules;
+
+        parent->moduleInstance->totalNumberOfModuleInstances += 1;
+        parent->moduleInstance->totalNumberOfModules += numberOfModules;
+
+        internal_nbp_increment_number_of_module_instances(
+            parent->numberOfModuleInstances,
+            mis_ready,
+            1);
+        internal_nbp_increment_number_of_modules(
+            parent->numberOfModules,
+            ms_ready,
+            numberOfModules);
+
+        internal_nbp_increment_number_of_module_instances(
+            parent->moduleInstance->numberOfModuleInstances,
+            mis_ready,
+            1);
+        internal_nbp_increment_number_of_modules(
+            parent->moduleInstance->numberOfModules,
+            ms_ready,
+            numberOfModules);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_module_update_state_stats(
+    nbp_module_t* module,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState)
+{
+    nbp_module_t* parent = module->moduleInstance->parent;
+
+    internal_nbp_update_number_of_modules(
+        module->moduleInstance->numberOfModules,
+        oldState,
+        newState);
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_modules(
+            parent->numberOfModules,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_modules(
+            parent->moduleInstance->numberOfModules,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_module_instance_update_state_stats(
+    nbp_module_instance_t* moduleInstance,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState)
+{
+    nbp_module_t* parent = moduleInstance->parent;
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_module_instances(
+            parent->numberOfModuleInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_module_instances(
+            parent->moduleInstance->numberOfModuleInstances,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+unsigned int internal_nbp_get_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+unsigned int internal_nbp_get_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
@@ -109,14 +268,40 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        runs[i].moduleInstance         = moduleInstance;
-        runs[i].state                  = ms_ready;
-        runs[i].firstTestCaseInstance  = NBP_NULLPTR;
-        runs[i].lastTestCaseInstance   = NBP_NULLPTR;
-        runs[i].firstTestSuiteInstance = NBP_NULLPTR;
-        runs[i].lastTestSuiteInstance  = NBP_NULLPTR;
-        runs[i].firstModuleInstance    = NBP_NULLPTR;
-        runs[i].lastModuleInstance     = NBP_NULLPTR;
+        runs[i].moduleInstance                  = moduleInstance;
+        runs[i].state                           = ms_ready;
+        runs[i].firstTestCaseInstance           = NBP_NULLPTR;
+        runs[i].lastTestCaseInstance            = NBP_NULLPTR;
+        runs[i].firstTestSuiteInstance          = NBP_NULLPTR;
+        runs[i].lastTestSuiteInstance           = NBP_NULLPTR;
+        runs[i].firstModuleInstance             = NBP_NULLPTR;
+        runs[i].lastModuleInstance              = NBP_NULLPTR;
+        runs[i].totalNumberOfTestCases          = 0;
+        runs[i].totalNumberOfTestCaseInstances  = 0;
+        runs[i].totalNumberOfTestSuites         = 0;
+        runs[i].totalNumberOfTestSuiteInstances = 0;
+        runs[i].totalNumberOfModules            = 0;
+        runs[i].totalNumberOfModuleInstances    = 0;
+
+        unsigned int j;
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCaseInstances[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuites[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuiteInstances[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModules[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModuleInstances[j], 0);
+        }
     }
 
     moduleInstance->moduleDetails     = moduleDetails;
@@ -131,6 +316,35 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->next              = NBP_NULLPTR;
     moduleInstance->prev              = NBP_NULLPTR;
 
+    moduleInstance->totalNumberOfTestCases          = 0;
+    moduleInstance->totalNumberOfTestCaseInstances  = 0;
+    moduleInstance->totalNumberOfTestSuites         = 0;
+    moduleInstance->totalNumberOfTestSuiteInstances = 0;
+    moduleInstance->totalNumberOfModules            = 0;
+    moduleInstance->totalNumberOfModuleInstances    = 0;
+
+    unsigned int j;
+    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCases[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCaseInstances[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestSuites[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(
+            &moduleInstance->numberOfTestSuiteInstances[j],
+            0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModules[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModuleInstances[j], 0);
+    }
+
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;
 
@@ -143,6 +357,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             parentModule->lastModuleInstance       = moduleInstance;
         }
     }
+
+    internal_nbp_module_instance_update_stats(moduleInstance);
 
     internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
 

@@ -32,6 +32,24 @@ SOFTWARE.
 #include "../types/test_case.h"
 #include "../types/test_suite.h"
 
+void internal_nbp_test_case_update_state_stats(
+    nbp_test_case_t* testCase,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState);
+
+void internal_nbp_test_case_instance_update_state_stats(
+    nbp_test_case_instance_t* testCaseInstance,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state);
+
+unsigned int internal_nbp_get_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state);
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,

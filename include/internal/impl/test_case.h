@@ -37,6 +37,233 @@ SOFTWARE.
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
+static void internal_nbp_increment_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_cases(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_test_cases(statsArray, newState, 1);
+}
+
+static void internal_nbp_increment_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_case_instances(
+        statsArray,
+        oldState,
+        1);
+    internal_nbp_increment_number_of_test_case_instances(
+        statsArray,
+        newState,
+        1);
+}
+
+static void internal_nbp_test_case_instance_update_stats(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    nbp_module_t* parent                         = testCaseInstance->module;
+    nbp_test_suite_t* testSuite                  = testCaseInstance->testSuite;
+    nbp_test_suite_instance_t* testSuiteInstance = NBP_NULLPTR;
+    unsigned int numberOfTestCases = testCaseInstance->numberOfRuns;
+
+    internal_nbp_increment_number_of_test_cases(
+        testCaseInstance->numberOfTestCases,
+        tcs_ready,
+        numberOfTestCases);
+
+    if (testSuite != NBP_NULLPTR) {
+        testSuiteInstance = testSuite->testSuiteInstance;
+
+        testSuite->totalNumberOfTestCaseInstances += 1;
+        testSuite->totalNumberOfTestCases += numberOfTestCases;
+
+        testSuiteInstance->totalNumberOfTestCaseInstances += 1;
+        testSuiteInstance->totalNumberOfTestCases += numberOfTestCases;
+
+        internal_nbp_increment_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            testSuite->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        internal_nbp_increment_number_of_test_case_instances(
+            testSuiteInstance->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            testSuiteInstance->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        parent = testCaseInstance->testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        parent->totalNumberOfTestCaseInstances += 1;
+        parent->totalNumberOfTestCases += numberOfTestCases;
+
+        parent->moduleInstance->totalNumberOfTestCaseInstances += 1;
+        parent->moduleInstance->totalNumberOfTestCases += numberOfTestCases;
+
+        internal_nbp_increment_number_of_test_case_instances(
+            parent->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            parent->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        internal_nbp_increment_number_of_test_case_instances(
+            parent->moduleInstance->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            parent->moduleInstance->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_case_update_state_stats(
+    nbp_test_case_t* testCase,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState)
+{
+    nbp_module_t* parent        = testCase->testCaseInstance->module;
+    nbp_test_suite_t* testSuite = testCase->testCaseInstance->testSuite;
+
+    internal_nbp_update_number_of_test_cases(
+        testCase->testCaseInstance->numberOfTestCases,
+        oldState,
+        newState);
+
+    if (testSuite != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_cases(
+            testSuite->numberOfTestCases,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_cases(
+            testSuite->testSuiteInstance->numberOfTestCases,
+            oldState,
+            newState);
+
+        parent = testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_cases(
+            parent->numberOfTestCases,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_cases(
+            parent->moduleInstance->numberOfTestCases,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_case_instance_update_state_stats(
+    nbp_test_case_instance_t* testCaseInstance,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState)
+{
+    nbp_module_t* parent        = testCaseInstance->module;
+    nbp_test_suite_t* testSuite = testCaseInstance->testSuite;
+
+    if (testSuite != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_case_instances(
+            testSuite->testSuiteInstance->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        parent = testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_case_instances(
+            parent->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_case_instances(
+            parent->moduleInstance->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+unsigned int internal_nbp_get_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+unsigned int internal_nbp_get_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,
@@ -116,6 +343,10 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
 
+    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
+        NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);
+    }
+
     if (parentModule != NBP_NULLPTR) {
         testCaseInstance->depth = parentModule->moduleInstance->depth + 1;
 
@@ -141,6 +372,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
             parentTestSuite->lastTestCaseInstance       = testCaseInstance;
         }
     }
+
+    internal_nbp_test_case_instance_update_stats(testCaseInstance);
 
     internal_nbp_notify_printer_instantiate_test_case(testCaseInstance);
     internal_nbp_notify_scheduler_instantiate_test_case(

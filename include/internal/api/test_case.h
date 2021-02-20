@@ -167,6 +167,23 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
+#define NBP_TEST_CASE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                 \
+    testCaseInstance)                                                          \
+    testCaseInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                       \
+    testCaseInstance,                                                          \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_cases(                                     \
+        testCaseInstance->numberOfTestCases,                                   \
+        state)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
     NBP_INCLUDE_TEST_CASE(func);                                               \
     internal_nbp_instantiate_test_case(                                        \

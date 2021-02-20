@@ -30,6 +30,24 @@ SOFTWARE.
 
 #include "../types/test_suite.h"
 
+void internal_nbp_test_suite_update_state_stats(
+    nbp_test_suite_t* testSuite,
+    nbp_test_suite_state_e oldState,
+    nbp_test_suite_state_e newState);
+
+void internal_nbp_test_suite_instance_update_state_stats(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    nbp_test_suite_instance_state_e oldState,
+    nbp_test_suite_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e state);
+
+unsigned int internal_nbp_get_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e state);
+
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
     nbp_module_t* parentModule,

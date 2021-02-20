@@ -792,586 +792,6 @@ enum nbp_memory_tag_e
 };
 typedef enum nbp_memory_tag_e nbp_memory_tag_e;
 
-struct nbp_module_t;
-
-struct nbp_test_suite_t;
-
-struct nbp_test_case_details_t;
-struct nbp_test_case_instance_t;
-struct nbp_test_case_t;
-
-typedef void (*nbp_test_case_setup_pfn_t)(
-    struct nbp_test_case_t* /* nbpParamTestCase */
-);
-
-typedef void (*nbp_test_case_teardown_pfn_t)(
-    struct nbp_test_case_t* /* nbpParamTestCase */
-);
-
-typedef void (*nbp_test_case_config_pfn_t)(
-    struct nbp_test_case_details_t* /* testCaseDetails */
-);
-
-typedef void (*nbp_test_case_pfn_t)(
-    struct nbp_test_case_t* /* nbpParamTestCase */
-);
-
-enum nbp_test_case_instance_state_e
-{
-    tcis_ready   = 0x20000000,
-    tcis_running = 0x20000001,
-    tcis_passed  = 0x20000002,
-    tcis_failed  = 0x20000003,
-    tcis_skipped = 0x20000004,
-};
-typedef enum nbp_test_case_instance_state_e nbp_test_case_instance_state_e;
-
-enum nbp_test_case_state_e
-{
-    tcs_ready   = 0x21000000,
-    tcs_running = 0x21000001,
-    tcs_passed  = 0x21000002,
-    tcs_failed  = 0x21000003,
-    tcs_skipped = 0x21000004,
-};
-typedef enum nbp_test_case_state_e nbp_test_case_state_e;
-
-struct nbp_test_case_setup_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_test_case_setup_pfn_t function;
-};
-typedef struct nbp_test_case_setup_details_t nbp_test_case_setup_details_t;
-
-struct nbp_test_case_teardown_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_test_case_teardown_pfn_t function;
-};
-typedef struct nbp_test_case_teardown_details_t
-    nbp_test_case_teardown_details_t;
-
-struct nbp_test_case_details_t
-{
-    const char* name;
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    int isConfigured;
-
-    nbp_test_case_config_pfn_t configFunction;
-    nbp_test_case_pfn_t function;
-
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
-};
-typedef struct nbp_test_case_details_t nbp_test_case_details_t;
-
-struct nbp_test_case_instance_t
-{
-    nbp_test_case_details_t* testCaseDetails;
-
-    nbp_test_case_instance_state_e state;
-
-    struct nbp_module_t* module;
-    struct nbp_test_suite_t* testSuite;
-    unsigned int depth;
-
-    int instantiationLine;
-
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
-
-    struct nbp_test_case_t* runs;
-    unsigned int numberOfRuns;
-
-    struct nbp_test_case_instance_t* next;
-    struct nbp_test_case_instance_t* prev;
-};
-typedef struct nbp_test_case_instance_t nbp_test_case_instance_t;
-
-struct nbp_test_case_t
-{
-    nbp_test_case_instance_t* testCaseInstance;
-
-    nbp_test_case_state_e state;
-};
-typedef struct nbp_test_case_t nbp_test_case_t;
-
-struct nbp_module_t;
-
-struct nbp_test_suite_details_t;
-struct nbp_test_suite_instance_t;
-struct nbp_test_suite_t;
-
-typedef void (*nbp_test_suite_setup_pfn_t)(
-    struct nbp_test_suite_t* /* nbpParamTestSuite */
-);
-
-typedef void (*nbp_test_suite_teardown_pfn_t)(
-    struct nbp_test_suite_t* /* nbpParamTestSuite */
-);
-
-typedef void (*nbp_test_suite_config_pfn_t)(
-    struct nbp_test_suite_details_t* /* testSuiteDetails */
-);
-
-typedef void (*nbp_test_suite_pfn_t)(
-    struct nbp_test_suite_t* /* nbpParamTestSuite */,
-    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
-    struct nbp_module_t* /*nbpParamTciParentModule */
-);
-
-enum nbp_test_suite_instance_state_e
-{
-    tsis_ready   = 0x30000000,
-    tsis_running = 0x30000001,
-    tsis_passed  = 0x30000002,
-    tsis_failed  = 0x30000003,
-    tsis_skipped = 0x30000004,
-};
-typedef enum nbp_test_suite_instance_state_e nbp_test_suite_instance_state_e;
-
-enum nbp_test_suite_state_e
-{
-    tss_ready   = 0x31000000,
-    tss_running = 0x31000001,
-    tss_passed  = 0x31000002,
-    tss_failed  = 0x31000003,
-    tss_skipped = 0x31000004,
-};
-typedef enum nbp_test_suite_state_e nbp_test_suite_state_e;
-
-struct nbp_test_suite_setup_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_test_suite_setup_pfn_t function;
-};
-typedef struct nbp_test_suite_setup_details_t nbp_test_suite_setup_details_t;
-
-struct nbp_test_suite_teardown_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_test_suite_teardown_pfn_t function;
-};
-typedef struct nbp_test_suite_teardown_details_t
-    nbp_test_suite_teardown_details_t;
-
-struct nbp_test_suite_details_t
-{
-    const char* name;
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    int isConfigured;
-
-    nbp_test_suite_config_pfn_t configFunction;
-    nbp_test_suite_pfn_t function;
-
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
-};
-typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
-
-struct nbp_test_suite_instance_t
-{
-    nbp_test_suite_details_t* testSuiteDetails;
-
-    nbp_test_suite_instance_state_e state;
-
-    struct nbp_module_t* module;
-    unsigned int depth;
-
-    int instantiationLine;
-
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
-
-    struct nbp_test_suite_t* runs;
-    unsigned int numberOfRuns;
-
-    struct nbp_test_suite_instance_t* next;
-    struct nbp_test_suite_instance_t* prev;
-};
-typedef struct nbp_test_suite_instance_t nbp_test_suite_instance_t;
-
-struct nbp_test_suite_t
-{
-    nbp_test_suite_instance_t* testSuiteInstance;
-
-    nbp_test_suite_state_e state;
-
-    nbp_test_case_instance_t* firstTestCaseInstance;
-    nbp_test_case_instance_t* lastTestCaseInstance;
-};
-typedef struct nbp_test_suite_t nbp_test_suite_t;
-
-struct nbp_module_details_t;
-struct nbp_module_instance_t;
-struct nbp_module_t;
-
-typedef void (*nbp_module_setup_pfn_t)(
-    struct nbp_module_t* /* nbpParamModule */);
-
-typedef void (*nbp_module_teardown_pfn_t)(
-    struct nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_mdoule_config_pfn_t)(
-    struct nbp_module_details_t* /* moduleDetails */
-);
-
-typedef void (*nbp_module_pfn_t)(
-    struct nbp_module_t* /* nbpParamModule*/,
-    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
-    struct nbp_module_t* /* nbpParamTciParentModule */,
-    struct nbp_module_t* /* nbpParamTsiParentModule */,
-    struct nbp_module_t* /* nbpParamMiParentModule */
-);
-
-enum nbp_module_instance_state_e
-{
-    mis_ready   = 0x40000000,
-    mis_running = 0x40000001,
-    mis_passed  = 0x40000002,
-    mis_failed  = 0x40000003,
-    mis_skipped = 0x40000004,
-};
-typedef enum nbp_module_instance_state_e nbp_module_instance_state_e;
-
-enum nbp_module_state_e
-{
-    ms_ready   = 0x41000000,
-    ms_running = 0x41000001,
-    ms_passed  = 0x41000002,
-    ms_failed  = 0x41000003,
-    ms_skipped = 0x41000004,
-};
-typedef enum nbp_module_state_e nbp_module_state_e;
-
-struct nbp_module_setup_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_module_setup_pfn_t function;
-};
-typedef struct nbp_module_setup_details_t nbp_module_setup_details_t;
-
-struct nbp_module_teardown_details_t
-{
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    nbp_module_teardown_pfn_t function;
-};
-typedef struct nbp_module_teardown_details_t nbp_module_teardown_details_t;
-
-struct nbp_module_details_t
-{
-    const char* name;
-    const char* functionName;
-
-    const char* file;
-    int line;
-
-    int isConfigured;
-
-    nbp_mdoule_config_pfn_t configFunction;
-    nbp_module_pfn_t function;
-
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
-};
-typedef struct nbp_module_details_t nbp_module_details_t;
-
-struct nbp_module_instance_t
-{
-    nbp_module_details_t* moduleDetails;
-
-    nbp_module_instance_state_e state;
-
-    struct nbp_module_t* parent;
-    unsigned int depth;
-
-    int instantiationLine;
-
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
-
-    struct nbp_module_t* runs;
-    unsigned int numberOfRuns;
-
-    struct nbp_module_instance_t* next;
-    struct nbp_module_instance_t* prev;
-};
-typedef struct nbp_module_instance_t nbp_module_instance_t;
-
-struct nbp_module_t
-{
-    nbp_module_instance_t* moduleInstance;
-
-    nbp_module_state_e state;
-
-    nbp_test_case_instance_t* firstTestCaseInstance;
-    nbp_test_case_instance_t* lastTestCaseInstance;
-
-    nbp_test_suite_instance_t* firstTestSuiteInstance;
-    nbp_test_suite_instance_t* lastTestSuiteInstance;
-
-    nbp_module_instance_t* firstModuleInstance;
-    nbp_module_instance_t* lastModuleInstance;
-};
-typedef struct nbp_module_t nbp_module_t;
-
-struct nbp_printer_interface_t;
-
-typedef void (*nbp_printer_config_pfn_t)(
-    struct nbp_printer_interface_t* /* printerInterface */
-);
-
-typedef void (*nbp_printer_callback_init_pfn_t)(void);
-
-typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
-
-typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
-
-typedef void (*nbp_printer_callback_on_error_pfn_t)(
-    nbp_error_t /* nbpParamError */
-);
-
-typedef void (*nbp_printer_callback_on_exit_pfn_t)(
-    nbp_error_code_e /* nbpParamErrorCode */
-);
-
-typedef void (*nbp_printer_callback_on_instantiate_test_case_pfn_t)(
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_started_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_instantiate_module_started_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_instantiate_module_completed_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_case_started_pfn_t)(
-    nbp_test_case_t* /* nbpParamTestCase */,
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_case_completed_pfn_t)(
-    nbp_test_case_t* /* nbpParamTestCase */,
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_case_instance_started_pfn_t)(
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_case_instance_completed_pfn_t)(
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_suite_started_pfn_t)(
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_suite_completed_pfn_t)(
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_suite_instance_started_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_test_suite_instance_completed_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_printer_callback_on_module_started_pfn_t)(
-    nbp_module_t* /* nbpParamModule */,
-    nbp_module_instance_t* /* nbpParamModuleInstance */
-);
-
-typedef void (*nbp_printer_callback_on_module_completed_pfn_t)(
-    nbp_module_t* /* nbpParamModule */,
-    nbp_module_instance_t* /* nbpParamModuleInstance */
-);
-
-typedef void (*nbp_printer_callback_on_module_instance_started_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */
-);
-
-typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */
-);
-
-struct nbp_printer_interface_t
-{
-    const char* printerName;
-    nbp_printer_config_pfn_t configFunction;
-
-    int isInitialized;
-
-    nbp_printer_callback_init_pfn_t initCbk;
-    nbp_printer_callback_uninit_pfn_t uninitCbk;
-
-    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
-
-    nbp_printer_callback_on_error_pfn_t errorCbk;
-    nbp_printer_callback_on_exit_pfn_t exitCbk;
-
-    nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
-
-    nbp_printer_callback_on_instantiate_test_suite_started_pfn_t
-        instantiateTestSuiteStartedCbk;
-    nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t
-        instantiateTestSuiteCompletedCbk;
-
-    nbp_printer_callback_on_instantiate_module_started_pfn_t
-        instantiateModuleStartedCbk;
-    nbp_printer_callback_on_instantiate_module_completed_pfn_t
-        instantiateModuleCompletedCbk;
-
-    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
-    nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
-    nbp_printer_callback_on_test_case_instance_started_pfn_t
-        testCaseInstanceStartedCbk;
-    nbp_printer_callback_on_test_case_instance_completed_pfn_t
-        testCaseInstanceCompletedCbk;
-
-    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
-    nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
-    nbp_printer_callback_on_test_suite_instance_started_pfn_t
-        testSuiteInstanceStartedCbk;
-    nbp_printer_callback_on_test_suite_instance_completed_pfn_t
-        testSuiteInstanceCompletedCbk;
-
-    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
-    nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
-    nbp_printer_callback_on_module_instance_started_pfn_t
-        moduleInstanceStartedCbk;
-    nbp_printer_callback_on_module_instance_completed_pfn_t
-        moduleInstanceCompletedCbk;
-};
-typedef struct nbp_printer_interface_t nbp_printer_interface_t;
-
-struct nbp_scheduler_interface_t;
-
-typedef void (*nbp_scheduler_config_pfn_t)(
-    struct nbp_scheduler_interface_t* /* schedulerInterface */
-);
-
-typedef void (*nbp_scheduler_callback_init_pfn_t)(void);
-
-typedef void (*nbp_scheduler_callback_uninit_pfn_t)(void);
-
-typedef void (*nbp_scheduler_callback_run_pfn_t)(void);
-
-typedef void (*nbp_scheduler_callback_on_instantiate_test_case_pfn_t)(
-    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
-    nbp_test_suite_t* /* nbpParamTestSuite */,
-    nbp_module_t* /* nbpParamModule */,
-    void* /* nbpParamContext */
-);
-typedef void (*nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */,
-    void* /* nbpParamContext */
-);
-
-typedef void (
-    *nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t)(
-    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-typedef void (*nbp_scheduler_callback_on_instantiate_module_started_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */,
-    nbp_module_t* /* nbpParamModule */,
-    void* /* nbpParamContext */
-);
-
-typedef void (*nbp_scheduler_callback_on_instantiate_module_completed_pfn_t)(
-    nbp_module_instance_t* /* nbpParamModuleInstance */,
-    nbp_module_t* /* nbpParamModule */
-);
-
-struct nbp_scheduler_interface_t
-{
-    const char* schedulerName;
-    nbp_scheduler_config_pfn_t configFunction;
-
-    nbp_scheduler_callback_init_pfn_t initCbk;
-    nbp_scheduler_callback_uninit_pfn_t uninitCbk;
-    nbp_scheduler_callback_run_pfn_t runCbk;
-    nbp_scheduler_callback_on_instantiate_test_case_pfn_t
-        instantiateTestCaseCbk;
-    nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t
-        instantiateTestSuiteStartedCbk;
-    nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t
-        instantiateTestSuiteCompletedCbk;
-    nbp_scheduler_callback_on_instantiate_module_started_pfn_t
-        instantiateModuleStartedCbk;
-    nbp_scheduler_callback_on_instantiate_module_completed_pfn_t
-        instantiateModuleCompletedCbk;
-};
-typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
-
 #ifdef NBP_MT_SUPPORT
 
 #ifdef NBP_OS_LINUX
@@ -1617,6 +1037,662 @@ typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 
 #endif // end if NBP_MT_SUPPORT
 
+#define NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_TEST_CASE_STATES          ((unsigned int) 5)
+
+struct nbp_module_t;
+
+struct nbp_test_suite_t;
+
+struct nbp_test_case_details_t;
+struct nbp_test_case_instance_t;
+struct nbp_test_case_t;
+
+typedef void (*nbp_test_case_setup_pfn_t)(
+    struct nbp_test_case_t* /* nbpParamTestCase */
+);
+
+typedef void (*nbp_test_case_teardown_pfn_t)(
+    struct nbp_test_case_t* /* nbpParamTestCase */
+);
+
+typedef void (*nbp_test_case_config_pfn_t)(
+    struct nbp_test_case_details_t* /* testCaseDetails */
+);
+
+typedef void (*nbp_test_case_pfn_t)(
+    struct nbp_test_case_t* /* nbpParamTestCase */
+);
+
+enum nbp_test_case_instance_state_e
+{
+    tcis_ready   = 0x20000000,
+    tcis_running = 0x20000001,
+    tcis_passed  = 0x20000002,
+    tcis_failed  = 0x20000003,
+    tcis_skipped = 0x20000004,
+};
+typedef enum nbp_test_case_instance_state_e nbp_test_case_instance_state_e;
+
+enum nbp_test_case_state_e
+{
+    tcs_ready   = 0x21000000,
+    tcs_running = 0x21000001,
+    tcs_passed  = 0x21000002,
+    tcs_failed  = 0x21000003,
+    tcs_skipped = 0x21000004,
+};
+typedef enum nbp_test_case_state_e nbp_test_case_state_e;
+
+struct nbp_test_case_setup_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_test_case_setup_pfn_t function;
+};
+typedef struct nbp_test_case_setup_details_t nbp_test_case_setup_details_t;
+
+struct nbp_test_case_teardown_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_test_case_teardown_pfn_t function;
+};
+typedef struct nbp_test_case_teardown_details_t
+    nbp_test_case_teardown_details_t;
+
+struct nbp_test_case_details_t
+{
+    const char* name;
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    int isConfigured;
+
+    nbp_test_case_config_pfn_t configFunction;
+    nbp_test_case_pfn_t function;
+
+    nbp_test_case_setup_details_t* setupDetails;
+    nbp_test_case_teardown_details_t* teardownDetails;
+};
+typedef struct nbp_test_case_details_t nbp_test_case_details_t;
+
+struct nbp_test_case_instance_t
+{
+    nbp_test_case_details_t* testCaseDetails;
+
+    nbp_test_case_instance_state_e state;
+
+    struct nbp_module_t* module;
+    struct nbp_test_suite_t* testSuite;
+    unsigned int depth;
+
+    int instantiationLine;
+
+    nbp_test_case_setup_details_t* setupDetails;
+    nbp_test_case_teardown_details_t* teardownDetails;
+
+    struct nbp_test_case_t* runs;
+    unsigned int numberOfRuns;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+
+    struct nbp_test_case_instance_t* next;
+    struct nbp_test_case_instance_t* prev;
+};
+typedef struct nbp_test_case_instance_t nbp_test_case_instance_t;
+
+struct nbp_test_case_t
+{
+    nbp_test_case_instance_t* testCaseInstance;
+
+    nbp_test_case_state_e state;
+};
+typedef struct nbp_test_case_t nbp_test_case_t;
+
+#define NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_TEST_SUITE_STATES          ((unsigned int) 5)
+
+struct nbp_module_t;
+
+struct nbp_test_suite_details_t;
+struct nbp_test_suite_instance_t;
+struct nbp_test_suite_t;
+
+typedef void (*nbp_test_suite_setup_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */
+);
+
+typedef void (*nbp_test_suite_teardown_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */
+);
+
+typedef void (*nbp_test_suite_config_pfn_t)(
+    struct nbp_test_suite_details_t* /* testSuiteDetails */
+);
+
+typedef void (*nbp_test_suite_pfn_t)(
+    struct nbp_test_suite_t* /* nbpParamTestSuite */,
+    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
+    struct nbp_module_t* /*nbpParamTciParentModule */
+);
+
+enum nbp_test_suite_instance_state_e
+{
+    tsis_ready   = 0x30000000,
+    tsis_running = 0x30000001,
+    tsis_passed  = 0x30000002,
+    tsis_failed  = 0x30000003,
+    tsis_skipped = 0x30000004,
+};
+typedef enum nbp_test_suite_instance_state_e nbp_test_suite_instance_state_e;
+
+enum nbp_test_suite_state_e
+{
+    tss_ready   = 0x31000000,
+    tss_running = 0x31000001,
+    tss_passed  = 0x31000002,
+    tss_failed  = 0x31000003,
+    tss_skipped = 0x31000004,
+};
+typedef enum nbp_test_suite_state_e nbp_test_suite_state_e;
+
+struct nbp_test_suite_setup_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_test_suite_setup_pfn_t function;
+};
+typedef struct nbp_test_suite_setup_details_t nbp_test_suite_setup_details_t;
+
+struct nbp_test_suite_teardown_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_test_suite_teardown_pfn_t function;
+};
+typedef struct nbp_test_suite_teardown_details_t
+    nbp_test_suite_teardown_details_t;
+
+struct nbp_test_suite_details_t
+{
+    const char* name;
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    int isConfigured;
+
+    nbp_test_suite_config_pfn_t configFunction;
+    nbp_test_suite_pfn_t function;
+
+    nbp_test_suite_setup_details_t* setupDetails;
+    nbp_test_suite_teardown_details_t* teardownDetails;
+};
+typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
+
+struct nbp_test_suite_instance_t
+{
+    nbp_test_suite_details_t* testSuiteDetails;
+
+    nbp_test_suite_instance_state_e state;
+
+    struct nbp_module_t* module;
+    unsigned int depth;
+
+    int instantiationLine;
+
+    nbp_test_suite_setup_details_t* setupDetails;
+    nbp_test_suite_teardown_details_t* teardownDetails;
+
+    struct nbp_test_suite_t* runs;
+    unsigned int numberOfRuns;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+
+    struct nbp_test_suite_instance_t* next;
+    struct nbp_test_suite_instance_t* prev;
+};
+typedef struct nbp_test_suite_instance_t nbp_test_suite_instance_t;
+
+struct nbp_test_suite_t
+{
+    nbp_test_suite_instance_t* testSuiteInstance;
+
+    nbp_test_suite_state_e state;
+
+    nbp_test_case_instance_t* firstTestCaseInstance;
+    nbp_test_case_instance_t* lastTestCaseInstance;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+};
+typedef struct nbp_test_suite_t nbp_test_suite_t;
+
+#define NBP_NUMBER_OF_MODULE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_MODULE_STATES          ((unsigned int) 5)
+
+struct nbp_module_details_t;
+struct nbp_module_instance_t;
+struct nbp_module_t;
+
+typedef void (*nbp_module_setup_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule */);
+
+typedef void (*nbp_module_teardown_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_mdoule_config_pfn_t)(
+    struct nbp_module_details_t* /* moduleDetails */
+);
+
+typedef void (*nbp_module_pfn_t)(
+    struct nbp_module_t* /* nbpParamModule*/,
+    struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
+    struct nbp_module_t* /* nbpParamTciParentModule */,
+    struct nbp_module_t* /* nbpParamTsiParentModule */,
+    struct nbp_module_t* /* nbpParamMiParentModule */
+);
+
+enum nbp_module_instance_state_e
+{
+    mis_ready   = 0x40000000,
+    mis_running = 0x40000001,
+    mis_passed  = 0x40000002,
+    mis_failed  = 0x40000003,
+    mis_skipped = 0x40000004,
+};
+typedef enum nbp_module_instance_state_e nbp_module_instance_state_e;
+
+enum nbp_module_state_e
+{
+    ms_ready   = 0x41000000,
+    ms_running = 0x41000001,
+    ms_passed  = 0x41000002,
+    ms_failed  = 0x41000003,
+    ms_skipped = 0x41000004,
+};
+typedef enum nbp_module_state_e nbp_module_state_e;
+
+struct nbp_module_setup_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_module_setup_pfn_t function;
+};
+typedef struct nbp_module_setup_details_t nbp_module_setup_details_t;
+
+struct nbp_module_teardown_details_t
+{
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    nbp_module_teardown_pfn_t function;
+};
+typedef struct nbp_module_teardown_details_t nbp_module_teardown_details_t;
+
+struct nbp_module_details_t
+{
+    const char* name;
+    const char* functionName;
+
+    const char* file;
+    int line;
+
+    int isConfigured;
+
+    nbp_mdoule_config_pfn_t configFunction;
+    nbp_module_pfn_t function;
+
+    nbp_module_setup_details_t* setupDetails;
+    nbp_module_teardown_details_t* teardownDetails;
+};
+typedef struct nbp_module_details_t nbp_module_details_t;
+
+struct nbp_module_instance_t
+{
+    nbp_module_details_t* moduleDetails;
+
+    nbp_module_instance_state_e state;
+
+    struct nbp_module_t* parent;
+    unsigned int depth;
+
+    int instantiationLine;
+
+    nbp_module_setup_details_t* setupDetails;
+    nbp_module_teardown_details_t* teardownDetails;
+
+    struct nbp_module_t* runs;
+    unsigned int numberOfRuns;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    unsigned int totalNumberOfTestSuites;
+    unsigned int totalNumberOfTestSuiteInstances;
+    unsigned int totalNumberOfModules;
+    unsigned int totalNumberOfModuleInstances;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestSuiteInstances[NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
+
+    struct nbp_module_instance_t* next;
+    struct nbp_module_instance_t* prev;
+};
+typedef struct nbp_module_instance_t nbp_module_instance_t;
+
+struct nbp_module_t
+{
+    nbp_module_instance_t* moduleInstance;
+
+    nbp_module_state_e state;
+
+    nbp_test_case_instance_t* firstTestCaseInstance;
+    nbp_test_case_instance_t* lastTestCaseInstance;
+
+    nbp_test_suite_instance_t* firstTestSuiteInstance;
+    nbp_test_suite_instance_t* lastTestSuiteInstance;
+
+    nbp_module_instance_t* firstModuleInstance;
+    nbp_module_instance_t* lastModuleInstance;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    unsigned int totalNumberOfTestSuites;
+    unsigned int totalNumberOfTestSuiteInstances;
+    unsigned int totalNumberOfModules;
+    unsigned int totalNumberOfModuleInstances;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestSuiteInstances[NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
+};
+typedef struct nbp_module_t nbp_module_t;
+
+struct nbp_printer_interface_t;
+
+typedef void (*nbp_printer_config_pfn_t)(
+    struct nbp_printer_interface_t* /* printerInterface */
+);
+
+typedef void (*nbp_printer_callback_init_pfn_t)(void);
+
+typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
+
+typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
+
+typedef void (*nbp_printer_callback_on_error_pfn_t)(
+    nbp_error_t /* nbpParamError */
+);
+
+typedef void (*nbp_printer_callback_on_exit_pfn_t)(
+    nbp_error_code_e /* nbpParamErrorCode */
+);
+
+typedef void (*nbp_printer_callback_on_instantiate_test_case_pfn_t)(
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_instantiate_test_suite_started_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_instantiate_module_started_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_instantiate_module_completed_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_case_started_pfn_t)(
+    nbp_test_case_t* /* nbpParamTestCase */,
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_case_completed_pfn_t)(
+    nbp_test_case_t* /* nbpParamTestCase */,
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_case_instance_started_pfn_t)(
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_case_instance_completed_pfn_t)(
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_suite_started_pfn_t)(
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_suite_completed_pfn_t)(
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_suite_instance_started_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_test_suite_instance_completed_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_printer_callback_on_module_started_pfn_t)(
+    nbp_module_t* /* nbpParamModule */,
+    nbp_module_instance_t* /* nbpParamModuleInstance */
+);
+
+typedef void (*nbp_printer_callback_on_module_completed_pfn_t)(
+    nbp_module_t* /* nbpParamModule */,
+    nbp_module_instance_t* /* nbpParamModuleInstance */
+);
+
+typedef void (*nbp_printer_callback_on_module_instance_started_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */
+);
+
+typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */
+);
+
+struct nbp_printer_interface_t
+{
+    const char* printerName;
+    nbp_printer_config_pfn_t configFunction;
+
+    int isInitialized;
+
+    nbp_printer_callback_init_pfn_t initCbk;
+    nbp_printer_callback_uninit_pfn_t uninitCbk;
+
+    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
+
+    nbp_printer_callback_on_error_pfn_t errorCbk;
+    nbp_printer_callback_on_exit_pfn_t exitCbk;
+
+    nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
+
+    nbp_printer_callback_on_instantiate_test_suite_started_pfn_t
+        instantiateTestSuiteStartedCbk;
+    nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t
+        instantiateTestSuiteCompletedCbk;
+
+    nbp_printer_callback_on_instantiate_module_started_pfn_t
+        instantiateModuleStartedCbk;
+    nbp_printer_callback_on_instantiate_module_completed_pfn_t
+        instantiateModuleCompletedCbk;
+
+    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
+    nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
+    nbp_printer_callback_on_test_case_instance_started_pfn_t
+        testCaseInstanceStartedCbk;
+    nbp_printer_callback_on_test_case_instance_completed_pfn_t
+        testCaseInstanceCompletedCbk;
+
+    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
+    nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
+    nbp_printer_callback_on_test_suite_instance_started_pfn_t
+        testSuiteInstanceStartedCbk;
+    nbp_printer_callback_on_test_suite_instance_completed_pfn_t
+        testSuiteInstanceCompletedCbk;
+
+    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
+    nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
+    nbp_printer_callback_on_module_instance_started_pfn_t
+        moduleInstanceStartedCbk;
+    nbp_printer_callback_on_module_instance_completed_pfn_t
+        moduleInstanceCompletedCbk;
+};
+typedef struct nbp_printer_interface_t nbp_printer_interface_t;
+
+struct nbp_scheduler_interface_t;
+
+typedef void (*nbp_scheduler_config_pfn_t)(
+    struct nbp_scheduler_interface_t* /* schedulerInterface */
+);
+
+typedef void (*nbp_scheduler_callback_init_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_uninit_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_run_pfn_t)(void);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_test_case_pfn_t)(
+    nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
+    nbp_test_suite_t* /* nbpParamTestSuite */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+typedef void (*nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+
+typedef void (
+    *nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t)(
+    nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_module_started_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */,
+    void* /* nbpParamContext */
+);
+
+typedef void (*nbp_scheduler_callback_on_instantiate_module_completed_pfn_t)(
+    nbp_module_instance_t* /* nbpParamModuleInstance */,
+    nbp_module_t* /* nbpParamModule */
+);
+
+struct nbp_scheduler_interface_t
+{
+    const char* schedulerName;
+    nbp_scheduler_config_pfn_t configFunction;
+
+    nbp_scheduler_callback_init_pfn_t initCbk;
+    nbp_scheduler_callback_uninit_pfn_t uninitCbk;
+    nbp_scheduler_callback_run_pfn_t runCbk;
+    nbp_scheduler_callback_on_instantiate_test_case_pfn_t
+        instantiateTestCaseCbk;
+    nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t
+        instantiateTestSuiteStartedCbk;
+    nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t
+        instantiateTestSuiteCompletedCbk;
+    nbp_scheduler_callback_on_instantiate_module_started_pfn_t
+        instantiateModuleStartedCbk;
+    nbp_scheduler_callback_on_instantiate_module_completed_pfn_t
+        instantiateModuleCompletedCbk;
+};
+typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
+
+void internal_nbp_module_update_state_stats(
+    nbp_module_t* module,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState);
+
+void internal_nbp_module_instance_update_state_stats(
+    nbp_module_instance_t* moduleInstance,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state);
+
+unsigned int internal_nbp_get_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state);
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
@@ -1751,6 +1827,24 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 #endif // end if NBP_MT_SUPPORT
 
+void internal_nbp_test_case_update_state_stats(
+    nbp_test_case_t* testCase,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState);
+
+void internal_nbp_test_case_instance_update_state_stats(
+    nbp_test_case_instance_t* testCaseInstance,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state);
+
+unsigned int internal_nbp_get_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state);
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,
@@ -1758,6 +1852,24 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context);
+
+void internal_nbp_test_suite_update_state_stats(
+    nbp_test_suite_t* testSuite,
+    nbp_test_suite_state_e oldState,
+    nbp_test_suite_state_e newState);
+
+void internal_nbp_test_suite_instance_update_state_stats(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    nbp_test_suite_instance_state_e oldState,
+    nbp_test_suite_instance_state_e newState);
+
+unsigned int internal_nbp_get_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e state);
+
+unsigned int internal_nbp_get_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e state);
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
@@ -2044,6 +2156,177 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
  */
 #define NBP_GET_MODULE_NAME(module)                                            \
     NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(moduleInstance)     \
+    moduleInstance->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASES(moduleInstance, state)    \
+    internal_nbp_get_number_of_test_cases(                                     \
+        moduleInstance->numberOfTestCases,                                     \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(           \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(                 \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        moduleInstance->numberOfTestCaseInstances,                             \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(moduleInstance)    \
+    moduleInstance->totalNumberOfTestSuites
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(moduleInstance, state)   \
+    internal_nbp_get_number_of_test_suites(                                    \
+        moduleInstance->numberOfTestSuites,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(          \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfTestSuiteInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(                \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        moduleInstance->numberOfTestSuiteInstances,                            \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULES(moduleInstance)        \
+    moduleInstance->totalNumberOfModules
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULES(moduleInstance, state)       \
+    internal_nbp_get_number_of_modules(moduleInstance->numberOfModules, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(              \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfModuleInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULE_INSTANCES(                    \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_module_instances(                               \
+        moduleInstance->numberOfModuleInstances,                               \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASES(module)                      \
+    module->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_CASES(module, state)                     \
+    internal_nbp_get_number_of_test_cases(module->numberOfTestCases, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(module)             \
+    module->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_CASE_INSTANCES(module, state)            \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        module->numberOfTestCaseInstances,                                     \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITES(module)                     \
+    module->totalNumberOfTestSuites
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITES(module, state)                    \
+    internal_nbp_get_number_of_test_suites(                                    \
+        moduleInstance->numberOfTestSuites,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(module)            \
+    module->totalNumberOfTestSuiteInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(module, state)           \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        module->numberOfTestSuiteInstances,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULES(module)                         \
+    module->totalNumberOfModules
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_MODULES(module, state)                        \
+    internal_nbp_get_number_of_modules(module->numberOfModules, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(module)                \
+    module->totalNumberOfModuleInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_MODULE_INSTANCES(module, state)               \
+    internal_nbp_get_number_of_module_instances(                               \
+        module->numberOfModuleInstances,                                       \
+        state)
 
 /**
  * TODO: add docs
@@ -2531,6 +2814,83 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                      \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_cases(                                     \
+        testSuiteInstance->numberOfTestCases,                                  \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(       \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(             \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        testSuiteInstance->numberOfTestCaseInstances,                          \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(               \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(                     \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_suites(                                    \
+        testSuiteInstance->numberOfTestSuites,                                 \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASES(testSuite)               \
+    testSuite->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASES(testSuite, state)              \
+    internal_nbp_get_number_of_test_cases(testSuite->numberOfTestCases, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(testSuite)      \
+    testSuite->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASE_INSTANCES(testSuite, state)     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        testSuite->numberOfTestCaseInstances,                                  \
+        state)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
     NBP_INCLUDE_TEST_SUITE(func);                                              \
     internal_nbp_instantiate_test_suite(                                       \
@@ -2691,6 +3051,23 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
  */
 #define NBP_GET_TEST_CASE_NAME(testCase)                                       \
     NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                 \
+    testCaseInstance)                                                          \
+    testCaseInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                       \
+    testCaseInstance,                                                          \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_cases(                                     \
+        testCaseInstance->numberOfTestCases,                                   \
+        state)
 
 /**
  * TODO: add docs
@@ -2914,6 +3291,165 @@ int main(int argc, const char** argv)
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+static void internal_nbp_increment_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState)
+{
+    internal_nbp_decrement_number_of_modules(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_modules(statsArray, newState, 1);
+}
+
+static void internal_nbp_increment_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState)
+{
+    internal_nbp_decrement_number_of_module_instances(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_module_instances(statsArray, newState, 1);
+}
+
+static void internal_nbp_module_instance_update_stats(
+    nbp_module_instance_t* moduleInstance)
+{
+    nbp_module_t* parent         = moduleInstance->parent;
+    unsigned int numberOfModules = moduleInstance->numberOfRuns;
+
+    internal_nbp_increment_number_of_modules(
+        moduleInstance->numberOfModules,
+        ms_ready,
+        numberOfModules);
+
+    while (parent != NBP_NULLPTR) {
+        parent->totalNumberOfModuleInstances += 1;
+        parent->totalNumberOfModules += numberOfModules;
+
+        parent->moduleInstance->totalNumberOfModuleInstances += 1;
+        parent->moduleInstance->totalNumberOfModules += numberOfModules;
+
+        internal_nbp_increment_number_of_module_instances(
+            parent->numberOfModuleInstances,
+            mis_ready,
+            1);
+        internal_nbp_increment_number_of_modules(
+            parent->numberOfModules,
+            ms_ready,
+            numberOfModules);
+
+        internal_nbp_increment_number_of_module_instances(
+            parent->moduleInstance->numberOfModuleInstances,
+            mis_ready,
+            1);
+        internal_nbp_increment_number_of_modules(
+            parent->moduleInstance->numberOfModules,
+            ms_ready,
+            numberOfModules);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_module_update_state_stats(
+    nbp_module_t* module,
+    nbp_module_state_e oldState,
+    nbp_module_state_e newState)
+{
+    nbp_module_t* parent = module->moduleInstance->parent;
+
+    internal_nbp_update_number_of_modules(
+        module->moduleInstance->numberOfModules,
+        oldState,
+        newState);
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_modules(
+            parent->numberOfModules,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_modules(
+            parent->moduleInstance->numberOfModules,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_module_instance_update_state_stats(
+    nbp_module_instance_t* moduleInstance,
+    nbp_module_instance_state_e oldState,
+    nbp_module_instance_state_e newState)
+{
+    nbp_module_t* parent = moduleInstance->parent;
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_module_instances(
+            parent->numberOfModuleInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_module_instances(
+            parent->moduleInstance->numberOfModuleInstances,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+unsigned int internal_nbp_get_number_of_modules(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_state_e state)
+{
+    int pos = ((int) state) - ((int) ms_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+unsigned int internal_nbp_get_number_of_module_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_module_instance_state_e state)
+{
+    int pos = ((int) state) - ((int) mis_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
@@ -2986,14 +3522,40 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        runs[i].moduleInstance         = moduleInstance;
-        runs[i].state                  = ms_ready;
-        runs[i].firstTestCaseInstance  = NBP_NULLPTR;
-        runs[i].lastTestCaseInstance   = NBP_NULLPTR;
-        runs[i].firstTestSuiteInstance = NBP_NULLPTR;
-        runs[i].lastTestSuiteInstance  = NBP_NULLPTR;
-        runs[i].firstModuleInstance    = NBP_NULLPTR;
-        runs[i].lastModuleInstance     = NBP_NULLPTR;
+        runs[i].moduleInstance                  = moduleInstance;
+        runs[i].state                           = ms_ready;
+        runs[i].firstTestCaseInstance           = NBP_NULLPTR;
+        runs[i].lastTestCaseInstance            = NBP_NULLPTR;
+        runs[i].firstTestSuiteInstance          = NBP_NULLPTR;
+        runs[i].lastTestSuiteInstance           = NBP_NULLPTR;
+        runs[i].firstModuleInstance             = NBP_NULLPTR;
+        runs[i].lastModuleInstance              = NBP_NULLPTR;
+        runs[i].totalNumberOfTestCases          = 0;
+        runs[i].totalNumberOfTestCaseInstances  = 0;
+        runs[i].totalNumberOfTestSuites         = 0;
+        runs[i].totalNumberOfTestSuiteInstances = 0;
+        runs[i].totalNumberOfModules            = 0;
+        runs[i].totalNumberOfModuleInstances    = 0;
+
+        unsigned int j;
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCaseInstances[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuites[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuiteInstances[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModules[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModuleInstances[j], 0);
+        }
     }
 
     moduleInstance->moduleDetails     = moduleDetails;
@@ -3008,6 +3570,35 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->next              = NBP_NULLPTR;
     moduleInstance->prev              = NBP_NULLPTR;
 
+    moduleInstance->totalNumberOfTestCases          = 0;
+    moduleInstance->totalNumberOfTestCaseInstances  = 0;
+    moduleInstance->totalNumberOfTestSuites         = 0;
+    moduleInstance->totalNumberOfTestSuiteInstances = 0;
+    moduleInstance->totalNumberOfModules            = 0;
+    moduleInstance->totalNumberOfModuleInstances    = 0;
+
+    unsigned int j;
+    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCases[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCaseInstances[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestSuites[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(
+            &moduleInstance->numberOfTestSuiteInstances[j],
+            0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModules[j], 0);
+    }
+    for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
+        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModuleInstances[j], 0);
+    }
+
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;
 
@@ -3020,6 +3611,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             parentModule->lastModuleInstance       = moduleInstance;
         }
     }
+
+    internal_nbp_module_instance_update_stats(moduleInstance);
 
     internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
 
@@ -3606,6 +4199,233 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
+static void internal_nbp_increment_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_cases(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_test_cases(statsArray, newState, 1);
+}
+
+static void internal_nbp_increment_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_case_instances(
+        statsArray,
+        oldState,
+        1);
+    internal_nbp_increment_number_of_test_case_instances(
+        statsArray,
+        newState,
+        1);
+}
+
+static void internal_nbp_test_case_instance_update_stats(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    nbp_module_t* parent                         = testCaseInstance->module;
+    nbp_test_suite_t* testSuite                  = testCaseInstance->testSuite;
+    nbp_test_suite_instance_t* testSuiteInstance = NBP_NULLPTR;
+    unsigned int numberOfTestCases = testCaseInstance->numberOfRuns;
+
+    internal_nbp_increment_number_of_test_cases(
+        testCaseInstance->numberOfTestCases,
+        tcs_ready,
+        numberOfTestCases);
+
+    if (testSuite != NBP_NULLPTR) {
+        testSuiteInstance = testSuite->testSuiteInstance;
+
+        testSuite->totalNumberOfTestCaseInstances += 1;
+        testSuite->totalNumberOfTestCases += numberOfTestCases;
+
+        testSuiteInstance->totalNumberOfTestCaseInstances += 1;
+        testSuiteInstance->totalNumberOfTestCases += numberOfTestCases;
+
+        internal_nbp_increment_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            testSuite->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        internal_nbp_increment_number_of_test_case_instances(
+            testSuiteInstance->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            testSuiteInstance->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        parent = testCaseInstance->testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        parent->totalNumberOfTestCaseInstances += 1;
+        parent->totalNumberOfTestCases += numberOfTestCases;
+
+        parent->moduleInstance->totalNumberOfTestCaseInstances += 1;
+        parent->moduleInstance->totalNumberOfTestCases += numberOfTestCases;
+
+        internal_nbp_increment_number_of_test_case_instances(
+            parent->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            parent->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        internal_nbp_increment_number_of_test_case_instances(
+            parent->moduleInstance->numberOfTestCaseInstances,
+            tcis_ready,
+            1);
+        internal_nbp_increment_number_of_test_cases(
+            parent->moduleInstance->numberOfTestCases,
+            tcs_ready,
+            numberOfTestCases);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_case_update_state_stats(
+    nbp_test_case_t* testCase,
+    nbp_test_case_state_e oldState,
+    nbp_test_case_state_e newState)
+{
+    nbp_module_t* parent        = testCase->testCaseInstance->module;
+    nbp_test_suite_t* testSuite = testCase->testCaseInstance->testSuite;
+
+    internal_nbp_update_number_of_test_cases(
+        testCase->testCaseInstance->numberOfTestCases,
+        oldState,
+        newState);
+
+    if (testSuite != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_cases(
+            testSuite->numberOfTestCases,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_cases(
+            testSuite->testSuiteInstance->numberOfTestCases,
+            oldState,
+            newState);
+
+        parent = testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_cases(
+            parent->numberOfTestCases,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_cases(
+            parent->moduleInstance->numberOfTestCases,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_case_instance_update_state_stats(
+    nbp_test_case_instance_t* testCaseInstance,
+    nbp_test_case_instance_state_e oldState,
+    nbp_test_case_instance_state_e newState)
+{
+    nbp_module_t* parent        = testCaseInstance->module;
+    nbp_test_suite_t* testSuite = testCaseInstance->testSuite;
+
+    if (testSuite != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_case_instances(
+            testSuite->testSuiteInstance->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        parent = testSuite->testSuiteInstance->module;
+    }
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_case_instances(
+            parent->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_case_instances(
+            parent->moduleInstance->numberOfTestCaseInstances,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+unsigned int internal_nbp_get_number_of_test_cases(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_state_e state)
+{
+    int pos = ((int) state) - ((int) tcs_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+unsigned int internal_nbp_get_number_of_test_case_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_case_instance_state_e state)
+{
+    int pos = ((int) state) - ((int) tcis_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,
@@ -3685,6 +4505,10 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
 
+    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
+        NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);
+    }
+
     if (parentModule != NBP_NULLPTR) {
         testCaseInstance->depth = parentModule->moduleInstance->depth + 1;
 
@@ -3711,12 +4535,179 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         }
     }
 
+    internal_nbp_test_case_instance_update_stats(testCaseInstance);
+
     internal_nbp_notify_printer_instantiate_test_case(testCaseInstance);
     internal_nbp_notify_scheduler_instantiate_test_case(
         testCaseInstance,
         context);
 
     return testCaseInstance;
+}
+
+static void internal_nbp_increment_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tss_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tss_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e oldState,
+    nbp_test_suite_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_suites(statsArray, oldState, 1);
+    internal_nbp_increment_number_of_test_suites(statsArray, newState, 1);
+}
+
+static void internal_nbp_increment_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tsis_ready);
+    NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_decrement_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e state,
+    unsigned int value)
+{
+    int pos = ((int) state) - ((int) tsis_ready);
+    NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
+}
+
+static void internal_nbp_update_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e oldState,
+    nbp_test_suite_instance_state_e newState)
+{
+    internal_nbp_decrement_number_of_test_suite_instances(
+        statsArray,
+        oldState,
+        1);
+    internal_nbp_increment_number_of_test_suite_instances(
+        statsArray,
+        newState,
+        1);
+}
+
+static void internal_nbp_test_suite_instance_update_stats(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    nbp_module_t* parent            = testSuiteInstance->module;
+    unsigned int numberOfTestSuites = testSuiteInstance->numberOfRuns;
+
+    internal_nbp_increment_number_of_test_suites(
+        testSuiteInstance->numberOfTestSuites,
+        tss_ready,
+        numberOfTestSuites);
+
+    while (parent != NBP_NULLPTR) {
+        parent->totalNumberOfTestSuiteInstances += 1;
+        parent->totalNumberOfTestSuites += numberOfTestSuites;
+
+        parent->moduleInstance->totalNumberOfTestSuiteInstances += 1;
+        parent->moduleInstance->totalNumberOfTestSuites += numberOfTestSuites;
+
+        internal_nbp_increment_number_of_test_suite_instances(
+            parent->numberOfTestSuiteInstances,
+            tsis_ready,
+            1);
+        internal_nbp_increment_number_of_test_suites(
+            parent->numberOfTestSuites,
+            tss_ready,
+            numberOfTestSuites);
+
+        internal_nbp_increment_number_of_test_suite_instances(
+            parent->moduleInstance->numberOfTestSuiteInstances,
+            tsis_ready,
+            1);
+        internal_nbp_increment_number_of_test_suites(
+            parent->moduleInstance->numberOfTestSuites,
+            tss_ready,
+            numberOfTestSuites);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_suite_update_state_stats(
+    nbp_test_suite_t* testSuite,
+    nbp_test_suite_state_e oldState,
+    nbp_test_suite_state_e newState)
+{
+    nbp_module_t* parent = testSuite->testSuiteInstance->module;
+
+    internal_nbp_update_number_of_test_suites(
+        testSuite->testSuiteInstance->numberOfTestSuites,
+        oldState,
+        newState);
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_suites(
+            parent->numberOfTestSuites,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_suites(
+            parent->moduleInstance->numberOfTestSuites,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+void internal_nbp_test_suite_instance_update_state_stats(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    nbp_test_suite_instance_state_e oldState,
+    nbp_test_suite_instance_state_e newState)
+{
+    nbp_module_t* parent = testSuiteInstance->module;
+
+    while (parent != NBP_NULLPTR) {
+        internal_nbp_update_number_of_test_suite_instances(
+            parent->numberOfTestSuiteInstances,
+            oldState,
+            newState);
+
+        internal_nbp_update_number_of_test_suite_instances(
+            parent->moduleInstance->numberOfTestSuiteInstances,
+            oldState,
+            newState);
+
+        parent = parent->moduleInstance->parent;
+    }
+}
+
+unsigned int internal_nbp_get_number_of_test_suites(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_state_e state)
+{
+    int pos = ((int) state) - ((int) tss_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+unsigned int internal_nbp_get_number_of_test_suite_instances(
+    NBP_ATOMIC_UINT_TYPE* statsArray,
+    nbp_test_suite_instance_state_e state)
+{
+    int pos = ((int) state) - ((int) tsis_ready);
+    return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
@@ -3770,10 +4761,20 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        runs[i].testSuiteInstance     = testSuiteInstance;
-        runs[i].state                 = tss_ready;
-        runs[i].firstTestCaseInstance = NBP_NULLPTR;
-        runs[i].lastTestCaseInstance  = NBP_NULLPTR;
+        runs[i].testSuiteInstance              = testSuiteInstance;
+        runs[i].state                          = tss_ready;
+        runs[i].firstTestCaseInstance          = NBP_NULLPTR;
+        runs[i].lastTestCaseInstance           = NBP_NULLPTR;
+        runs[i].totalNumberOfTestCases         = 0;
+        runs[i].totalNumberOfTestCaseInstances = 0;
+
+        unsigned int j;
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
+        }
+        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
+            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCaseInstances[j], 0);
+        }
     }
 
     testSuiteInstance->testSuiteDetails  = testSuiteDetails;
@@ -3787,6 +4788,20 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     testSuiteInstance->next              = NBP_NULLPTR;
     testSuiteInstance->prev              = NBP_NULLPTR;
     testSuiteInstance->depth = parentModule->moduleInstance->depth + 1;
+    testSuiteInstance->totalNumberOfTestCases         = 0;
+    testSuiteInstance->totalNumberOfTestCaseInstances = 0;
+
+    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
+        NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);
+    }
+    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; i++) {
+        NBP_ATOMIC_UINT_STORE(
+            &testSuiteInstance->numberOfTestCaseInstances[i],
+            0U);
+    }
+    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_SUITE_STATES; i++) {
+        NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestSuites[i], 0U);
+    }
 
     if (parentModule->firstTestSuiteInstance == NBP_NULLPTR) {
         parentModule->firstTestSuiteInstance = testSuiteInstance;
@@ -3796,6 +4811,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         parentModule->lastTestSuiteInstance->next = testSuiteInstance;
         parentModule->lastTestSuiteInstance       = testSuiteInstance;
     }
+
+    internal_nbp_test_suite_instance_update_stats(testSuiteInstance);
 
     internal_nbp_notify_printer_instantiate_test_suite_started(
         testSuiteInstance);

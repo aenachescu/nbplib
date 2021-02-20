@@ -28,7 +28,11 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_TYPES_TEST_SUITE
 #define _H_NBP_INTERNAL_TYPES_TEST_SUITE
 
+#include "sync.h"
 #include "test_case.h"
+
+#define NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_TEST_SUITE_STATES          ((unsigned int) 5)
 
 struct nbp_module_t;
 
@@ -132,6 +136,13 @@ struct nbp_test_suite_instance_t
     struct nbp_test_suite_t* runs;
     unsigned int numberOfRuns;
 
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+
     struct nbp_test_suite_instance_t* next;
     struct nbp_test_suite_instance_t* prev;
 };
@@ -145,6 +156,12 @@ struct nbp_test_suite_t
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
 };
 typedef struct nbp_test_suite_t nbp_test_suite_t;
 

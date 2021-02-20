@@ -31,6 +31,9 @@ SOFTWARE.
 #include "test_case.h"
 #include "test_suite.h"
 
+#define NBP_NUMBER_OF_MODULE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_MODULE_STATES          ((unsigned int) 5)
+
 struct nbp_module_details_t;
 struct nbp_module_instance_t;
 struct nbp_module_t;
@@ -131,6 +134,23 @@ struct nbp_module_instance_t
     struct nbp_module_t* runs;
     unsigned int numberOfRuns;
 
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    unsigned int totalNumberOfTestSuites;
+    unsigned int totalNumberOfTestSuiteInstances;
+    unsigned int totalNumberOfModules;
+    unsigned int totalNumberOfModuleInstances;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestSuiteInstances[NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
+
     struct nbp_module_instance_t* next;
     struct nbp_module_instance_t* prev;
 };
@@ -150,6 +170,23 @@ struct nbp_module_t
 
     nbp_module_instance_t* firstModuleInstance;
     nbp_module_instance_t* lastModuleInstance;
+
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    unsigned int totalNumberOfTestSuites;
+    unsigned int totalNumberOfTestSuiteInstances;
+    unsigned int totalNumberOfModules;
+    unsigned int totalNumberOfModuleInstances;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfTestSuiteInstances[NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES];
+    NBP_ATOMIC_UINT_TYPE numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
+    NBP_ATOMIC_UINT_TYPE
+    numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
 };
 typedef struct nbp_module_t nbp_module_t;
 

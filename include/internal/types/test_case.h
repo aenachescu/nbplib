@@ -28,6 +28,11 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_TYPES_TEST_CASE
 #define _H_NBP_INTERNAL_TYPES_TEST_CASE
 
+#include "sync.h"
+
+#define NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES ((unsigned int) 5)
+#define NBP_NUMBER_OF_TEST_CASE_STATES          ((unsigned int) 5)
+
 struct nbp_module_t;
 
 struct nbp_test_suite_t;
@@ -130,6 +135,8 @@ struct nbp_test_case_instance_t
 
     struct nbp_test_case_t* runs;
     unsigned int numberOfRuns;
+
+    NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
 
     struct nbp_test_case_instance_t* next;
     struct nbp_test_case_instance_t* prev;

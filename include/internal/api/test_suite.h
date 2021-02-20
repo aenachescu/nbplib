@@ -28,6 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_TEST_SUITE
 #define _H_NBP_INTERNAL_API_TEST_SUITE
 
+#include "../details/test_case.h"
 #include "../details/test_suite.h"
 #include "../types/test_suite.h"
 #include "../utils/utils.h"
@@ -168,6 +169,83 @@ SOFTWARE.
  */
 #define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
     NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                      \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_cases(                                     \
+        testSuiteInstance->numberOfTestCases,                                  \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(       \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(             \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        testSuiteInstance->numberOfTestCaseInstances,                          \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(               \
+    testSuiteInstance)                                                         \
+    testSuiteInstace->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(                     \
+    testSuiteInstance,                                                         \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_suites(                                    \
+        testSuiteInstance->numberOfTestSuites,                                 \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASES(testSuite)               \
+    testSuite->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASES(testSuite, state)              \
+    internal_nbp_get_number_of_test_cases(testSuite->numberOfTestCases, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(testSuite)      \
+    testSuite->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASE_INSTANCES(testSuite, state)     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        testSuite->numberOfTestCaseInstances,                                  \
+        state)
 
 /**
  * TODO: add docs

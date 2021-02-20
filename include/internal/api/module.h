@@ -29,6 +29,8 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_API_MODULE
 
 #include "../details/module.h"
+#include "../details/test_case.h"
+#include "../details/test_suite.h"
 #include "../types/module.h"
 #include "../utils/utils.h"
 #include "memory.h"
@@ -168,6 +170,177 @@ SOFTWARE.
  */
 #define NBP_GET_MODULE_NAME(module)                                            \
     NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(moduleInstance)     \
+    moduleInstance->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASES(moduleInstance, state)    \
+    internal_nbp_get_number_of_test_cases(                                     \
+        moduleInstance->numberOfTestCases,                                     \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(           \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(                 \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        moduleInstance->numberOfTestCaseInstances,                             \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(moduleInstance)    \
+    moduleInstance->totalNumberOfTestSuites
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(moduleInstance, state)   \
+    internal_nbp_get_number_of_test_suites(                                    \
+        moduleInstance->numberOfTestSuites,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(          \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfTestSuiteInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(                \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        moduleInstance->numberOfTestSuiteInstances,                            \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULES(moduleInstance)        \
+    moduleInstance->totalNumberOfModules
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULES(moduleInstance, state)       \
+    internal_nbp_get_number_of_modules(moduleInstance->numberOfModules, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(              \
+    moduleInstance)                                                            \
+    moduleInstance->totalNumberOfModuleInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULE_INSTANCES(                    \
+    moduleInstance,                                                            \
+    state)                                                                     \
+    internal_nbp_get_number_of_module_instances(                               \
+        moduleInstance->numberOfModuleInstances,                               \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASES(module)                      \
+    module->totalNumberOfTestCases
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_CASES(module, state)                     \
+    internal_nbp_get_number_of_test_cases(module->numberOfTestCases, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(module)             \
+    module->totalNumberOfTestCaseInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_CASE_INSTANCES(module, state)            \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        module->numberOfTestCaseInstances,                                     \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITES(module)                     \
+    module->totalNumberOfTestSuites
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITES(module, state)                    \
+    internal_nbp_get_number_of_test_suites(                                    \
+        moduleInstance->numberOfTestSuites,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(module)            \
+    module->totalNumberOfTestSuiteInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(module, state)           \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        module->numberOfTestSuiteInstances,                                    \
+        state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULES(module)                         \
+    module->totalNumberOfModules
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_MODULES(module, state)                        \
+    internal_nbp_get_number_of_modules(module->numberOfModules, state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(module)                \
+    module->totalNumberOfModuleInstances
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_NUMBER_OF_MODULE_INSTANCES(module, state)               \
+    internal_nbp_get_number_of_module_instances(                               \
+        module->numberOfModuleInstances,                                       \
+        state)
 
 /**
  * TODO: add docs
