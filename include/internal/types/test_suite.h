@@ -125,6 +125,8 @@ struct nbp_test_suite_instance_t
 
     nbp_test_suite_instance_state_e state;
 
+    NBP_ATOMIC_INT_TYPE isSkipped;
+
     struct nbp_module_t* module;
     unsigned int depth;
 
@@ -153,6 +155,8 @@ struct nbp_test_suite_t
     nbp_test_suite_instance_t* testSuiteInstance;
 
     nbp_test_suite_state_e state;
+
+    NBP_ATOMIC_INT_TYPE isSkipped;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;

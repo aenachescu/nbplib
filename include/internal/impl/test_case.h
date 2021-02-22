@@ -34,6 +34,7 @@ SOFTWARE.
 #include "../details/printer_notifier.h"
 #include "../details/scheduler_notifier.h"
 #include "../details/test_case.h"
+#include "../types/flags.h"
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
@@ -328,6 +329,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;
         runs[i].state            = tcs_ready;
+
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
     testCaseInstance->testCaseDetails   = testCaseDetails;
@@ -342,6 +345,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->numberOfRuns      = numberOfRuns;
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
+
+    NBP_ATOMIC_INT_STORE(&testCaseInstance->isSkipped, (int) sf_is_not_set);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);

@@ -34,6 +34,7 @@ SOFTWARE.
 #include "../details/module.h"
 #include "../details/printer_notifier.h"
 #include "../details/scheduler_notifier.h"
+#include "../types/flags.h"
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
@@ -283,6 +284,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         runs[i].totalNumberOfModules            = 0;
         runs[i].totalNumberOfModuleInstances    = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
             NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
@@ -322,6 +325,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->totalNumberOfTestSuiteInstances = 0;
     moduleInstance->totalNumberOfModules            = 0;
     moduleInstance->totalNumberOfModuleInstances    = 0;
+
+    NBP_ATOMIC_INT_STORE(&moduleInstance->isSkipped, (int) sf_is_not_set);
 
     unsigned int j;
     for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {

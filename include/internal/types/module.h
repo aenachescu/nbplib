@@ -123,6 +123,8 @@ struct nbp_module_instance_t
 
     nbp_module_instance_state_e state;
 
+    NBP_ATOMIC_INT_TYPE isSkipped;
+
     struct nbp_module_t* parent;
     unsigned int depth;
 
@@ -161,6 +163,8 @@ struct nbp_module_t
     nbp_module_instance_t* moduleInstance;
 
     nbp_module_state_e state;
+
+    NBP_ATOMIC_INT_TYPE isSkipped;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;

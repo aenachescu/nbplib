@@ -25,17 +25,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_TYPES
-#define _H_NBP_INTERNAL_TYPES_TYPES
+#ifndef _H_NBP_INTERNAL_TYPES_FLAGS
+#define _H_NBP_INTERNAL_TYPES_FLAGS
 
-#include "error.h"
-#include "flags.h"
-#include "memory.h"
-#include "module.h"
-#include "printer.h"
-#include "scheduler.h"
-#include "sync.h"
-#include "test_case.h"
-#include "test_suite.h"
+enum internal_nbp_skip_flag_e
+{
+    sf_is_not_set   = 0x50000000,
+    sf_is_set       = 0x50000001,
+    sf_is_processed = 0x50000002,
+};
+typedef enum internal_nbp_skip_flag_e internal_nbp_skip_flag_e;
 
-#endif // end if _H_NBP_INTERNAL_TYPES_TYPES
+#endif // end if _H_NBP_INTERNAL_TYPES_FLAGS

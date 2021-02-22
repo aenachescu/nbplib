@@ -34,6 +34,7 @@ SOFTWARE.
 #include "../details/printer_notifier.h"
 #include "../details/scheduler_notifier.h"
 #include "../details/test_suite.h"
+#include "../types/flags.h"
 
 static void internal_nbp_increment_number_of_test_suites(
     NBP_ATOMIC_UINT_TYPE* statsArray,
@@ -258,6 +259,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         runs[i].totalNumberOfTestCases         = 0;
         runs[i].totalNumberOfTestCaseInstances = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
             NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
@@ -280,6 +283,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     testSuiteInstance->depth = parentModule->moduleInstance->depth + 1;
     testSuiteInstance->totalNumberOfTestCases         = 0;
     testSuiteInstance->totalNumberOfTestCaseInstances = 0;
+
+    NBP_ATOMIC_INT_STORE(&testSuiteInstance->isSkipped, (int) sf_is_not_set);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);

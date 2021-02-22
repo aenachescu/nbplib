@@ -779,6 +779,14 @@ struct nbp_error_t
 };
 typedef struct nbp_error_t nbp_error_t;
 
+enum internal_nbp_skip_flag_e
+{
+    sf_is_not_set   = 0x50000000,
+    sf_is_set       = 0x50000001,
+    sf_is_processed = 0x50000002,
+};
+typedef enum internal_nbp_skip_flag_e internal_nbp_skip_flag_e;
+
 enum nbp_memory_tag_e
 {
     mt_test_case_instance  = 0x4E425000,
@@ -1131,6 +1139,8 @@ struct nbp_test_case_instance_t
 
     nbp_test_case_instance_state_e state;
 
+    NBP_ATOMIC_INT_TYPE isSkipped;
+
     struct nbp_module_t* module;
     struct nbp_test_suite_t* testSuite;
     unsigned int depth;
@@ -1155,6 +1165,8 @@ struct nbp_test_case_t
     nbp_test_case_instance_t* testCaseInstance;
 
     nbp_test_case_state_e state;
+
+    NBP_ATOMIC_INT_TYPE isSkipped;
 };
 typedef struct nbp_test_case_t nbp_test_case_t;
 
@@ -1252,6 +1264,8 @@ struct nbp_test_suite_instance_t
 
     nbp_test_suite_instance_state_e state;
 
+    NBP_ATOMIC_INT_TYPE isSkipped;
+
     struct nbp_module_t* module;
     unsigned int depth;
 
@@ -1280,6 +1294,8 @@ struct nbp_test_suite_t
     nbp_test_suite_instance_t* testSuiteInstance;
 
     nbp_test_suite_state_e state;
+
+    NBP_ATOMIC_INT_TYPE isSkipped;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
@@ -1384,6 +1400,8 @@ struct nbp_module_instance_t
 
     nbp_module_instance_state_e state;
 
+    NBP_ATOMIC_INT_TYPE isSkipped;
+
     struct nbp_module_t* parent;
     unsigned int depth;
 
@@ -1422,6 +1440,8 @@ struct nbp_module_t
     nbp_module_instance_t* moduleInstance;
 
     nbp_module_state_e state;
+
+    NBP_ATOMIC_INT_TYPE isSkipped;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
@@ -3537,6 +3557,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         runs[i].totalNumberOfModules            = 0;
         runs[i].totalNumberOfModuleInstances    = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
             NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
@@ -3576,6 +3598,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->totalNumberOfTestSuiteInstances = 0;
     moduleInstance->totalNumberOfModules            = 0;
     moduleInstance->totalNumberOfModuleInstances    = 0;
+
+    NBP_ATOMIC_INT_STORE(&moduleInstance->isSkipped, (int) sf_is_not_set);
 
     unsigned int j;
     for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -4490,6 +4514,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;
         runs[i].state            = tcs_ready;
+
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
     testCaseInstance->testCaseDetails   = testCaseDetails;
@@ -4504,6 +4530,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->numberOfRuns      = numberOfRuns;
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
+
+    NBP_ATOMIC_INT_STORE(&testCaseInstance->isSkipped, (int) sf_is_not_set);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);
@@ -4768,6 +4796,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         runs[i].totalNumberOfTestCases         = 0;
         runs[i].totalNumberOfTestCaseInstances = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
             NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
@@ -4790,6 +4820,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     testSuiteInstance->depth = parentModule->moduleInstance->depth + 1;
     testSuiteInstance->totalNumberOfTestCases         = 0;
     testSuiteInstance->totalNumberOfTestCaseInstances = 0;
+
+    NBP_ATOMIC_INT_STORE(&testSuiteInstance->isSkipped, (int) sf_is_not_set);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);
