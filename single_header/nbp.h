@@ -761,6 +761,7 @@ enum nbp_error_code_e
     ec_scheduler_run_is_disabled   = 8,
     ec_unexpected_state            = 9,
     ec_invalid_parent              = 10,
+    ec_no_test_case_instantiated   = 11,
 };
 typedef enum nbp_error_code_e nbp_error_code_e;
 
@@ -3651,6 +3652,13 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             &moduleInstance->runs[i],
             &moduleInstance->runs[i],
             &moduleInstance->runs[i]);
+
+        if (moduleInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_no_test_case_instantiated,
+                "module has no test case");
+            NBP_EXIT(ec_no_test_case_instantiated);
+        }
     }
 
     internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);
@@ -4858,6 +4866,13 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             &testSuiteInstance->runs[i],
             &testSuiteInstance->runs[i],
             NBP_NULLPTR);
+
+        if (testSuiteInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_no_test_case_instantiated,
+                "test suite has no test case");
+            NBP_EXIT(ec_no_test_case_instantiated);
+        }
     }
 
     internal_nbp_notify_printer_instantiate_test_suite_completed(

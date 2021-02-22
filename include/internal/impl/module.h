@@ -378,6 +378,13 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             &moduleInstance->runs[i],
             &moduleInstance->runs[i],
             &moduleInstance->runs[i]);
+
+        if (moduleInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_no_test_case_instantiated,
+                "module has no test case");
+            NBP_EXIT(ec_no_test_case_instantiated);
+        }
     }
 
     internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);
