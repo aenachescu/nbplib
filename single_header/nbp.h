@@ -4783,7 +4783,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     }
 
     nbp_test_suite_t* runs = (nbp_test_suite_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_test_suite_t),
+        numberOfRuns * sizeof(nbp_test_suite_t),
         mt_test_suite);
 
     if (runs == NBP_NULLPTR) {
