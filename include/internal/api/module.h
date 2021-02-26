@@ -84,7 +84,8 @@ SOFTWARE.
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         nbp_module_t* nbpParamTsiParentModule,                                 \
-        nbp_module_t* nbpParamMiParentModule);                                 \
+        nbp_module_t* nbpParamMiParentModule,                                  \
+        unsigned int nbpParamNumberOfRuns);                                    \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -102,7 +103,8 @@ SOFTWARE.
             nbpParamTciParentTestSuite,                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule,       \
+        NBP_MAYBE_UNUSED_PARAMETER unsigned int nbpParamNumberOfRuns)
 
 /**
  * TODO: add docs
@@ -347,12 +349,15 @@ SOFTWARE.
  */
 #define NBP_INSTANTIATE_MODULE(func, ...)                                      \
     NBP_INCLUDE_MODULE(func);                                                  \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(MPIO_##__VA_ARGS__))   \
+    (MPIO_, MPIO_##__VA_ARGS__);                                               \
     internal_nbp_instantiate_module(                                           \
         NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
         nbpParamMiParentModule,                                                \
         NBP_SOURCE_LINE,                                                       \
-        1,                                                                     \
-        NBP_NULLPTR)
+        nbpParamNumberOfRuns,                                                  \
+        NBP_NULLPTR);                                                          \
+    nbpParamNumberOfRuns = 1;
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
@@ -375,5 +380,11 @@ SOFTWARE.
 #define INTERNAL_NBP_GMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)         \
     INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(setupFunc)                              \
     INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(teardownFunc)
+
+// This macro is generated when NBP_INSTANTIATE_MODULE macro is used without
+// parameters
+#define INTERNAL_NBP_MPIO_
+
+#define INTERNAL_NBP_MPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
 
 #endif // end if _H_NBP_INTERNAL_API_MODULE

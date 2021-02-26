@@ -377,7 +377,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             NBP_NULLPTR,
             &moduleInstance->runs[i],
             &moduleInstance->runs[i],
-            &moduleInstance->runs[i]);
+            &moduleInstance->runs[i],
+            1);
 
         if (moduleInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
             NBP_REPORT_ERROR_STRING_CONTEXT(

@@ -55,7 +55,8 @@ typedef void (*nbp_test_suite_config_pfn_t)(
 typedef void (*nbp_test_suite_pfn_t)(
     struct nbp_test_suite_t* /* nbpParamTestSuite */,
     struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
-    struct nbp_module_t* /*nbpParamTciParentModule */
+    struct nbp_module_t* /*nbpParamTciParentModule */,
+    unsigned int /* nbpParamNumberOfRuns */
 );
 
 enum nbp_test_suite_instance_state_e

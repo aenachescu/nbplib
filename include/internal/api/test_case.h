@@ -186,13 +186,16 @@ SOFTWARE.
  */
 #define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
     NBP_INCLUDE_TEST_CASE(func);                                               \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TCPIO_##__VA_ARGS__))  \
+    (TCPIO_, TCPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_case(                                        \
         NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
         nbpParamTciParentModule,                                               \
         nbpParamTciParentTestSuite,                                            \
         NBP_SOURCE_LINE,                                                       \
-        1,                                                                     \
-        NBP_NULLPTR)
+        nbpParamNumberOfRuns,                                                  \
+        NBP_NULLPTR);                                                          \
+    nbpParamNumberOfRuns = 1;
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
@@ -216,5 +219,11 @@ SOFTWARE.
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
+
+// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used without
+// parameters
+#define INTERNAL_NBP_TCPIO_
+
+#define INTERNAL_NBP_TCPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
 
 #endif // end if _H_NBP_INTERNAL_API_TEST_CASE

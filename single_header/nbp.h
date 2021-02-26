@@ -1195,7 +1195,8 @@ typedef void (*nbp_test_suite_config_pfn_t)(
 typedef void (*nbp_test_suite_pfn_t)(
     struct nbp_test_suite_t* /* nbpParamTestSuite */,
     struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
-    struct nbp_module_t* /*nbpParamTciParentModule */
+    struct nbp_module_t* /*nbpParamTciParentModule */,
+    unsigned int /* nbpParamNumberOfRuns */
 );
 
 enum nbp_test_suite_instance_state_e
@@ -1332,7 +1333,8 @@ typedef void (*nbp_module_pfn_t)(
     struct nbp_test_suite_t* /* nbpParamTciParentTestSuite */,
     struct nbp_module_t* /* nbpParamTciParentModule */,
     struct nbp_module_t* /* nbpParamTsiParentModule */,
-    struct nbp_module_t* /* nbpParamMiParentModule */
+    struct nbp_module_t* /* nbpParamMiParentModule */,
+    unsigned int /* nbpParamNumberOfRuns */
 );
 
 enum nbp_module_instance_state_e
@@ -1988,6 +1990,11 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
+#define NBP_NUMBER_OF_RUNS(num)
+
+/**
+ * TODO: add docs
+ */
 #ifndef NBP_CUSTOM_MEMORY_ALLOCATOR
 
 #include <stdlib.h>
@@ -2091,7 +2098,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         nbp_module_t* nbpParamTsiParentModule,                                 \
-        nbp_module_t* nbpParamMiParentModule);                                 \
+        nbp_module_t* nbpParamMiParentModule,                                  \
+        unsigned int nbpParamNumberOfRuns);                                    \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -2109,7 +2117,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             nbpParamTciParentTestSuite,                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule,       \
+        NBP_MAYBE_UNUSED_PARAMETER unsigned int nbpParamNumberOfRuns)
 
 /**
  * TODO: add docs
@@ -2354,12 +2363,15 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
  */
 #define NBP_INSTANTIATE_MODULE(func, ...)                                      \
     NBP_INCLUDE_MODULE(func);                                                  \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(MPIO_##__VA_ARGS__))   \
+    (MPIO_, MPIO_##__VA_ARGS__);                                               \
     internal_nbp_instantiate_module(                                           \
         NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
         nbpParamMiParentModule,                                                \
         NBP_SOURCE_LINE,                                                       \
-        1,                                                                     \
-        NBP_NULLPTR)
+        nbpParamNumberOfRuns,                                                  \
+        NBP_NULLPTR);                                                          \
+    nbpParamNumberOfRuns = 1;
 
 #define INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(...)                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMC##__VA_ARGS__))     \
@@ -2382,6 +2394,12 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 #define INTERNAL_NBP_GMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)         \
     INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(setupFunc)                              \
     INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(teardownFunc)
+
+// This macro is generated when NBP_INSTANTIATE_MODULE macro is used without
+// parameters
+#define INTERNAL_NBP_MPIO_
+
+#define INTERNAL_NBP_MPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
 
 /**
  * TODO: add docs
@@ -2744,7 +2762,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     void nbp_test_suite_function_##func(                                       \
         nbp_test_suite_t* nbpParamTestSuite,                                   \
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
-        nbp_module_t* nbpParamTciParentModule);                                \
+        nbp_module_t* nbpParamTciParentModule,                                 \
+        unsigned int nbpParamNumberOfRuns);                                    \
     nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -2760,7 +2779,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
             nbpParamTciParentTestSuite,                                        \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
+        NBP_MAYBE_UNUSED_PARAMETER unsigned int nbpParamNumberOfRuns)
 
 /**
  * TODO: add docs
@@ -2914,12 +2934,15 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
  */
 #define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
     NBP_INCLUDE_TEST_SUITE(func);                                              \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TSPIO_##__VA_ARGS__))  \
+    (TSPIO_, TSPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_suite(                                       \
         NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
         nbpParamTsiParentModule,                                               \
         NBP_SOURCE_LINE,                                                       \
-        1,                                                                     \
-        NBP_NULLPTR)
+        nbpParamNumberOfRuns,                                                  \
+        NBP_NULLPTR);                                                          \
+    nbpParamNumberOfRuns = 1;
 
 #define INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(...)                  \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTSC##__VA_ARGS__))    \
@@ -2943,6 +2966,12 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(teardownFunc)
+
+// This macro is generated when NBP_INSTANTIATE_MODULE macro is used without
+// parameters
+#define INTERNAL_NBP_TSPIO_
+
+#define INTERNAL_NBP_TSPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
 
 /**
  * TODO: add docs
@@ -3095,13 +3124,16 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
  */
 #define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
     NBP_INCLUDE_TEST_CASE(func);                                               \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TCPIO_##__VA_ARGS__))  \
+    (TCPIO_, TCPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_case(                                        \
         NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
         nbpParamTciParentModule,                                               \
         nbpParamTciParentTestSuite,                                            \
         NBP_SOURCE_LINE,                                                       \
-        1,                                                                     \
-        NBP_NULLPTR)
+        nbpParamNumberOfRuns,                                                  \
+        NBP_NULLPTR);                                                          \
+    nbpParamNumberOfRuns = 1;
 
 #define INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
@@ -3126,6 +3158,12 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
+// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used without
+// parameters
+#define INTERNAL_NBP_TCPIO_
+
+#define INTERNAL_NBP_TCPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
 #ifdef NBP_LIBRARY_MAIN
 
 /**
@@ -3147,7 +3185,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         nbp_module_t* nbpParamTsiParentModule,                                 \
-        nbp_module_t* nbpParamMiParentModule);                                 \
+        nbp_module_t* nbpParamMiParentModule,                                  \
+        unsigned int nbpParamNumberOfRuns);                                    \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -3167,7 +3206,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             nbpParamTciParentTestSuite,                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule,       \
+        NBP_MAYBE_UNUSED_PARAMETER unsigned int nbpParamNumberOfRuns)
 
 #define INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(...)                 \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMMC##__VA_ARGS__))    \
@@ -3651,7 +3691,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             NBP_NULLPTR,
             &moduleInstance->runs[i],
             &moduleInstance->runs[i],
-            &moduleInstance->runs[i]);
+            &moduleInstance->runs[i],
+            1);
 
         if (moduleInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -4865,7 +4906,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         testSuiteInstance->testSuiteDetails->function(
             &testSuiteInstance->runs[i],
             &testSuiteInstance->runs[i],
-            NBP_NULLPTR);
+            NBP_NULLPTR,
+            1);
 
         if (testSuiteInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
             NBP_REPORT_ERROR_STRING_CONTEXT(

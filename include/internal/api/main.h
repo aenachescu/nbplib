@@ -52,7 +52,8 @@ SOFTWARE.
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         nbp_module_t* nbpParamTsiParentModule,                                 \
-        nbp_module_t* nbpParamMiParentModule);                                 \
+        nbp_module_t* nbpParamMiParentModule,                                  \
+        unsigned int nbpParamNumberOfRuns);                                    \
     nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
         .name            = #func,                                              \
         .functionName    = #func,                                              \
@@ -72,7 +73,8 @@ SOFTWARE.
             nbpParamTciParentTestSuite,                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTciParentModule,      \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamTsiParentModule,      \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule)
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamMiParentModule,       \
+        NBP_MAYBE_UNUSED_PARAMETER unsigned int nbpParamNumberOfRuns)
 
 #define INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(...)                 \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GMMC##__VA_ARGS__))    \

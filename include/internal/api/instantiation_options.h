@@ -25,20 +25,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_API_API
-#define _H_NBP_INTERNAL_API_API
+#ifndef _H_NBP_INTERNAL_API_INSTANTIATION_OPTIONS
+#define _H_NBP_INTERNAL_API_INSTANTIATION_OPTIONS
 
-#include "error.h"
-#include "exit.h"
-#include "instantiation_options.h"
-#include "memory.h"
-#include "module.h"
-#include "printer.h"
-#include "test_case.h"
-#include "test_suite.h"
+/**
+ * TODO: add docs
+ */
+#define NBP_NUMBER_OF_RUNS(num)
 
-#ifdef NBP_LIBRARY_MAIN
-#include "main.h"
-#endif // end if NBP_LIBRARY_MAIN
-
-#endif // end if _H_NBP_INTERNAL_API_API
+#endif // end if _H_NBP_INTERNAL_API_INSTANTIATION_OPTIONS

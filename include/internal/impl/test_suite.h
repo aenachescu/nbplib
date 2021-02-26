@@ -320,7 +320,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         testSuiteInstance->testSuiteDetails->function(
             &testSuiteInstance->runs[i],
             &testSuiteInstance->runs[i],
-            NBP_NULLPTR);
+            NBP_NULLPTR,
+            1);
 
         if (testSuiteInstance->runs[i].totalNumberOfTestCaseInstances == 0) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
