@@ -75,6 +75,9 @@ macroNameExceptions = [
     "INTERNAL_NBP_GMMCF_",
     "INTERNAL_NBP_GTSCF_",
     "INTERNAL_NBP_GTCCF_",
+    "INTERNAL_NBP_TCPIO_",
+    "INTERNAL_NBP_TSPIO_",
+    "INTERNAL_NBP_MPIO_",
 ]
 
 functionNameExceptions = [
