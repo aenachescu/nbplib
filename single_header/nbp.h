@@ -3518,6 +3518,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     unsigned int numberOfRuns,
     void* context)
 {
+    moduleDetails->configFunction(moduleDetails);
+
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_number_of_runs,
@@ -4507,6 +4509,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     unsigned int numberOfRuns,
     void* context)
 {
+    testCaseDetails->configFunction(testCaseDetails);
+
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_number_of_runs,
@@ -4794,6 +4798,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     unsigned int numberOfRuns,
     void* context)
 {
+    testSuiteDetails->configFunction(testSuiteDetails);
+
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_number_of_runs,

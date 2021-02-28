@@ -204,6 +204,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     unsigned int numberOfRuns,
     void* context)
 {
+    moduleDetails->configFunction(moduleDetails);
+
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_number_of_runs,
