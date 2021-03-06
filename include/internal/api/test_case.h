@@ -155,14 +155,43 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
+#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
     testCaseInstance->testCaseDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
-    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
+    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(testCaseInstance)            \
+    testCaseInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_TEST_CASE(testCaseInstance, runId)          \
+    internal_nbp_get_test_case_from_instance(testCaseInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
+    testCaseInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
+    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
 
 /**
  * TODO: add docs

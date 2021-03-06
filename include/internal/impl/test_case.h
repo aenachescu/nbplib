@@ -265,6 +265,16 @@ unsigned int internal_nbp_get_number_of_test_case_instances(
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
+nbp_test_case_t* internal_nbp_get_test_case_from_instance(
+    nbp_test_case_instance_t* testCaseInstance,
+    unsigned int runId)
+{
+    if (runId >= testCaseInstance->numberOfRuns) {
+        return NBP_NULLPTR;
+    }
+    return &testCaseInstance->runs[runId];
+}
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,

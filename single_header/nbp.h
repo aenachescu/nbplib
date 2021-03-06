@@ -1872,6 +1872,10 @@ unsigned int internal_nbp_get_number_of_test_case_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_instance_state_e state);
 
+nbp_test_case_t* internal_nbp_get_test_case_from_instance(
+    nbp_test_case_instance_t* testCaseInstance,
+    unsigned int runId);
+
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     nbp_test_case_details_t* testCaseDetails,
     nbp_module_t* parentModule,
@@ -3170,14 +3174,43 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_CASE_INSTANCE_NAME(testCaseInstance)                      \
+#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
     testCaseInstance->testCaseDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_CASE_NAME(testCase)                                       \
-    NBP_GET_TEST_CASE_INSTANCE_NAME(testCase->testCaseInstance)
+#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
+    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(testCaseInstance)            \
+    testCaseInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_TEST_CASE(testCaseInstance, runId)          \
+    internal_nbp_get_test_case_from_instance(testCaseInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
+    testCaseInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
+    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
 
 /**
  * TODO: add docs
@@ -4586,6 +4619,16 @@ unsigned int internal_nbp_get_number_of_test_case_instances(
 {
     int pos = ((int) state) - ((int) tcis_ready);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+nbp_test_case_t* internal_nbp_get_test_case_from_instance(
+    nbp_test_case_instance_t* testCaseInstance,
+    unsigned int runId)
+{
+    if (runId >= testCaseInstance->numberOfRuns) {
+        return NBP_NULLPTR;
+    }
+    return &testCaseInstance->runs[runId];
 }
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
