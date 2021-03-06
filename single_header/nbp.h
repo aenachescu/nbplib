@@ -5528,7 +5528,9 @@ static void internal_nbp_dp_add_test_case_instance_to_module(
         return;
     }
 
-    task = NBP_MEMORY_ALLOC_TAG(sizeof(nbp_dp_task_tree_t), mt_default_printer);
+    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dp_task_tree_t),
+        mt_default_printer);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -5537,7 +5539,7 @@ static void internal_nbp_dp_add_test_case_instance_to_module(
         return;
     }
 
-    testCaseTasks = NBP_MEMORY_ALLOC_TAG(
+    testCaseTasks = (nbp_dp_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
         numberOfRuns * sizeof(nbp_dp_test_case_task_t),
         mt_default_printer);
     if (testCaseTasks == NBP_NULLPTR) {
@@ -5594,7 +5596,7 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
         return;
     }
 
-    task = NBP_MEMORY_ALLOC_TAG(
+    task = (nbp_dp_test_case_instance_task_t*) NBP_MEMORY_ALLOC_TAG(
         sizeof(nbp_dp_test_case_instance_task_t),
         mt_default_printer);
     if (task == NBP_NULLPTR) {
@@ -5605,7 +5607,7 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
         return;
     }
 
-    testCaseTasks = NBP_MEMORY_ALLOC_TAG(
+    testCaseTasks = (nbp_dp_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
         numberOfRuns * sizeof(nbp_dp_test_case_task_t),
         mt_default_printer);
     if (testCaseTasks == NBP_NULLPTR) {
@@ -5717,7 +5719,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
         return;
     }
 
-    task = NBP_MEMORY_ALLOC_TAG(sizeof(nbp_dp_task_tree_t), mt_default_printer);
+    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dp_task_tree_t),
+        mt_default_printer);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -5726,7 +5730,7 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
         return;
     }
 
-    testSuiteTasks = NBP_MEMORY_ALLOC_TAG(
+    testSuiteTasks = (nbp_dp_test_suite_task_t*) NBP_MEMORY_ALLOC_TAG(
         numberOfRuns * sizeof(nbp_dp_test_suite_task_t),
         mt_default_printer);
     if (testSuiteTasks == NBP_NULLPTR) {
@@ -5789,7 +5793,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
         depth = parent->module.depth;
     }
 
-    task = NBP_MEMORY_ALLOC_TAG(sizeof(nbp_dp_task_tree_t), mt_default_printer);
+    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dp_task_tree_t),
+        mt_default_printer);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -5814,7 +5820,7 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        child = NBP_MEMORY_ALLOC_TAG(
+        child = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
             sizeof(nbp_dp_task_tree_t),
             mt_default_printer);
         if (child == NBP_NULLPTR) {
