@@ -316,6 +316,15 @@ def get_macro_name_prefixes(filePath):
 
     return [ "NBP_", "INTERNAL_NBP_" ]
 
+def get_enum_field_prefix_by_enum_name(enumName, filePath):
+    if not filePath.endswith("single_header/nbp.h"):
+        return ""
+
+    if enumName == "nbp_dp_task_type_e":
+        return "tt"
+
+    return ""
+
 def starts_with_prefix(name, prefixes):
     for p in prefixes:
         if name.startswith(p):
@@ -893,12 +902,14 @@ def check_enums(log, root, filePath):
             enum.location.line
         )
 
-        prefix = ""
-        plainEnumName = enumName[len(enumNamePrefix):-2]
-        enumNameWords = plainEnumName.split("_")
+        prefix = get_enum_field_prefix_by_enum_name(enumName, filePath)
 
-        for w in enumNameWords:
-            prefix += w[0]
+        if prefix == "":
+            plainEnumName = enumName[len(enumNamePrefix):-2]
+            enumNameWords = plainEnumName.split("_")
+
+            for w in enumNameWords:
+                prefix += w[0]
 
         enumFieldsStatus, expectedTypedefLine = check_enum_fields(
             log,
