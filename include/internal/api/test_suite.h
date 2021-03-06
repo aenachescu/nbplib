@@ -163,14 +163,55 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuiteInstance)                    \
+#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
     testSuiteInstance->testSuiteDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
-    NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
+    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(testSuiteInstance)          \
+    testSuiteInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TEST_SUITE(testSuiteInstance, runId)       \
+    internal_nbp_get_test_suite_from_instance(testSuiteInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
+    testSuiteInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
+    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
+    testSuiteInstance->module
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
+    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
 
 /**
  * TODO: add docs

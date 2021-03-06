@@ -48,6 +48,10 @@ unsigned int internal_nbp_get_number_of_test_suite_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_instance_state_e state);
 
+nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    unsigned int runId);
+
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
     nbp_module_t* parentModule,

@@ -1898,6 +1898,10 @@ unsigned int internal_nbp_get_number_of_test_suite_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_instance_state_e state);
 
+nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    unsigned int runId);
+
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     nbp_test_suite_details_t* testSuiteDetails,
     nbp_module_t* parentModule,
@@ -2875,14 +2879,55 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuiteInstance)                    \
+#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
     testSuiteInstance->testSuiteDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_TEST_SUITE_NAME(testSuite)                                     \
-    NBP_GET_TEST_SUITE_INSTANCE_NAME(testSuite->testSuiteInstance)
+#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
+    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(testSuiteInstance)          \
+    testSuiteInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_TEST_SUITE(testSuiteInstance, runId)       \
+    internal_nbp_get_test_suite_from_instance(testSuiteInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
+    testSuiteInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
+    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
+    testSuiteInstance->module
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
+    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
 
 /**
  * TODO: add docs
@@ -4831,6 +4876,16 @@ unsigned int internal_nbp_get_number_of_test_suite_instances(
 {
     int pos = ((int) state) - ((int) tsis_ready);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
+    nbp_test_suite_instance_t* testSuiteInstance,
+    unsigned int runId)
+{
+    if (runId >= testSuiteInstance->numberOfRuns) {
+        return NBP_NULLPTR;
+    }
+    return &testSuiteInstance->runs[runId];
 }
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
