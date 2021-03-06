@@ -164,14 +164,42 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_GET_MODULE_INSTANCE_NAME(moduleInstance)                           \
+#define NBP_MODULE_INSTANCE_GET_NAME(moduleInstance)                           \
     moduleInstance->moduleDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_MODULE_NAME(module)                                            \
-    NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+#define NBP_MODULE_GET_NAME(module)                                            \
+    NBP_MODULE_INSTANCE_GET_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstance) moduleInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_DEPTH(module)                                           \
+    NBP_MODULE_INSTANCE_GET_DEPTH(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_MODULE(moduleInstance, runId)                  \
+    internal_nbp_get_module_from_instance(moduleInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(moduleInstance)                 \
+    moduleInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_INSTANCE(module) module->moduleInstance
 
 /**
  * TODO: add docs

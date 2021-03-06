@@ -1716,6 +1716,10 @@ unsigned int internal_nbp_get_number_of_module_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_instance_state_e state);
 
+nbp_module_t* internal_nbp_get_module_from_instance(
+    nbp_module_instance_t* moduleInstance,
+    unsigned int runId);
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
@@ -2178,14 +2182,42 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
-#define NBP_GET_MODULE_INSTANCE_NAME(moduleInstance)                           \
+#define NBP_MODULE_INSTANCE_GET_NAME(moduleInstance)                           \
     moduleInstance->moduleDetails->name
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_MODULE_NAME(module)                                            \
-    NBP_GET_MODULE_INSTANCE_NAME(module->moduleInstance)
+#define NBP_MODULE_GET_NAME(module)                                            \
+    NBP_MODULE_INSTANCE_GET_NAME(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstance) moduleInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_DEPTH(module)                                           \
+    NBP_MODULE_INSTANCE_GET_DEPTH(module->moduleInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_MODULE(moduleInstance, runId)                  \
+    internal_nbp_get_module_from_instance(moduleInstance, runId)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(moduleInstance)                 \
+    moduleInstance->numberOfRuns
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_INSTANCE(module) module->moduleInstance
 
 /**
  * TODO: add docs
@@ -3509,6 +3541,16 @@ unsigned int internal_nbp_get_number_of_module_instances(
 {
     int pos = ((int) state) - ((int) mis_ready);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
+}
+
+nbp_module_t* internal_nbp_get_module_from_instance(
+    nbp_module_instance_t* moduleInstance,
+    unsigned int runId)
+{
+    if (runId >= moduleInstance->numberOfRuns) {
+        return NBP_NULLPTR;
+    }
+    return &moduleInstance->runs[runId];
 }
 
 nbp_module_instance_t* internal_nbp_instantiate_module(

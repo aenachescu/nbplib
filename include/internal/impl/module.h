@@ -197,6 +197,16 @@ unsigned int internal_nbp_get_number_of_module_instances(
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
+nbp_module_t* internal_nbp_get_module_from_instance(
+    nbp_module_instance_t* moduleInstance,
+    unsigned int runId)
+{
+    if (runId >= moduleInstance->numberOfRuns) {
+        return NBP_NULLPTR;
+    }
+    return &moduleInstance->runs[runId];
+}
+
 nbp_module_instance_t* internal_nbp_instantiate_module(
     nbp_module_details_t* moduleDetails,
     nbp_module_t* parentModule,
