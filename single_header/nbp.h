@@ -5128,6 +5128,11 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 #define NBP_DP_TEST_SUITE_EMOJI "\xF0\x9F\x93\x9C"
 #define NBP_DP_MODULE_EMOJI     "\xF0\x9F\x93\x81"
 
+#define NBP_DP_COLOR_NORMAL "\x1B[0m"
+#define NBP_DP_COLOR_RED    "\x1B[31m"
+#define NBP_DP_COLOR_GREEN  "\x1B[32m"
+#define NBP_DP_COLOR_YELLOW "\x1B[33m"
+
 #ifdef NBP_MT_SUPPORT
 
 #include <pthread.h>
@@ -5406,34 +5411,74 @@ static void internal_nbp_dp_print_test_case_task(
 {
     unsigned int numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_TEST_CASE_GET_INSTANCE(testCaseTask->testCase));
+    nbp_test_case_state_e state =
+        NBP_TEST_CASE_GET_STATE(testCaseTask->testCase);
+    const char* color = NBP_DP_COLOR_NORMAL;
+
+    if (state == tcs_passed) {
+        color = NBP_DP_COLOR_GREEN;
+    } else if (state == tcs_failed) {
+        color = NBP_DP_COLOR_RED;
+    } else if (state == tcs_skipped) {
+        color = NBP_DP_COLOR_YELLOW;
+    }
 
     if (numberOfRuns > 1) {
         internal_nbp_dp_print_depth(
             NBP_TEST_CASE_GET_DEPTH(testCaseTask->testCase),
             testCaseTask->testCaseInstanceTask->depth + 1);
         printf(
-            "%s %s#%u\n",
+            "%s %s%s%s#%u\n",
             NBP_DP_TEST_CASE_EMOJI,
+            color,
             NBP_TEST_CASE_GET_NAME(testCaseTask->testCase),
+            NBP_DP_COLOR_NORMAL,
             testCaseTask->runId);
+    } else {
+        internal_nbp_dp_print_depth(
+            NBP_TEST_CASE_GET_DEPTH(testCaseTask->testCase),
+            testCaseTask->testCaseInstanceTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_TEST_CASE_EMOJI,
+            color,
+            NBP_TEST_CASE_GET_NAME(testCaseTask->testCase),
+            NBP_DP_COLOR_NORMAL);
     }
 }
 
 static void internal_nbp_dp_print_test_case_instance_task(
     nbp_dp_test_case_instance_task_t* testCaseInstanceTask)
 {
-    internal_nbp_dp_print_depth(
-        NBP_TEST_CASE_INSTANCE_GET_DEPTH(
-            testCaseInstanceTask->testCaseInstance),
-        testCaseInstanceTask->depth);
-    printf(
-        "%s %s\n",
-        NBP_DP_TEST_CASE_EMOJI,
-        NBP_TEST_CASE_INSTANCE_GET_NAME(
-            testCaseInstanceTask->testCaseInstance));
-
     unsigned int numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(
         testCaseInstanceTask->testCaseInstance);
+
+    if (numberOfRuns > 1) {
+        nbp_test_case_instance_state_e state = NBP_TEST_CASE_INSTANCE_GET_STATE(
+            testCaseInstanceTask->testCaseInstance);
+        const char* color = NBP_DP_COLOR_NORMAL;
+
+        if (state == tcis_passed) {
+            color = NBP_DP_COLOR_GREEN;
+        } else if (state == tcis_failed) {
+            color = NBP_DP_COLOR_RED;
+        } else if (state == tcis_skipped) {
+            color = NBP_DP_COLOR_YELLOW;
+        }
+
+        internal_nbp_dp_print_depth(
+            NBP_TEST_CASE_INSTANCE_GET_DEPTH(
+                testCaseInstanceTask->testCaseInstance),
+            testCaseInstanceTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_TEST_CASE_EMOJI,
+            color,
+            NBP_TEST_CASE_INSTANCE_GET_NAME(
+                testCaseInstanceTask->testCaseInstance),
+            NBP_DP_COLOR_NORMAL);
+    }
+
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         internal_nbp_dp_print_test_case_task(
             &testCaseInstanceTask->testCaseTasks[i]);
@@ -5445,16 +5490,39 @@ static void internal_nbp_dp_print_test_suite_task(
 {
     unsigned int numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_TEST_SUITE_GET_INSTANCE(testSuiteTask->testSuite));
+    nbp_test_suite_state_e state =
+        NBP_TEST_SUITE_GET_STATE(testSuiteTask->testSuite);
+    const char* color = NBP_DP_COLOR_NORMAL;
+
+    if (state == tss_passed) {
+        color = NBP_DP_COLOR_GREEN;
+    } else if (state == tss_failed) {
+        color = NBP_DP_COLOR_RED;
+    } else if (state == tss_skipped) {
+        color = NBP_DP_COLOR_YELLOW;
+    }
 
     if (numberOfRuns > 1) {
         internal_nbp_dp_print_depth(
             NBP_TEST_SUITE_GET_DEPTH(testSuiteTask->testSuite),
             testSuiteTask->testSuiteInstanceTask->depth + 1);
         printf(
-            "%s %s#%u\n",
+            "%s %s%s%s#%u\n",
             NBP_DP_TEST_SUITE_EMOJI,
+            color,
             NBP_TEST_SUITE_GET_NAME(testSuiteTask->testSuite),
+            NBP_DP_COLOR_NORMAL,
             testSuiteTask->runId);
+    } else {
+        internal_nbp_dp_print_depth(
+            NBP_TEST_SUITE_GET_DEPTH(testSuiteTask->testSuite),
+            testSuiteTask->testSuiteInstanceTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_TEST_SUITE_EMOJI,
+            color,
+            NBP_TEST_SUITE_GET_NAME(testSuiteTask->testSuite),
+            NBP_DP_COLOR_NORMAL);
     }
 
     nbp_dp_test_case_instance_task_t* child =
@@ -5469,18 +5537,36 @@ static void internal_nbp_dp_print_test_suite_task(
 static void internal_nbp_dp_print_test_suite_instance_task(
     nbp_dp_test_suite_instance_task_t* testSuiteInstanceTask)
 {
-    internal_nbp_dp_print_depth(
-        NBP_TEST_SUITE_INSTANCE_GET_DEPTH(
-            testSuiteInstanceTask->testSuiteInstance),
-        testSuiteInstanceTask->depth);
-    printf(
-        "%s %s\n",
-        NBP_DP_TEST_SUITE_EMOJI,
-        NBP_TEST_SUITE_INSTANCE_GET_NAME(
-            testSuiteInstanceTask->testSuiteInstance));
-
     unsigned int numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         testSuiteInstanceTask->testSuiteInstance);
+
+    if (numberOfRuns > 1) {
+        nbp_test_suite_instance_state_e state =
+            NBP_TEST_SUITE_INSTANCE_GET_STATE(
+                testSuiteInstanceTask->testSuiteInstance);
+        const char* color = NBP_DP_COLOR_NORMAL;
+
+        if (state == tsis_passed) {
+            color = NBP_DP_COLOR_GREEN;
+        } else if (state == tsis_failed) {
+            color = NBP_DP_COLOR_RED;
+        } else if (state == tsis_skipped) {
+            color = NBP_DP_COLOR_YELLOW;
+        }
+
+        internal_nbp_dp_print_depth(
+            NBP_TEST_SUITE_INSTANCE_GET_DEPTH(
+                testSuiteInstanceTask->testSuiteInstance),
+            testSuiteInstanceTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_TEST_SUITE_EMOJI,
+            color,
+            NBP_TEST_SUITE_INSTANCE_GET_NAME(
+                testSuiteInstanceTask->testSuiteInstance),
+            NBP_DP_COLOR_NORMAL);
+    }
+
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         internal_nbp_dp_print_test_suite_task(
             &testSuiteInstanceTask->testSuiteTasks[i]);
@@ -5491,30 +5577,70 @@ static void internal_nbp_dp_print_module_task(nbp_dp_module_task_t* moduleTask)
 {
     unsigned int numberOfRuns = NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_MODULE_GET_INSTANCE(moduleTask->module));
-    if (numberOfRuns < 2) {
-        return;
+    nbp_module_state_e state = NBP_MODULE_GET_STATE(moduleTask->module);
+    const char* color        = NBP_DP_COLOR_NORMAL;
+
+    if (state == ms_passed) {
+        color = NBP_DP_COLOR_GREEN;
+    } else if (state == ms_failed) {
+        color = NBP_DP_COLOR_RED;
+    } else if (state == ms_skipped) {
+        color = NBP_DP_COLOR_YELLOW;
     }
 
-    internal_nbp_dp_print_depth(
-        NBP_MODULE_GET_DEPTH(moduleTask->module),
-        moduleTask->depth);
-    printf(
-        "%s %s#%u\n",
-        NBP_DP_MODULE_EMOJI,
-        NBP_MODULE_GET_NAME(moduleTask->module),
-        moduleTask->runId);
+    if (numberOfRuns > 1) {
+        internal_nbp_dp_print_depth(
+            NBP_MODULE_GET_DEPTH(moduleTask->module),
+            moduleTask->depth);
+        printf(
+            "%s %s%s%s#%u\n",
+            NBP_DP_MODULE_EMOJI,
+            color,
+            NBP_MODULE_GET_NAME(moduleTask->module),
+            NBP_DP_COLOR_NORMAL,
+            moduleTask->runId);
+    } else {
+        internal_nbp_dp_print_depth(
+            NBP_MODULE_GET_DEPTH(moduleTask->module),
+            moduleTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_MODULE_EMOJI,
+            color,
+            NBP_MODULE_GET_NAME(moduleTask->module),
+            NBP_DP_COLOR_NORMAL);
+    }
 }
 
 static void internal_nbp_dp_print_module_instace_task(
     nbp_dp_module_instance_task_t* moduleInstanceTask)
 {
-    internal_nbp_dp_print_depth(
-        NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstanceTask->moduleInstance),
-        moduleInstanceTask->depth);
-    printf(
-        "%s %s\n",
-        NBP_DP_MODULE_EMOJI,
-        NBP_MODULE_INSTANCE_GET_NAME(moduleInstanceTask->moduleInstance));
+    unsigned int numberOfRuns = NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(
+        moduleInstanceTask->moduleInstance);
+
+    if (numberOfRuns > 1) {
+        nbp_module_instance_state_e state =
+            NBP_MODULE_INSTANCE_GET_STATE(moduleInstanceTask->moduleInstance);
+        const char* color = NBP_DP_COLOR_NORMAL;
+
+        if (state == mis_passed) {
+            color = NBP_DP_COLOR_GREEN;
+        } else if (state == mis_failed) {
+            color = NBP_DP_COLOR_RED;
+        } else if (state == mis_skipped) {
+            color = NBP_DP_COLOR_YELLOW;
+        }
+
+        internal_nbp_dp_print_depth(
+            NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstanceTask->moduleInstance),
+            moduleInstanceTask->depth);
+        printf(
+            "%s %s%s%s\n",
+            NBP_DP_MODULE_EMOJI,
+            color,
+            NBP_MODULE_INSTANCE_GET_NAME(moduleInstanceTask->moduleInstance),
+            NBP_DP_COLOR_NORMAL);
+    }
 }
 
 static void internal_nbp_dp_print_task_tree(nbp_dp_task_tree_t* root)
@@ -5917,6 +6043,15 @@ NBP_PRINTER(
             nbp_dp_instantiate_test_suite_started),
         NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
             nbp_dp_instantiate_module_started)));
+
+#undef NBP_DP_TEST_CASE_EMOJI
+#undef NBP_DP_TEST_SUITE_EMOJI
+#undef NBP_DP_MODULE_EMOJI
+
+#undef NBP_DP_COLOR_NORMAL
+#undef NBP_DP_COLOR_RED
+#undef NBP_DP_COLOR_GREEN
+#undef NBP_DP_COLOR_YELLOW
 
 #endif // end if NBP_OS_LINUX
 
