@@ -1139,7 +1139,7 @@ struct nbp_test_case_instance_t
 {
     nbp_test_case_details_t* testCaseDetails;
 
-    nbp_test_case_instance_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
@@ -1154,6 +1154,7 @@ struct nbp_test_case_instance_t
 
     struct nbp_test_case_t* runs;
     unsigned int numberOfRuns;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedRuns;
 
     NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
 
@@ -1166,7 +1167,7 @@ struct nbp_test_case_t
 {
     nbp_test_case_instance_t* testCaseInstance;
 
-    nbp_test_case_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 };
@@ -1265,7 +1266,7 @@ struct nbp_test_suite_instance_t
 {
     nbp_test_suite_details_t* testSuiteDetails;
 
-    nbp_test_suite_instance_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
@@ -1279,6 +1280,7 @@ struct nbp_test_suite_instance_t
 
     struct nbp_test_suite_t* runs;
     unsigned int numberOfRuns;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedRuns;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -1296,12 +1298,17 @@ struct nbp_test_suite_t
 {
     nbp_test_suite_instance_t* testSuiteInstance;
 
-    nbp_test_suite_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
+    NBP_SYNC_EVENT_TYPE runEvent;
+    NBP_SYNC_EVENT_TYPE setupEvent;
+
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
+
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedTasks;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -1402,7 +1409,7 @@ struct nbp_module_instance_t
 {
     nbp_module_details_t* moduleDetails;
 
-    nbp_module_instance_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
@@ -1416,6 +1423,7 @@ struct nbp_module_instance_t
 
     struct nbp_module_t* runs;
     unsigned int numberOfRuns;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedRuns;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -1443,9 +1451,12 @@ struct nbp_module_t
 {
     nbp_module_instance_t* moduleInstance;
 
-    nbp_module_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
+
+    NBP_SYNC_EVENT_TYPE runEvent;
+    NBP_SYNC_EVENT_TYPE setupEvent;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
@@ -1455,6 +1466,9 @@ struct nbp_module_t
 
     nbp_module_instance_t* firstModuleInstance;
     nbp_module_instance_t* lastModuleInstance;
+
+    unsigned int numberOfTasks;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedTasks;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -1812,7 +1826,7 @@ void internal_nbp_notify_printer_module_instance_completed(
 #define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
     &gInternalNbpSchedulerInterface##name
 
-void internal_nbp_run_test_case_instance(
+void internal_nbp_scheduler_run_test_case_instance(
     nbp_test_case_instance_t* testCaseInstance);
 
 void internal_nbp_notify_scheduler_init();
@@ -1854,6 +1868,8 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 #endif // end if NBP_OS_LINUX
 
 #endif // end if NBP_MT_SUPPORT
+
+int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase);
 
 void internal_nbp_test_case_update_state_stats(
     nbp_test_case_t* testCase,
@@ -3745,13 +3761,13 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].moduleInstance                  = moduleInstance;
-        runs[i].state                           = ms_ready;
         runs[i].firstTestCaseInstance           = NBP_NULLPTR;
         runs[i].lastTestCaseInstance            = NBP_NULLPTR;
         runs[i].firstTestSuiteInstance          = NBP_NULLPTR;
         runs[i].lastTestSuiteInstance           = NBP_NULLPTR;
         runs[i].firstModuleInstance             = NBP_NULLPTR;
         runs[i].lastModuleInstance              = NBP_NULLPTR;
+        runs[i].numberOfTasks                   = 0;
         runs[i].totalNumberOfTestCases          = 0;
         runs[i].totalNumberOfTestCaseInstances  = 0;
         runs[i].totalNumberOfTestSuites         = 0;
@@ -3759,7 +3775,25 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         runs[i].totalNumberOfModules            = 0;
         runs[i].totalNumberOfModuleInstances    = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) ms_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+        NBP_ATOMIC_UINT_STORE(&runs[i].numberOfCompletedTasks, 0U);
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].runEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init runEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].setupEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
 
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -3783,7 +3817,6 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     moduleInstance->moduleDetails     = moduleDetails;
-    moduleInstance->state             = mis_ready;
     moduleInstance->parent            = parentModule;
     moduleInstance->depth             = 0;
     moduleInstance->instantiationLine = instantiationLine;
@@ -3801,7 +3834,9 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->totalNumberOfModules            = 0;
     moduleInstance->totalNumberOfModuleInstances    = 0;
 
+    NBP_ATOMIC_INT_STORE(&moduleInstance->state, (int) mis_ready);
     NBP_ATOMIC_INT_STORE(&moduleInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfCompletedRuns, 0U);
 
     unsigned int j;
     for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -3827,6 +3862,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;
+
+        parentModule->numberOfTasks += 1;
 
         if (parentModule->firstModuleInstance == NBP_NULLPTR) {
             parentModule->firstModuleInstance = moduleInstance;
@@ -4258,7 +4295,779 @@ extern int gInternalNbpSchedulerRunEnabled;
 
 extern NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases;
 
-void internal_nbp_run_test_case(nbp_test_case_t* testCase)
+static int internal_nbp_scheduler_run_module(nbp_module_t* module)
+{
+    if (module == NBP_NULLPTR) {
+        return (int) ms_running;
+    }
+
+    int oldModuleInstanceState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &module->moduleInstance->state,
+        mis_ready,
+        mis_running);
+    if (oldModuleInstanceState != mis_ready
+        && oldModuleInstanceState != mis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "module instance is not ready or running");
+        NBP_EXIT(ec_unexpected_state);
+        return ms_failed;
+    }
+
+    int oldModuleState =
+        NBP_ATOMIC_INT_COMPARE_AND_SWAP(&module->state, ms_ready, ms_running);
+    if (oldModuleState == ms_running) {
+        nbp_error_code_e err = NBP_SYNC_EVENT_WAIT(module->runEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "wait for module runEvent failed");
+            NBP_EXIT(ec_sync_error);
+            return ms_failed;
+        }
+
+        return ms_running;
+    }
+
+    if (oldModuleState == ms_ready) {
+        int parentModuleState =
+            internal_nbp_scheduler_run_module(module->moduleInstance->parent);
+        if (parentModuleState != ms_running) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_state,
+                "parent module is not running");
+            NBP_EXIT(ec_unexpected_state);
+            return ms_failed;
+        }
+
+        if (oldModuleInstanceState == mis_ready) {
+            internal_nbp_module_instance_update_state_stats(
+                module->moduleInstance,
+                mis_ready,
+                mis_running);
+
+            internal_nbp_notify_printer_module_instance_started(
+                module->moduleInstance);
+        }
+
+        internal_nbp_module_update_state_stats(module, ms_ready, ms_running);
+
+        internal_nbp_notify_printer_module_started(module);
+
+        nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(module->runEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to notify module runEvent");
+            NBP_EXIT(ec_sync_error);
+            return ms_failed;
+        }
+
+        return ms_running;
+    }
+
+    NBP_REPORT_ERROR_STRING_CONTEXT(
+        ec_unexpected_state,
+        "module is not ready or running");
+    NBP_EXIT(ec_unexpected_state);
+    return ms_failed;
+}
+
+static int internal_nbp_scheduler_run_test_suite(nbp_test_suite_t* testSuite)
+{
+    int oldTestSuiteInstanceState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuite->testSuiteInstance->state,
+        tsis_ready,
+        tsis_running);
+    if (oldTestSuiteInstanceState != tsis_ready
+        && oldTestSuiteInstanceState != tsis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test suite instance is not ready or running");
+        NBP_EXIT(ec_unexpected_state);
+        return tss_failed;
+    }
+
+    int oldTestSuiteState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuite->state,
+        tss_ready,
+        tss_running);
+
+    if (oldTestSuiteState == tss_running) {
+        nbp_error_code_e err = NBP_SYNC_EVENT_WAIT(testSuite->runEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "wait for test suite runEvent failed");
+            NBP_EXIT(ec_sync_error);
+            return tss_failed;
+        }
+
+        return tss_running;
+    }
+
+    if (oldTestSuiteState == tss_ready) {
+        int moduleState = internal_nbp_scheduler_run_module(
+            testSuite->testSuiteInstance->module);
+        if (moduleState != ms_running) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_state,
+                "parent module is not running");
+            NBP_EXIT(ec_unexpected_state);
+            return tss_failed;
+        }
+
+        if (oldTestSuiteInstanceState == tsis_ready) {
+            internal_nbp_test_suite_instance_update_state_stats(
+                testSuite->testSuiteInstance,
+                tsis_ready,
+                tsis_running);
+
+            internal_nbp_notify_printer_test_suite_instance_started(
+                testSuite->testSuiteInstance);
+        }
+
+        internal_nbp_test_suite_update_state_stats(
+            testSuite,
+            tss_ready,
+            tss_running);
+
+        internal_nbp_notify_printer_test_suite_started(testSuite);
+
+        nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(testSuite->runEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to notify test suite runEvent");
+            NBP_EXIT(ec_sync_error);
+            return tss_failed;
+        }
+
+        return tss_running;
+    }
+
+    NBP_REPORT_ERROR_STRING_CONTEXT(
+        ec_unexpected_state,
+        "test suite is not ready or running");
+    NBP_EXIT(ec_unexpected_state);
+    return tss_failed;
+}
+
+static int internal_nbp_scheduler_setup_module(nbp_module_t* module)
+{
+    if (module == NBP_NULLPTR) {
+        return (int) sf_is_processed;
+    }
+
+    nbp_error_code_e err;
+
+    int oldModuleInstanceValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &module->moduleInstance->isSkipped,
+        sf_is_not_set,
+        sf_is_processed);
+
+    if (oldModuleInstanceValue == (int) sf_is_set) {
+        return (int) sf_is_set;
+    }
+
+    int oldValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &module->isSkipped,
+        sf_is_not_set,
+        sf_is_processed);
+
+    if (oldValue == (int) sf_is_set) {
+        return (int) sf_is_set;
+    }
+
+    if (oldValue == (int) sf_is_processed) {
+        err = NBP_SYNC_EVENT_WAIT(module->setupEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to wait for module setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return (int) sf_is_not_set;
+        }
+
+        oldValue = NBP_ATOMIC_INT_LOAD(&module->isSkipped);
+        if (oldValue == (int) sf_is_set || oldValue == (int) sf_is_processed) {
+            return oldValue;
+        }
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_internal_data,
+            "unexpected module isSkipped flag value");
+        NBP_EXIT(ec_unexpected_internal_data);
+        return (int) sf_is_not_set;
+    }
+
+    if (oldValue == (int) sf_is_not_set) {
+        int parentValue =
+            internal_nbp_scheduler_setup_module(module->moduleInstance->parent);
+
+        if (parentValue == (int) sf_is_processed) {
+            if (module->moduleInstance->setupDetails != NBP_NULLPTR) {
+                module->moduleInstance->setupDetails->function(module);
+            }
+
+            err = NBP_SYNC_EVENT_NOTIFY(module->setupEvent);
+            if (err != ec_success) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_sync_error,
+                    "failed to notify module setupEvent");
+                NBP_EXIT(ec_sync_error);
+                return (int) sf_is_not_set;
+            }
+
+            return (int) sf_is_processed;
+        }
+
+        if (parentValue == (int) sf_is_set) {
+            oldValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+                &module->isSkipped,
+                sf_is_processed,
+                sf_is_set);
+
+            if (oldValue != (int) sf_is_processed) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_unexpected_internal_data,
+                    "unexpected module isSkipped flag value");
+                NBP_EXIT(ec_unexpected_internal_data);
+            }
+
+            err = NBP_SYNC_EVENT_NOTIFY(module->setupEvent);
+            if (err != ec_success) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_sync_error,
+                    "failed to notify module setupEvent");
+                NBP_EXIT(ec_sync_error);
+                return (int) sf_is_not_set;
+            }
+
+            return (int) sf_is_set;
+        }
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_internal_data,
+            "unexpected module isSkipped flag value");
+        NBP_EXIT(ec_unexpected_internal_data);
+        return (int) sf_is_not_set;
+    }
+
+    NBP_REPORT_ERROR_STRING_CONTEXT(
+        ec_unexpected_internal_data,
+        "unexpected module isSkipped flag value");
+    NBP_EXIT(ec_unexpected_internal_data);
+    return (int) sf_is_not_set;
+}
+
+static int internal_nbp_scheduler_compute_module_instance_state(
+    nbp_module_instance_t* moduleInstance)
+{
+    unsigned int numberOfPassedModules  = 0;
+    unsigned int numberOfSkippedModules = 0;
+
+    for (unsigned int i = 0; i < moduleInstance->numberOfRuns; i++) {
+        nbp_module_state_e state =
+            NBP_MODULE_GET_STATE(&moduleInstance->runs[i]);
+        if (state == ms_passed) {
+            numberOfPassedModules++;
+        } else if (state == ms_skipped) {
+            numberOfSkippedModules++;
+        }
+    }
+
+    if (numberOfPassedModules == moduleInstance->numberOfRuns) {
+        return mis_passed;
+    }
+
+    if (numberOfSkippedModules == moduleInstance->numberOfRuns) {
+        return mis_skipped;
+    }
+
+    return mis_failed;
+}
+
+static int internal_nbp_scheduler_complete_module_instance(
+    nbp_module_instance_t* moduleInstance)
+{
+    unsigned int num = NBP_ATOMIC_UINT_ADD_AND_FETCH(
+        &moduleInstance->numberOfCompletedRuns,
+        1U);
+    if (num != moduleInstance->numberOfRuns) {
+        return 0;
+    }
+
+    int newState =
+        internal_nbp_scheduler_compute_module_instance_state(moduleInstance);
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &moduleInstance->state,
+        mis_running,
+        newState);
+
+    if (oldState != mis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "module instance is not running");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    internal_nbp_module_instance_update_state_stats(
+        moduleInstance,
+        mis_running,
+        newState);
+
+    internal_nbp_notify_printer_module_instance_completed(moduleInstance);
+
+    return 1;
+}
+
+static int internal_nbp_scheduler_compute_module_state(nbp_module_t* module)
+{
+    unsigned int passedTasks  = 0;
+    unsigned int skippedTasks = 0;
+
+    nbp_test_case_instance_t* testCaseInstance = module->firstTestCaseInstance;
+    nbp_test_suite_instance_t* testSuiteInstance =
+        module->firstTestSuiteInstance;
+    nbp_module_instance_t* moduleInstance = module->firstModuleInstance;
+
+    while (testCaseInstance != NBP_NULLPTR) {
+        nbp_test_case_instance_state_e state =
+            NBP_TEST_CASE_INSTANCE_GET_STATE(testCaseInstance);
+
+        if (state == tcis_passed) {
+            passedTasks++;
+        } else if (state == tcis_skipped) {
+            skippedTasks++;
+        }
+
+        testCaseInstance = testCaseInstance->next;
+    }
+
+    while (testSuiteInstance != NBP_NULLPTR) {
+        nbp_test_suite_instance_state_e state =
+            NBP_TEST_SUITE_INSTANCE_GET_STATE(testSuiteInstance);
+
+        if (state == tsis_passed) {
+            passedTasks++;
+        } else if (state == tsis_skipped) {
+            skippedTasks++;
+        }
+
+        testSuiteInstance = testSuiteInstance->next;
+    }
+
+    while (moduleInstance != NBP_NULLPTR) {
+        nbp_module_instance_state_e state =
+            NBP_MODULE_INSTANCE_GET_STATE(moduleInstance);
+
+        if (state == mis_passed) {
+            passedTasks++;
+        } else if (state == mis_skipped) {
+            skippedTasks++;
+        }
+
+        moduleInstance = moduleInstance->next;
+    }
+
+    if (passedTasks == module->numberOfTasks) {
+        return ms_passed;
+    }
+
+    if (skippedTasks == module->numberOfTasks) {
+        return ms_skipped;
+    }
+
+    return ms_failed;
+}
+
+static void internal_nbp_scheduler_teardown_module(nbp_module_t* module)
+{
+    while (module != NBP_NULLPTR) {
+        unsigned int num =
+            NBP_ATOMIC_UINT_ADD_AND_FETCH(&module->numberOfCompletedTasks, 1U);
+        if (num != module->numberOfTasks) {
+            return;
+        }
+
+        int isSkipped = NBP_ATOMIC_INT_LOAD(&module->isSkipped);
+        if (isSkipped == (int) sf_is_processed) {
+            if (module->moduleInstance->teardownDetails != NBP_NULLPTR) {
+                module->moduleInstance->teardownDetails->function(module);
+            }
+        }
+
+        int newState = internal_nbp_scheduler_compute_module_state(module);
+
+        int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+            &module->state,
+            ms_running,
+            newState);
+
+        if (oldState != ms_running) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_state,
+                "module is not running");
+            NBP_EXIT(ec_unexpected_state);
+            return;
+        }
+
+        internal_nbp_module_update_state_stats(module, ms_running, newState);
+
+        internal_nbp_notify_printer_module_completed(module);
+
+        int isCompletedInstance =
+            internal_nbp_scheduler_complete_module_instance(
+                module->moduleInstance);
+        if (isCompletedInstance == 0) {
+            break;
+        }
+
+        module = module->moduleInstance->parent;
+    }
+}
+
+static int internal_nbp_scheduler_setup_test_suite(nbp_test_suite_t* testSuite)
+{
+    nbp_error_code_e err;
+
+    int oldTsiValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuite->testSuiteInstance->isSkipped,
+        sf_is_not_set,
+        sf_is_processed);
+
+    if (oldTsiValue == (int) sf_is_set) {
+        return (int) sf_is_set;
+    }
+
+    int oldValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuite->isSkipped,
+        sf_is_not_set,
+        sf_is_processed);
+
+    if (oldValue == (int) sf_is_set) {
+        return (int) sf_is_set;
+    }
+
+    if (oldValue == (int) sf_is_processed) {
+        err = NBP_SYNC_EVENT_WAIT(testSuite->setupEvent);
+        if (err != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to wait for test suite setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return (int) sf_is_not_set;
+        }
+
+        oldValue = NBP_ATOMIC_INT_LOAD(&testSuite->isSkipped);
+        if (oldValue == (int) sf_is_set || oldValue == (int) sf_is_processed) {
+            return oldValue;
+        }
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_internal_data,
+            "unexpected test suite isSkipped flag value");
+        NBP_EXIT(ec_unexpected_internal_data);
+        return (int) sf_is_not_set;
+    }
+
+    if (oldValue == (int) sf_is_not_set) {
+        int parentValue = internal_nbp_scheduler_setup_module(
+            testSuite->testSuiteInstance->module);
+
+        if (parentValue == (int) sf_is_processed) {
+            if (testSuite->testSuiteInstance->setupDetails != NBP_NULLPTR) {
+                testSuite->testSuiteInstance->setupDetails->function(testSuite);
+            }
+
+            err = NBP_SYNC_EVENT_NOTIFY(testSuite->setupEvent);
+            if (err != ec_success) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_sync_error,
+                    "failed to notify test suite setupEvent");
+                NBP_EXIT(ec_sync_error);
+                return (int) sf_is_not_set;
+            }
+
+            return (int) sf_is_processed;
+        }
+
+        if (parentValue == (int) sf_is_set) {
+            oldValue = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+                &testSuite->isSkipped,
+                sf_is_processed,
+                sf_is_set);
+
+            if (oldValue != (int) sf_is_processed) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_unexpected_internal_data,
+                    "unexpected test suite isSkipped flag value");
+                NBP_EXIT(ec_unexpected_internal_data);
+            }
+
+            err = NBP_SYNC_EVENT_NOTIFY(testSuite->setupEvent);
+            if (err != ec_success) {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_sync_error,
+                    "failed to notify test suite setupEvent");
+                NBP_EXIT(ec_sync_error);
+                return (int) sf_is_not_set;
+            }
+
+            return (int) sf_is_set;
+        }
+
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_internal_data,
+            "unexpected test suite isSkipped flag value");
+        NBP_EXIT(ec_unexpected_internal_data);
+        return (int) sf_is_not_set;
+    }
+
+    NBP_REPORT_ERROR_STRING_CONTEXT(
+        ec_unexpected_internal_data,
+        "unexpected test suite isSkipped flag value");
+    NBP_EXIT(ec_unexpected_internal_data);
+    return (int) sf_is_not_set;
+}
+
+static int internal_nbp_scheduler_complete_test_suite_instance(
+    nbp_test_suite_instance_t* testSuiteInstance)
+{
+    unsigned int num = NBP_ATOMIC_UINT_ADD_AND_FETCH(
+        &testSuiteInstance->numberOfCompletedRuns,
+        1U);
+    if (num != testSuiteInstance->numberOfRuns) {
+        return 0;
+    }
+
+    int newState = tsis_passed;
+
+    do {
+        num = internal_nbp_get_number_of_test_suites(
+            testSuiteInstance->numberOfTestSuites,
+            tss_failed);
+        if (num > 0) {
+            newState = tsis_failed;
+            break;
+        }
+
+        num = internal_nbp_get_number_of_test_suites(
+            testSuiteInstance->numberOfTestSuites,
+            tss_skipped);
+
+        if (num == testSuiteInstance->numberOfRuns) {
+            newState = tsis_skipped;
+            break;
+        }
+
+        if (num > 0) {
+            newState = tsis_failed;
+            break;
+        }
+    } while (0);
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuiteInstance->state,
+        tsis_running,
+        newState);
+
+    if (oldState != tsis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test suite instance is not running");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    internal_nbp_test_suite_instance_update_state_stats(
+        testSuiteInstance,
+        tsis_running,
+        newState);
+
+    internal_nbp_notify_printer_test_suite_instance_completed(
+        testSuiteInstance);
+
+    return 1;
+}
+
+static void internal_nbp_scheduler_teardown_test_suite(
+    nbp_test_suite_t* testSuite)
+{
+    unsigned int num =
+        NBP_ATOMIC_UINT_ADD_AND_FETCH(&testSuite->numberOfCompletedTasks, 1U);
+    if (num != testSuite->totalNumberOfTestCaseInstances) {
+        return;
+    }
+
+    int isSkipped = NBP_ATOMIC_INT_LOAD(&testSuite->isSkipped);
+    if (isSkipped == (int) sf_is_processed) {
+        if (testSuite->testSuiteInstance->teardownDetails != NBP_NULLPTR) {
+            testSuite->testSuiteInstance->teardownDetails->function(testSuite);
+        }
+    }
+
+    int newState = tss_passed;
+
+    do {
+        num = internal_nbp_get_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            tcis_failed);
+        if (num > 0) {
+            newState = tss_failed;
+            break;
+        }
+
+        num = internal_nbp_get_number_of_test_case_instances(
+            testSuite->numberOfTestCaseInstances,
+            tcis_skipped);
+
+        if (num == testSuite->totalNumberOfTestCaseInstances) {
+            newState = tss_skipped;
+            break;
+        }
+
+        if (num > 0) {
+            newState = tss_failed;
+            break;
+        }
+    } while (0);
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testSuite->state,
+        tss_running,
+        newState);
+
+    if (oldState != tss_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test suite is not running");
+        NBP_EXIT(ec_unexpected_state);
+        return;
+    }
+
+    internal_nbp_test_suite_update_state_stats(
+        testSuite,
+        tss_running,
+        newState);
+
+    internal_nbp_notify_printer_test_suite_completed(testSuite);
+
+    int isCompletedInstance =
+        internal_nbp_scheduler_complete_test_suite_instance(
+            testSuite->testSuiteInstance);
+    if (isCompletedInstance == 1) {
+        internal_nbp_scheduler_teardown_module(
+            testSuite->testSuiteInstance->module);
+    }
+}
+
+static int internal_nbp_scheduler_complete_test_case_instance(
+    nbp_test_case_instance_t* testCaseInstance)
+{
+    unsigned int num = NBP_ATOMIC_UINT_ADD_AND_FETCH(
+        &testCaseInstance->numberOfCompletedRuns,
+        1U);
+    if (num != testCaseInstance->numberOfRuns) {
+        return 0;
+    }
+
+    int newState = tcis_passed;
+
+    do {
+        num = internal_nbp_get_number_of_test_cases(
+            testCaseInstance->numberOfTestCases,
+            tcs_failed);
+        if (num > 0) {
+            newState = tcis_failed;
+            break;
+        }
+
+        num = internal_nbp_get_number_of_test_cases(
+            testCaseInstance->numberOfTestCases,
+            tcs_skipped);
+
+        if (num == testCaseInstance->numberOfRuns) {
+            newState = tcis_skipped;
+            break;
+        }
+
+        if (num > 0) {
+            newState = tcis_failed;
+            break;
+        }
+    } while (0);
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testCaseInstance->state,
+        tcis_running,
+        newState);
+
+    if (oldState != tcis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test case instance is not running");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    internal_nbp_test_case_instance_update_state_stats(
+        testCaseInstance,
+        tcis_running,
+        newState);
+
+    internal_nbp_notify_printer_test_case_instance_completed(testCaseInstance);
+
+    return 1;
+}
+
+static void internal_nbp_scheduler_run_skipped_test_case(
+    nbp_test_case_t* testCase)
+{
+    ((void) testCase);
+}
+
+static void internal_nbp_scheduler_run_ready_test_case(
+    nbp_test_case_t* testCase)
+{
+    internal_nbp_test_case_update_state_stats(testCase, tcs_ready, tcs_running);
+    internal_nbp_notify_printer_test_case_started(testCase);
+
+    if (testCase->testCaseInstance->setupDetails != NBP_NULLPTR) {
+        testCase->testCaseInstance->setupDetails->function(testCase);
+    }
+
+    testCase->testCaseInstance->testCaseDetails->function(testCase);
+
+    if (testCase->testCaseInstance->teardownDetails != NBP_NULLPTR) {
+        testCase->testCaseInstance->teardownDetails->function(testCase);
+    }
+
+    int newState = (int) tcs_passed;
+    if (internal_nbp_is_failed_test_case(testCase) == 1) {
+        newState = (int) tcs_failed;
+    }
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testCase->state,
+        tcs_running,
+        newState);
+    if (oldState != (int) tcs_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test case is not running");
+        NBP_EXIT(ec_unexpected_state);
+        return;
+    }
+
+    internal_nbp_test_case_update_state_stats(testCase, tcs_running, newState);
+    internal_nbp_notify_printer_test_case_completed(testCase);
+}
+
+void internal_nbp_scheduler_run_test_case(nbp_test_case_t* testCase)
 {
     if (gInternalNbpSchedulerRunEnabled != 1) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -4268,12 +5077,132 @@ void internal_nbp_run_test_case(nbp_test_case_t* testCase)
         return;
     }
 
-    testCase->testCaseInstance->testCaseDetails->function(testCase);
+    int oldInstanceState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testCase->testCaseInstance->state,
+        tcis_ready,
+        tcis_running);
+    if (oldInstanceState != tcis_ready && oldInstanceState != tcis_running) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test case instance is not ready or running");
+        NBP_EXIT(ec_unexpected_state);
+        return;
+    }
+
+    int oldState = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testCase->state,
+        (int) tcs_ready,
+        (int) tcs_running);
+
+    if (oldState != (int) tcs_ready) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "test case is not ready");
+        NBP_EXIT(ec_unexpected_state);
+        return;
+    }
+
+    if (testCase->testCaseInstance->module != NBP_NULLPTR) {
+        int moduleState = internal_nbp_scheduler_run_module(
+            testCase->testCaseInstance->module);
+        if (moduleState != (int) ms_running) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_state,
+                "module is not running");
+            NBP_EXIT(ec_unexpected_state);
+            return;
+        }
+    } else if (testCase->testCaseInstance->testSuite != NBP_NULLPTR) {
+        int testSuiteState = internal_nbp_scheduler_run_test_suite(
+            testCase->testCaseInstance->testSuite);
+        if (testSuiteState != (int) tss_running) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_state,
+                "test suite is not running");
+            NBP_EXIT(ec_unexpected_state);
+            return;
+        }
+    } else {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_invalid_parent,
+            "test case has no parent");
+        NBP_EXIT(ec_invalid_parent);
+        return;
+    }
+
+    if (oldInstanceState == tcis_ready) {
+        internal_nbp_test_case_instance_update_state_stats(
+            testCase->testCaseInstance,
+            tcis_ready,
+            tcis_running);
+
+        internal_nbp_notify_printer_test_case_instance_started(
+            testCase->testCaseInstance);
+    }
+
+    int tciIsSkipped = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+        &testCase->testCaseInstance->isSkipped,
+        (int) sf_is_not_set,
+        (int) sf_is_processed);
+
+    if (tciIsSkipped == (int) sf_is_set) {
+        internal_nbp_scheduler_run_skipped_test_case(testCase);
+    } else {
+        int isSkipped = NBP_ATOMIC_INT_COMPARE_AND_SWAP(
+            &testCase->isSkipped,
+            (int) sf_is_not_set,
+            (int) sf_is_processed);
+
+        if (isSkipped == (int) sf_is_set) {
+            internal_nbp_scheduler_run_skipped_test_case(testCase);
+        } else if (isSkipped == (int) sf_is_not_set) {
+            int parentIsSkipped;
+            if (testCase->testCaseInstance->module != NBP_NULLPTR) {
+                parentIsSkipped = internal_nbp_scheduler_setup_module(
+                    testCase->testCaseInstance->module);
+            } else {
+                parentIsSkipped = internal_nbp_scheduler_setup_test_suite(
+                    testCase->testCaseInstance->testSuite);
+            }
+
+            if (parentIsSkipped == (int) sf_is_processed) {
+                internal_nbp_scheduler_run_ready_test_case(testCase);
+            } else if (parentIsSkipped == (int) sf_is_set) {
+                internal_nbp_scheduler_run_skipped_test_case(testCase);
+            } else {
+                NBP_REPORT_ERROR_STRING_CONTEXT(
+                    ec_unexpected_internal_data,
+                    "unexpected value for parent isSkipped flag");
+                NBP_EXIT(ec_unexpected_internal_data);
+                return;
+            }
+        } else {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_unexpected_internal_data,
+                "unexpected value for isSkipped flag");
+            NBP_EXIT(ec_unexpected_internal_data);
+            return;
+        }
+    }
+
+    int isCompletedInstance =
+        internal_nbp_scheduler_complete_test_case_instance(
+            testCase->testCaseInstance);
+
+    if (isCompletedInstance == 1) {
+        if (testCase->testCaseInstance->module != NBP_NULLPTR) {
+            internal_nbp_scheduler_teardown_module(
+                testCase->testCaseInstance->module);
+        } else {
+            internal_nbp_scheduler_teardown_test_suite(
+                testCase->testCaseInstance->testSuite);
+        }
+    }
 
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&gInternalNbpNumberOfRanTestCases, 1);
 }
 
-void internal_nbp_run_test_case_instance(
+void internal_nbp_scheduler_run_test_case_instance(
     nbp_test_case_instance_t* testCaseInstance)
 {
     if (gInternalNbpSchedulerRunEnabled != 1) {
@@ -4286,7 +5215,7 @@ void internal_nbp_run_test_case_instance(
     }
 
     for (unsigned int i = 0; i < testCaseInstance->numberOfRuns; i++) {
-        internal_nbp_run_test_case(&testCaseInstance->runs[i]);
+        internal_nbp_scheduler_run_test_case(&testCaseInstance->runs[i]);
     }
 }
 
@@ -4565,6 +5494,12 @@ static void internal_nbp_test_case_instance_update_stats(
     }
 }
 
+int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase)
+{
+    ((void) testCase);
+    return 0;
+}
+
 void internal_nbp_test_case_update_state_stats(
     nbp_test_case_t* testCase,
     nbp_test_case_state_e oldState,
@@ -4735,13 +5670,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;
-        runs[i].state            = tcs_ready;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) tcs_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
     testCaseInstance->testCaseDetails   = testCaseDetails;
-    testCaseInstance->state             = tcis_ready;
     testCaseInstance->module            = parentModule;
     testCaseInstance->testSuite         = parentTestSuite;
     testCaseInstance->depth             = 0;
@@ -4753,7 +5687,9 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
 
+    NBP_ATOMIC_INT_STORE(&testCaseInstance->state, (int) tcis_ready);
     NBP_ATOMIC_INT_STORE(&testCaseInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfCompletedRuns, 0U);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);
@@ -4761,6 +5697,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     if (parentModule != NBP_NULLPTR) {
         testCaseInstance->depth = parentModule->moduleInstance->depth + 1;
+
+        parentModule->numberOfTasks += 1;
 
         if (parentModule->firstTestCaseInstance == NBP_NULLPTR) {
             parentModule->firstTestCaseInstance = testCaseInstance;
@@ -5024,13 +5962,30 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testSuiteInstance              = testSuiteInstance;
-        runs[i].state                          = tss_ready;
         runs[i].firstTestCaseInstance          = NBP_NULLPTR;
         runs[i].lastTestCaseInstance           = NBP_NULLPTR;
         runs[i].totalNumberOfTestCases         = 0;
         runs[i].totalNumberOfTestCaseInstances = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) tss_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+        NBP_ATOMIC_UINT_STORE(&runs[i].numberOfCompletedTasks, 0U);
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].runEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init runEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].setupEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
 
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -5042,7 +5997,6 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     }
 
     testSuiteInstance->testSuiteDetails  = testSuiteDetails;
-    testSuiteInstance->state             = tsis_ready;
     testSuiteInstance->module            = parentModule;
     testSuiteInstance->instantiationLine = instantiationLine;
     testSuiteInstance->setupDetails      = testSuiteDetails->setupDetails;
@@ -5055,7 +6009,9 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     testSuiteInstance->totalNumberOfTestCases         = 0;
     testSuiteInstance->totalNumberOfTestCaseInstances = 0;
 
+    NBP_ATOMIC_INT_STORE(&testSuiteInstance->state, (int) tsis_ready);
     NBP_ATOMIC_INT_STORE(&testSuiteInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfCompletedRuns, 0U);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);
@@ -5068,6 +6024,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_SUITE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestSuites[i], 0U);
     }
+
+    parentModule->numberOfTasks += 1;
 
     if (parentModule->firstTestSuiteInstance == NBP_NULLPTR) {
         parentModule->firstTestSuiteInstance = testSuiteInstance;
@@ -6198,7 +7156,7 @@ NBP_PRINTER(
  * TODO: add docs
  */
 #define NBP_SCHEDULER_RUN_TEST_CASE_INSTANCE(testCaseInstance)                 \
-    internal_nbp_run_test_case_instance(testCaseInstance)
+    internal_nbp_scheduler_run_test_case_instance(testCaseInstance)
 
 #define INTERNAL_NBP_GENERATE_SCHEDULER_CONFIG_FUNCTION(...)                   \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GSC##__VA_ARGS__))     \

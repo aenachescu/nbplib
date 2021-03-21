@@ -265,13 +265,30 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testSuiteInstance              = testSuiteInstance;
-        runs[i].state                          = tss_ready;
         runs[i].firstTestCaseInstance          = NBP_NULLPTR;
         runs[i].lastTestCaseInstance           = NBP_NULLPTR;
         runs[i].totalNumberOfTestCases         = 0;
         runs[i].totalNumberOfTestCaseInstances = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) tss_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+        NBP_ATOMIC_UINT_STORE(&runs[i].numberOfCompletedTasks, 0U);
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].runEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init runEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].setupEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
 
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -283,7 +300,6 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     }
 
     testSuiteInstance->testSuiteDetails  = testSuiteDetails;
-    testSuiteInstance->state             = tsis_ready;
     testSuiteInstance->module            = parentModule;
     testSuiteInstance->instantiationLine = instantiationLine;
     testSuiteInstance->setupDetails      = testSuiteDetails->setupDetails;
@@ -296,7 +312,9 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     testSuiteInstance->totalNumberOfTestCases         = 0;
     testSuiteInstance->totalNumberOfTestCaseInstances = 0;
 
+    NBP_ATOMIC_INT_STORE(&testSuiteInstance->state, (int) tsis_ready);
     NBP_ATOMIC_INT_STORE(&testSuiteInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfCompletedRuns, 0U);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);
@@ -309,6 +327,8 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_SUITE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestSuites[i], 0U);
     }
+
+    parentModule->numberOfTasks += 1;
 
     if (parentModule->firstTestSuiteInstance == NBP_NULLPTR) {
         parentModule->firstTestSuiteInstance = testSuiteInstance;

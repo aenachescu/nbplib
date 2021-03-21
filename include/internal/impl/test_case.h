@@ -170,6 +170,12 @@ static void internal_nbp_test_case_instance_update_stats(
     }
 }
 
+int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase)
+{
+    ((void) testCase);
+    return 0;
+}
+
 void internal_nbp_test_case_update_state_stats(
     nbp_test_case_t* testCase,
     nbp_test_case_state_e oldState,
@@ -340,13 +346,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].testCaseInstance = testCaseInstance;
-        runs[i].state            = tcs_ready;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) tcs_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
     testCaseInstance->testCaseDetails   = testCaseDetails;
-    testCaseInstance->state             = tcis_ready;
     testCaseInstance->module            = parentModule;
     testCaseInstance->testSuite         = parentTestSuite;
     testCaseInstance->depth             = 0;
@@ -358,7 +363,9 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     testCaseInstance->next              = NBP_NULLPTR;
     testCaseInstance->prev              = NBP_NULLPTR;
 
+    NBP_ATOMIC_INT_STORE(&testCaseInstance->state, (int) tcis_ready);
     NBP_ATOMIC_INT_STORE(&testCaseInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfCompletedRuns, 0U);
 
     for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
         NBP_ATOMIC_UINT_STORE(&testCaseInstance->numberOfTestCases[i], 0U);
@@ -366,6 +373,8 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     if (parentModule != NBP_NULLPTR) {
         testCaseInstance->depth = parentModule->moduleInstance->depth + 1;
+
+        parentModule->numberOfTasks += 1;
 
         if (parentModule->firstTestCaseInstance == NBP_NULLPTR) {
             parentModule->firstTestCaseInstance = testCaseInstance;

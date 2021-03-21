@@ -122,7 +122,7 @@ struct nbp_module_instance_t
 {
     nbp_module_details_t* moduleDetails;
 
-    nbp_module_instance_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
@@ -136,6 +136,7 @@ struct nbp_module_instance_t
 
     struct nbp_module_t* runs;
     unsigned int numberOfRuns;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedRuns;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -163,9 +164,12 @@ struct nbp_module_t
 {
     nbp_module_instance_t* moduleInstance;
 
-    nbp_module_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
+
+    NBP_SYNC_EVENT_TYPE runEvent;
+    NBP_SYNC_EVENT_TYPE setupEvent;
 
     nbp_test_case_instance_t* firstTestCaseInstance;
     nbp_test_case_instance_t* lastTestCaseInstance;
@@ -175,6 +179,9 @@ struct nbp_module_t
 
     nbp_module_instance_t* firstModuleInstance;
     nbp_module_instance_t* lastModuleInstance;
+
+    unsigned int numberOfTasks;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedTasks;
 
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;

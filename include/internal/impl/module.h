@@ -282,13 +282,13 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
         runs[i].moduleInstance                  = moduleInstance;
-        runs[i].state                           = ms_ready;
         runs[i].firstTestCaseInstance           = NBP_NULLPTR;
         runs[i].lastTestCaseInstance            = NBP_NULLPTR;
         runs[i].firstTestSuiteInstance          = NBP_NULLPTR;
         runs[i].lastTestSuiteInstance           = NBP_NULLPTR;
         runs[i].firstModuleInstance             = NBP_NULLPTR;
         runs[i].lastModuleInstance              = NBP_NULLPTR;
+        runs[i].numberOfTasks                   = 0;
         runs[i].totalNumberOfTestCases          = 0;
         runs[i].totalNumberOfTestCaseInstances  = 0;
         runs[i].totalNumberOfTestSuites         = 0;
@@ -296,7 +296,25 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         runs[i].totalNumberOfModules            = 0;
         runs[i].totalNumberOfModuleInstances    = 0;
 
+        NBP_ATOMIC_INT_STORE(&runs[i].state, (int) ms_ready);
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
+        NBP_ATOMIC_UINT_STORE(&runs[i].numberOfCompletedTasks, 0U);
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].runEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init runEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
+
+        if (NBP_SYNC_EVENT_INIT(&runs[i].setupEvent) != ec_success) {
+            NBP_REPORT_ERROR_STRING_CONTEXT(
+                ec_sync_error,
+                "failed to init setupEvent");
+            NBP_EXIT(ec_sync_error);
+            return NBP_NULLPTR;
+        }
 
         unsigned int j;
         for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -320,7 +338,6 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     moduleInstance->moduleDetails     = moduleDetails;
-    moduleInstance->state             = mis_ready;
     moduleInstance->parent            = parentModule;
     moduleInstance->depth             = 0;
     moduleInstance->instantiationLine = instantiationLine;
@@ -338,7 +355,9 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     moduleInstance->totalNumberOfModules            = 0;
     moduleInstance->totalNumberOfModuleInstances    = 0;
 
+    NBP_ATOMIC_INT_STORE(&moduleInstance->state, (int) mis_ready);
     NBP_ATOMIC_INT_STORE(&moduleInstance->isSkipped, (int) sf_is_not_set);
+    NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfCompletedRuns, 0U);
 
     unsigned int j;
     for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
@@ -364,6 +383,8 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;
+
+        parentModule->numberOfTasks += 1;
 
         if (parentModule->firstModuleInstance == NBP_NULLPTR) {
             parentModule->firstModuleInstance = moduleInstance;

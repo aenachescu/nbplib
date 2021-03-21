@@ -122,7 +122,7 @@ struct nbp_test_case_instance_t
 {
     nbp_test_case_details_t* testCaseDetails;
 
-    nbp_test_case_instance_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 
@@ -137,6 +137,7 @@ struct nbp_test_case_instance_t
 
     struct nbp_test_case_t* runs;
     unsigned int numberOfRuns;
+    NBP_ATOMIC_UINT_TYPE numberOfCompletedRuns;
 
     NBP_ATOMIC_UINT_TYPE numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
 
@@ -149,7 +150,7 @@ struct nbp_test_case_t
 {
     nbp_test_case_instance_t* testCaseInstance;
 
-    nbp_test_case_state_e state;
+    NBP_ATOMIC_INT_TYPE state;
 
     NBP_ATOMIC_INT_TYPE isSkipped;
 };

@@ -32,6 +32,8 @@ SOFTWARE.
 #include "../types/test_case.h"
 #include "../types/test_suite.h"
 
+int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase);
+
 void internal_nbp_test_case_update_state_stats(
     nbp_test_case_t* testCase,
     nbp_test_case_state_e oldState,

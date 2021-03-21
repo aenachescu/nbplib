@@ -36,7 +36,7 @@ SOFTWARE.
 #define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
     &gInternalNbpSchedulerInterface##name
 
-void internal_nbp_run_test_case_instance(
+void internal_nbp_scheduler_run_test_case_instance(
     nbp_test_case_instance_t* testCaseInstance);
 
 #endif // end if _H_NBP_INTERNAL_DETAILS_SCHEDULER
