@@ -2908,6 +2908,19 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
+#define NBP_TEST_SUITE_INSTANCE_GET_STATE(testSuiteInstance)                   \
+    (nbp_test_suite_instance_state_e)                                          \
+        NBP_ATOMIC_INT_LOAD(&(testSuiteInstance)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_STATE(testSuite)                                    \
+    (nbp_test_suite_state_e) NBP_ATOMIC_INT_LOAD(&(testSuite)->state)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(testSuiteInstance)          \
     testSuiteInstance->numberOfRuns
 
