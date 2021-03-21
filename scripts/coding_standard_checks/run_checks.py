@@ -40,7 +40,7 @@ from check_naming import check_naming
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
-excludedDirs = [ ".git", "bin", "coverage", "build/cmake_files" ]
+excludedDirs = [ ".git", "bin", "coverage", "build/cmake_files", ".vscode" ]
 excludedDirsAbsPath = []
 
 stopOnError = False
