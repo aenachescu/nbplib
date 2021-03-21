@@ -176,6 +176,18 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
+#define NBP_MODULE_INSTANCE_GET_STATE(moduleInstance)                          \
+    (nbp_module_instance_state_e) NBP_ATOMIC_INT_LOAD(&(moduleInstance)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_STATE(module)                                           \
+    (nbp_module_state_e) NBP_ATOMIC_INT_LOAD(&(module)->state)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstance) moduleInstance->depth
 
 /**
