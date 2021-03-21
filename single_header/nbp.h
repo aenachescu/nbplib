@@ -762,6 +762,7 @@ enum nbp_error_code_e
     ec_unexpected_state            = 9,
     ec_invalid_parent              = 10,
     ec_no_test_case_instantiated   = 11,
+    ec_unexpected_internal_data    = 12,
 };
 typedef enum nbp_error_code_e nbp_error_code_e;
 
