@@ -3187,6 +3187,19 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 /**
  * TODO: add docs
  */
+#define NBP_TEST_CASE_INSTANCE_GET_STATE(testCaseInstance)                     \
+    (nbp_test_case_instance_state_e)                                           \
+        NBP_ATOMIC_INT_LOAD(&(testCaseInstance)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_STATE(testCase)                                      \
+    (nbp_test_case_state_e) NBP_ATOMIC_INT_LOAD(&(testCase)->state)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(testCaseInstance)            \
     testCaseInstance->numberOfRuns
 
