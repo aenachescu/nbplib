@@ -87,6 +87,16 @@ def processing_check_file_formatting(files):
         if not os.path.isabs(file):
             filePath = os.path.join(rootPath, file)
 
+        isExcludedDir = False
+
+        for d in excludedDirsAbsPath:
+            if filePath.startswith(d):
+                isExcludedDir = True
+                break
+
+        if isExcludedDir:
+            continue
+
         if not check_file_formatting(log, filePath):
             formattingSuccess = False
             if stopOnError:
@@ -135,6 +145,16 @@ def processing_check_file_rules(files):
         if not os.path.isabs(file):
             filePath = os.path.join(rootPath, file)
 
+        isExcludedDir = False
+
+        for d in excludedDirsAbsPath:
+            if filePath.startswith(d):
+                isExcludedDir = True
+                break
+
+        if isExcludedDir:
+            continue
+
         if not check_file_rules(log, filePath):
             status = False
             if stopOnError:
@@ -182,6 +202,16 @@ def processing_check_naming(files):
         filePath = file
         if not os.path.isabs(file):
             filePath = os.path.join(rootPath, file)
+
+        isExcludedDir = False
+
+        for d in excludedDirsAbsPath:
+            if filePath.startswith(d):
+                isExcludedDir = True
+                break
+
+        if isExcludedDir:
+            continue
 
         if not check_naming(log, filePath):
             status = False
@@ -248,6 +278,16 @@ def processing_check_all(files):
         filePath = file
         if not os.path.isabs(file):
             filePath = os.path.join(rootPath, file)
+
+        isExcludedDir = False
+
+        for d in excludedDirsAbsPath:
+            if filePath.startswith(d):
+                isExcludedDir = True
+                break
+
+        if isExcludedDir:
+            continue
 
         if not check_file_formatting(log, filePath):
             status = False
