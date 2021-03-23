@@ -45,7 +45,7 @@ typedef void (*nbp_module_teardown_pfn_t)(
     struct nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_mdoule_config_pfn_t)(
+typedef void (*nbp_module_config_pfn_t)(
     struct nbp_module_details_t* /* moduleDetails */
 );
 
@@ -110,7 +110,7 @@ struct nbp_module_details_t
 
     int isConfigured;
 
-    nbp_mdoule_config_pfn_t configFunction;
+    nbp_module_config_pfn_t configFunction;
     nbp_module_pfn_t function;
 
     nbp_module_setup_details_t* setupDetails;
