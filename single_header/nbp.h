@@ -4617,7 +4617,7 @@ static int internal_nbp_scheduler_complete_module_instance(
     internal_nbp_module_instance_update_state_stats(
         moduleInstance,
         mis_running,
-        newState);
+        (nbp_module_instance_state_e) newState);
 
     internal_nbp_notify_printer_module_instance_completed(moduleInstance);
 
@@ -4715,7 +4715,10 @@ static void internal_nbp_scheduler_teardown_module(nbp_module_t* module)
             return;
         }
 
-        internal_nbp_module_update_state_stats(module, ms_running, newState);
+        internal_nbp_module_update_state_stats(
+            module,
+            ms_running,
+            (nbp_module_state_e) newState);
 
         internal_nbp_notify_printer_module_completed(module);
 
@@ -4886,7 +4889,7 @@ static int internal_nbp_scheduler_complete_test_suite_instance(
     internal_nbp_test_suite_instance_update_state_stats(
         testSuiteInstance,
         tsis_running,
-        newState);
+        (nbp_test_suite_instance_state_e) newState);
 
     internal_nbp_notify_printer_test_suite_instance_completed(
         testSuiteInstance);
@@ -4952,7 +4955,7 @@ static void internal_nbp_scheduler_teardown_test_suite(
     internal_nbp_test_suite_update_state_stats(
         testSuite,
         tss_running,
-        newState);
+        (nbp_test_suite_state_e) newState);
 
     internal_nbp_notify_printer_test_suite_completed(testSuite);
 
@@ -5017,7 +5020,7 @@ static int internal_nbp_scheduler_complete_test_case_instance(
     internal_nbp_test_case_instance_update_state_stats(
         testCaseInstance,
         tcis_running,
-        newState);
+        (nbp_test_case_instance_state_e) newState);
 
     internal_nbp_notify_printer_test_case_instance_completed(testCaseInstance);
 
@@ -5063,7 +5066,10 @@ static void internal_nbp_scheduler_run_ready_test_case(
         return;
     }
 
-    internal_nbp_test_case_update_state_stats(testCase, tcs_running, newState);
+    internal_nbp_test_case_update_state_stats(
+        testCase,
+        tcs_running,
+        (nbp_test_case_state_e) newState);
     internal_nbp_notify_printer_test_case_completed(testCase);
 }
 
