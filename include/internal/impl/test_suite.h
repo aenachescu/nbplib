@@ -34,6 +34,7 @@ SOFTWARE.
 #include "../details/printer_notifier.h"
 #include "../details/scheduler_notifier.h"
 #include "../details/test_suite.h"
+#include "../details/utils.h"
 #include "../types/flags.h"
 
 static void internal_nbp_increment_number_of_test_suites(
@@ -290,13 +291,14 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             return NBP_NULLPTR;
         }
 
-        unsigned int j;
-        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCaseInstances[j], 0);
-        }
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestCases,
+            NBP_NUMBER_OF_TEST_CASE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestCaseInstances,
+            NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES,
+            0U);
     }
 
     testSuiteInstance->testSuiteDetails  = testSuiteDetails;
@@ -316,17 +318,18 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     NBP_ATOMIC_INT_STORE(&testSuiteInstance->isSkipped, (int) sf_is_not_set);
     NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfCompletedRuns, 0U);
 
-    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_STATES; i++) {
-        NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestCases[i], 0U);
-    }
-    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; i++) {
-        NBP_ATOMIC_UINT_STORE(
-            &testSuiteInstance->numberOfTestCaseInstances[i],
-            0U);
-    }
-    for (unsigned int i = 0; i < NBP_NUMBER_OF_TEST_SUITE_STATES; i++) {
-        NBP_ATOMIC_UINT_STORE(&testSuiteInstance->numberOfTestSuites[i], 0U);
-    }
+    internal_nbp_initialize_array_of_atomic_uint(
+        testSuiteInstance->numberOfTestCases,
+        NBP_NUMBER_OF_TEST_CASE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        testSuiteInstance->numberOfTestCaseInstances,
+        NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        testSuiteInstance->numberOfTestSuites,
+        NBP_NUMBER_OF_TEST_SUITE_STATES,
+        0U);
 
     parentModule->numberOfTasks += 1;
 

@@ -34,6 +34,7 @@ SOFTWARE.
 #include "../details/module.h"
 #include "../details/printer_notifier.h"
 #include "../details/scheduler_notifier.h"
+#include "../details/utils.h"
 #include "../types/flags.h"
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
@@ -316,25 +317,30 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             return NBP_NULLPTR;
         }
 
-        unsigned int j;
-        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCases[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestCaseInstances[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuites[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfTestSuiteInstances[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModules[j], 0);
-        }
-        for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
-            NBP_ATOMIC_UINT_STORE(&runs[i].numberOfModuleInstances[j], 0);
-        }
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestCases,
+            NBP_NUMBER_OF_TEST_CASE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestCaseInstances,
+            NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestSuites,
+            NBP_NUMBER_OF_TEST_SUITE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfTestSuiteInstances,
+            NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfModules,
+            NBP_NUMBER_OF_MODULE_STATES,
+            0U);
+        internal_nbp_initialize_array_of_atomic_uint(
+            runs[i].numberOfModuleInstances,
+            NBP_NUMBER_OF_MODULE_INSTANCE_STATES,
+            0U);
     }
 
     moduleInstance->moduleDetails     = moduleDetails;
@@ -359,27 +365,30 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     NBP_ATOMIC_INT_STORE(&moduleInstance->isSkipped, (int) sf_is_not_set);
     NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfCompletedRuns, 0U);
 
-    unsigned int j;
-    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCases[j], 0);
-    }
-    for (j = 0; j < NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestCaseInstances[j], 0);
-    }
-    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfTestSuites[j], 0);
-    }
-    for (j = 0; j < NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(
-            &moduleInstance->numberOfTestSuiteInstances[j],
-            0);
-    }
-    for (j = 0; j < NBP_NUMBER_OF_MODULE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModules[j], 0);
-    }
-    for (j = 0; j < NBP_NUMBER_OF_MODULE_INSTANCE_STATES; j++) {
-        NBP_ATOMIC_UINT_STORE(&moduleInstance->numberOfModuleInstances[j], 0);
-    }
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfTestCases,
+        NBP_NUMBER_OF_TEST_CASE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfTestCaseInstances,
+        NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfTestSuites,
+        NBP_NUMBER_OF_TEST_SUITE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfTestSuiteInstances,
+        NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfModules,
+        NBP_NUMBER_OF_MODULE_STATES,
+        0U);
+    internal_nbp_initialize_array_of_atomic_uint(
+        moduleInstance->numberOfModuleInstances,
+        NBP_NUMBER_OF_MODULE_INSTANCE_STATES,
+        0U);
 
     if (parentModule != NBP_NULLPTR) {
         moduleInstance->depth = parentModule->moduleInstance->depth + 1;

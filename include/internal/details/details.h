@@ -36,5 +36,6 @@ SOFTWARE.
 #include "sync.h"
 #include "test_case.h"
 #include "test_suite.h"
+#include "utils.h"
 
 #endif // end if _H_NBP_INTERNAL_DETAILS_DETAILS

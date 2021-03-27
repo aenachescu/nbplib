@@ -25,21 +25,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_IMPL_IMPL
-#define _H_NBP_INTERNAL_IMPL_IMPL
+#ifndef _H_NBP_INTERNAL_DETAILS_UTILS
+#define _H_NBP_INTERNAL_DETAILS_UTILS
 
-#ifdef NBP_LIBRARY_MAIN
+#include "../types/sync.h"
 
-#include "main.h"
-#include "module.h"
-#include "printer_notifier.h"
-#include "scheduler.h"
-#include "scheduler_notifier.h"
-#include "sync.h"
-#include "test_case.h"
-#include "test_suite.h"
-#include "utils.h"
+void internal_nbp_initialize_array_of_atomic_uint(
+    NBP_ATOMIC_UINT_TYPE* array,
+    unsigned int size,
+    unsigned int value);
 
-#endif // end if NBP_LIBRARY_MAIN
-
-#endif // end if _H_NBP_INTERNAL_IMPL_IMPL
+#endif // end if _H_NBP_INTERNAL_DETAILS_UTILS
