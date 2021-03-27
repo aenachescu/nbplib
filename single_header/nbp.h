@@ -3522,12 +3522,42 @@ int main(int argc, const char** argv)
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+static unsigned int internal_nbp_get_module_state_position(
+    nbp_module_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) ms_ready
+        || (unsigned int) state > (unsigned int) ms_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) ms_ready);
+}
+
+static unsigned int internal_nbp_get_module_instance_state_position(
+    nbp_module_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) mis_ready
+        || (unsigned int) state > (unsigned int) mis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) mis_ready);
+}
+
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -3536,7 +3566,7 @@ static void internal_nbp_decrement_number_of_modules(
     nbp_module_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -3554,7 +3584,7 @@ static void internal_nbp_increment_number_of_module_instances(
     nbp_module_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -3563,7 +3593,7 @@ static void internal_nbp_decrement_number_of_module_instances(
     nbp_module_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -3669,7 +3699,7 @@ unsigned int internal_nbp_get_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_state_e state)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -3677,7 +3707,7 @@ unsigned int internal_nbp_get_number_of_module_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_instance_state_e state)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -5381,12 +5411,42 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
+static unsigned int internal_nbp_get_test_case_state_position(
+    nbp_test_case_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcs_ready
+        || (unsigned int) state > (unsigned int) tcs_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcs_ready);
+}
+
+static unsigned int internal_nbp_get_test_case_instance_state_position(
+    nbp_test_case_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcis_ready
+        || (unsigned int) state > (unsigned int) tcis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcis_ready);
+}
+
 static void internal_nbp_increment_number_of_test_cases(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tcs_ready);
+    unsigned int pos = internal_nbp_get_test_case_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5395,7 +5455,7 @@ static void internal_nbp_decrement_number_of_test_cases(
     nbp_test_case_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tcs_ready);
+    unsigned int pos = internal_nbp_get_test_case_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5413,7 +5473,8 @@ static void internal_nbp_increment_number_of_test_case_instances(
     nbp_test_case_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tcis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_case_instance_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5422,7 +5483,8 @@ static void internal_nbp_decrement_number_of_test_case_instances(
     nbp_test_case_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tcis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_case_instance_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5602,7 +5664,7 @@ unsigned int internal_nbp_get_number_of_test_cases(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_state_e state)
 {
-    int pos = ((int) state) - ((int) tcs_ready);
+    unsigned int pos = internal_nbp_get_test_case_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -5610,7 +5672,8 @@ unsigned int internal_nbp_get_number_of_test_case_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_instance_state_e state)
 {
-    int pos = ((int) state) - ((int) tcis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_case_instance_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -5753,12 +5816,42 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     return testCaseInstance;
 }
 
+static unsigned int internal_nbp_get_test_suite_state_position(
+    nbp_test_suite_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tss_ready
+        || (unsigned int) state > (unsigned int) tss_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tss_ready);
+}
+
+static unsigned int internal_nbp_get_test_suite_instance_state_position(
+    nbp_test_suite_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tsis_ready
+        || (unsigned int) state > (unsigned int) tsis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tsis_ready);
+}
+
 static void internal_nbp_increment_number_of_test_suites(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tss_ready);
+    unsigned int pos = internal_nbp_get_test_suite_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5767,7 +5860,7 @@ static void internal_nbp_decrement_number_of_test_suites(
     nbp_test_suite_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tss_ready);
+    unsigned int pos = internal_nbp_get_test_suite_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5785,7 +5878,8 @@ static void internal_nbp_increment_number_of_test_suite_instances(
     nbp_test_suite_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tsis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_suite_instance_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5794,7 +5888,8 @@ static void internal_nbp_decrement_number_of_test_suite_instances(
     nbp_test_suite_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) tsis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_suite_instance_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -5906,7 +6001,7 @@ unsigned int internal_nbp_get_number_of_test_suites(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_state_e state)
 {
-    int pos = ((int) state) - ((int) tss_ready);
+    unsigned int pos = internal_nbp_get_test_suite_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -5914,7 +6009,8 @@ unsigned int internal_nbp_get_number_of_test_suite_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_instance_state_e state)
 {
-    int pos = ((int) state) - ((int) tsis_ready);
+    unsigned int pos =
+        internal_nbp_get_test_suite_instance_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 

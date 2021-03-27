@@ -39,12 +39,42 @@ SOFTWARE.
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+static unsigned int internal_nbp_get_module_state_position(
+    nbp_module_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) ms_ready
+        || (unsigned int) state > (unsigned int) ms_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) ms_ready);
+}
+
+static unsigned int internal_nbp_get_module_instance_state_position(
+    nbp_module_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) mis_ready
+        || (unsigned int) state > (unsigned int) mis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) mis_ready);
+}
+
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -53,7 +83,7 @@ static void internal_nbp_decrement_number_of_modules(
     nbp_module_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -71,7 +101,7 @@ static void internal_nbp_increment_number_of_module_instances(
     nbp_module_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     NBP_ATOMIC_UINT_ADD_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -80,7 +110,7 @@ static void internal_nbp_decrement_number_of_module_instances(
     nbp_module_instance_state_e state,
     unsigned int value)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     NBP_ATOMIC_UINT_SUB_AND_FETCH(&statsArray[pos], value);
 }
 
@@ -186,7 +216,7 @@ unsigned int internal_nbp_get_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_state_e state)
 {
-    int pos = ((int) state) - ((int) ms_ready);
+    unsigned int pos = internal_nbp_get_module_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
@@ -194,7 +224,7 @@ unsigned int internal_nbp_get_number_of_module_instances(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_instance_state_e state)
 {
-    int pos = ((int) state) - ((int) mis_ready);
+    unsigned int pos = internal_nbp_get_module_instance_state_position(state);
     return NBP_ATOMIC_UINT_LOAD(&statsArray[pos]);
 }
 
