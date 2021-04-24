@@ -32,6 +32,12 @@ SOFTWARE.
 #include "../types/test_case.h"
 #include "../types/test_suite.h"
 
+unsigned int internal_nbp_get_test_case_state_position(
+    nbp_test_case_state_e state);
+
+unsigned int internal_nbp_get_test_case_instance_state_position(
+    nbp_test_case_instance_state_e state);
+
 int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase);
 
 void internal_nbp_test_case_update_state_stats(

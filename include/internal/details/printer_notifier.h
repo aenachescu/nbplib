@@ -55,6 +55,10 @@ void internal_nbp_notify_printer_on_error_custom_context(
 
 void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
 
+void internal_nbp_notify_printer_before_run();
+
+void internal_nbp_notify_printer_after_run();
+
 void internal_nbp_notify_printer_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance);
 

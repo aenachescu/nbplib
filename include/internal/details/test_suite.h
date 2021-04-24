@@ -30,6 +30,12 @@ SOFTWARE.
 
 #include "../types/test_suite.h"
 
+unsigned int internal_nbp_get_test_suite_state_position(
+    nbp_test_suite_state_e state);
+
+unsigned int internal_nbp_get_test_suite_instance_state_position(
+    nbp_test_suite_instance_state_e state);
+
 void internal_nbp_test_suite_update_state_stats(
     nbp_test_suite_t* testSuite,
     nbp_test_suite_state_e oldState,

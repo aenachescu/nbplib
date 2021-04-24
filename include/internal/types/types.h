@@ -34,6 +34,7 @@ SOFTWARE.
 #include "module.h"
 #include "printer.h"
 #include "scheduler.h"
+#include "statistics.h"
 #include "sync.h"
 #include "test_case.h"
 #include "test_suite.h"

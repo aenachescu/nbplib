@@ -35,4 +35,9 @@ void internal_nbp_initialize_array_of_atomic_uint(
     unsigned int size,
     unsigned int value);
 
+void internal_nbp_copy_array_of_atomic_uint(
+    NBP_ATOMIC_UINT_TYPE* source,
+    unsigned int* dest,
+    unsigned int size);
+
 #endif // end if _H_NBP_INTERNAL_DETAILS_UTILS

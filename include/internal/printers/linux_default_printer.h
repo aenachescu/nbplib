@@ -44,6 +44,8 @@ SOFTWARE.
 #define NBP_DP_COLOR_GREEN  "\x1B[32m"
 #define NBP_DP_COLOR_YELLOW "\x1B[33m"
 
+#define NBP_DP_CLEAR_LINE "\x1B[2K\r"
+
 #ifdef NBP_MT_SUPPORT
 
 #include <pthread.h>
@@ -97,15 +99,35 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_unlock(
 
 #else
 
+static inline nbp_error_code_e internal_nbp_dp_mutex_init_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_uninit_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_lock_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_unlock_dummy()
+{
+    return ec_success;
+}
+
 #define INTERNAL_NBP_DP_DECLARE_MUTEX(name)
 
-#define INTERNAL_NBP_DP_MUTEX_INIT(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_INIT(name) internal_nbp_dp_mutex_init_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) internal_nbp_dp_mutex_uninit_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_LOCK(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_LOCK(name) internal_nbp_dp_mutex_lock_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) internal_nbp_dp_mutex_unlock_dummy()
 
 #endif // end if NBP_MT_SUPPORT
 
@@ -206,7 +228,12 @@ struct nbp_dp_task_tree_t
 };
 typedef struct nbp_dp_task_tree_t nbp_dp_task_tree_t;
 
-static nbp_dp_task_tree_t* gInternalNbpDpTaskTreeRoot = NBP_NULLPTR;
+static nbp_dp_task_tree_t* gInternalNbpDpTaskTreeRoot        = NBP_NULLPTR;
+static unsigned int gInternalNbpDpNumberOfTestCases          = 0;
+static unsigned int gInternalNbpDpNumberOfCompletedTestCases = 0;
+static int gInternalNbpDpProgressMessagePrinted              = 0;
+
+INTERNAL_NBP_DP_DECLARE_MUTEX(gInternalNbpDpMutex);
 
 static nbp_dp_task_tree_t* internal_nbp_dp_find_module_task(
     nbp_dp_task_tree_t* root,
@@ -719,25 +746,36 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
 
 NBP_PRINTER_CALLBACK_INIT(nbp_dp_init)
 {
+    INTERNAL_NBP_DP_MUTEX_INIT(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit)
 {
-    internal_nbp_dp_print_task_tree(gInternalNbpDpTaskTreeRoot);
     gInternalNbpDpTaskTreeRoot = NBP_NULLPTR;
+    INTERNAL_NBP_DP_MUTEX_UNINIT(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
 {
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
     printf("nbp version: %s\n", NBP_VERSION_STR);
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
 {
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    if (gInternalNbpDpProgressMessagePrinted == 1) {
+        printf(NBP_DP_CLEAR_LINE);
+    }
+
     switch (NBP_GET_ERROR_CONTEXT_TYPE(NBP_THIS_ERROR)) {
     case ect_string:
         printf(
-            "[error] code = %d, line = %d, file = %s, message = %s\n",
+            "[%serror%s] code = %d, line = %d, file = %s, message = %s\n",
+            NBP_DP_COLOR_RED,
+            NBP_DP_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR),
@@ -745,12 +783,24 @@ NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
         break;
     default:
         printf(
-            "[error] code = %d, line = %d, file = %s\n",
+            "[%serror%s] code = %d, line = %d, file = %s\n",
+            NBP_DP_COLOR_RED,
+            NBP_DP_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR));
         break;
     }
+
+    if (gInternalNbpDpProgressMessagePrinted) {
+        printf(
+            NBP_DP_CLEAR_LINE "Running... %u/%u",
+            gInternalNbpDpNumberOfCompletedTestCases,
+            gInternalNbpDpNumberOfTestCases);
+        fflush(stdout);
+    }
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_dp_instantiate_test_case)
@@ -940,6 +990,139 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
     }
 }
 
+NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed)
+{
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    gInternalNbpDpNumberOfCompletedTestCases++;
+
+    printf(
+        NBP_DP_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDpNumberOfCompletedTestCases,
+        gInternalNbpDpNumberOfTestCases);
+    fflush(stdout);
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+}
+
+NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run)
+{
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    gInternalNbpDpNumberOfTestCases =
+        NBP_PRINTER_GET_STATISTICS(st_total_number_of_test_cases);
+
+    printf(
+        NBP_DP_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDpNumberOfCompletedTestCases,
+        gInternalNbpDpNumberOfTestCases);
+    fflush(stdout);
+
+    gInternalNbpDpProgressMessagePrinted = 1;
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+}
+
+NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
+{
+#define INTERNAL_NBP_DP_PRINT_STATS(                                           \
+    name,                                                                      \
+    totalType,                                                                 \
+    type,                                                                      \
+    passed,                                                                    \
+    failed,                                                                    \
+    skipped)                                                                   \
+    numPassed  = NBP_PRINTER_GET_STATISTICS(type, passed);                     \
+    numFailed  = NBP_PRINTER_GET_STATISTICS(type, failed);                     \
+    numSkipped = NBP_PRINTER_GET_STATISTICS(type, skipped);                    \
+    printf(                                                                    \
+        "| %-22s | %5u | %s%5u%s %s | %s%5u%s %s | %s%5u%s %s |\n",            \
+        name,                                                                  \
+        NBP_PRINTER_GET_STATISTICS(totalType),                                 \
+        NBP_DP_COLOR_GREEN,                                                    \
+        numPassed,                                                             \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "passed",                                                              \
+        numFailed > 0 ? NBP_DP_COLOR_RED : NBP_DP_COLOR_GREEN,                 \
+        numFailed,                                                             \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "failed",                                                              \
+        numSkipped > 0 ? NBP_DP_COLOR_YELLOW : NBP_DP_COLOR_GREEN,             \
+        numSkipped,                                                            \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "skipped");
+
+    unsigned int numPassed  = 0;
+    unsigned int numFailed  = 0;
+    unsigned int numSkipped = 0;
+
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    if (gInternalNbpDpProgressMessagePrinted == 1) {
+        gInternalNbpDpProgressMessagePrinted = 0;
+        printf(NBP_DP_CLEAR_LINE);
+    }
+
+    internal_nbp_dp_print_task_tree(gInternalNbpDpTaskTreeRoot);
+
+    printf(
+        "----------------------------------------------------------------------"
+        "----------\n");
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test cases",
+        st_total_number_of_test_cases,
+        st_number_of_test_cases,
+        tcs_passed,
+        tcs_failed,
+        tcs_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test case instances",
+        st_total_number_of_test_case_instances,
+        st_number_of_test_case_instances,
+        tcis_passed,
+        tcis_failed,
+        tcis_skipped);
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test suites",
+        st_total_number_of_test_suites,
+        st_number_of_test_suites,
+        tss_passed,
+        tss_failed,
+        tss_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test suite instances",
+        st_total_number_of_test_suite_instances,
+        st_number_of_test_suite_instances,
+        tsis_passed,
+        tsis_failed,
+        tsis_skipped);
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Modules",
+        st_total_number_of_modules,
+        st_number_of_modules,
+        ms_passed,
+        ms_failed,
+        ms_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Module instances",
+        st_total_number_of_module_instances,
+        st_number_of_module_instances,
+        mis_passed,
+        mis_failed,
+        mis_skipped);
+
+    printf(
+        "----------------------------------------------------------------------"
+        "----------\n");
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+
+#undef INTERNAL_NBP_DP_PRINT_STATS
+}
+
 NBP_PRINTER(
     nbpDefaultPrinter,
     NBP_PRINTER_CALLBACKS(
@@ -953,7 +1136,10 @@ NBP_PRINTER(
         NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
             nbp_dp_instantiate_test_suite_started),
         NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
-            nbp_dp_instantiate_module_started)));
+            nbp_dp_instantiate_module_started),
+        NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed),
+        NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run),
+        NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)));
 
 #undef NBP_DP_TEST_CASE_EMOJI
 #undef NBP_DP_TEST_SUITE_EMOJI
@@ -963,5 +1149,7 @@ NBP_PRINTER(
 #undef NBP_DP_COLOR_RED
 #undef NBP_DP_COLOR_GREEN
 #undef NBP_DP_COLOR_YELLOW
+
+#undef NBP_DP_CLEAR_LINE
 
 #endif // end if _H_NBP_INTERNAL_PRINTERS_LINUX_DEFAULT_PRINTER

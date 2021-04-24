@@ -29,6 +29,7 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_API_PRINTER
 
 #include "../types/printer.h"
+#include "../types/statistics.h"
 #include "../utils/utils.h"
 #include "memory.h"
 
@@ -63,6 +64,22 @@ SOFTWARE.
 #define NBP_PRINTER_CALLBACK_ON_EXIT(func)                                     \
     static void nbp_printer_callback_##func(                                   \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_code_e nbpParamErrorCode)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                                  \
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+            nbpParamStatistics)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_PRINTER_CALLBACK_AFTER_RUN(func)                                   \
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+            nbpParamStatistics)
 
 /**
  * TODO: add docs
@@ -248,6 +265,8 @@ SOFTWARE.
         .handleVersionCommandCbk          = NBP_NULLPTR,                       \
         .errorCbk                         = NBP_NULLPTR,                       \
         .exitCbk                          = NBP_NULLPTR,                       \
+        .beforeRunCbk                     = NBP_NULLPTR,                       \
+        .afterRunCbk                      = NBP_NULLPTR,                       \
         .instantiateTestCaseCbk           = NBP_NULLPTR,                       \
         .instantiateTestSuiteStartedCbk   = NBP_NULLPTR,                       \
         .instantiateTestSuiteCompletedCbk = NBP_NULLPTR,                       \
@@ -271,6 +290,15 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_THIS_ERROR nbpParamError
+
+/**
+ * TODO: add docs
+ */
+#define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_PS_,                                                      \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(__VA_ARGS__)))                        \
+    (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
 #define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
     nbp_printer_interface_config_function_##name
@@ -300,6 +328,10 @@ SOFTWARE.
     printerInterface->errorCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
     printerInterface->exitCbk = nbp_printer_callback_##func;
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                  \
+    printerInterface->beforeRunCbk = nbp_printer_callback_##func;
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_AFTER_RUN(func)                   \
+    printerInterface->afterRunCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
     printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
@@ -344,5 +376,76 @@ SOFTWARE.
     printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
     printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
+
+#define INTERNAL_NBP_PS_PARAM_
+
+#define INTERNAL_NBP_PS_st_total_number_of_test_cases1(unused)                 \
+    unused nbpParamStatistics->totalNumberOfTestCases
+#define INTERNAL_NBP_PS_st_total_number_of_test_case_instances1(unused)        \
+    unused nbpParamStatistics->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_PS_st_total_number_of_test_suites1(unused)                \
+    unused nbpParamStatistics->totalNumberOfTestSuites
+#define INTERNAL_NBP_PS_st_total_number_of_test_suite_instances1(unused)       \
+    unused nbpParamStatistics->totalNumberOfTestSuiteInstances
+#define INTERNAL_NBP_PS_st_total_number_of_modules1(unused)                    \
+    unused nbpParamStatistics->totalNumberOfModules
+#define INTERNAL_NBP_PS_st_total_number_of_module_instances1(unused)           \
+    unused nbpParamStatistics->totalNumberOfModuleInstances
+
+#define INTERNAL_NBP_PS_st_number_of_test_cases1(state)                        \
+    nbpParamStatistics                                                         \
+        ->numberOfTestCases[internal_nbp_get_test_case_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_test_case_instances1(state)               \
+    nbpParamStatistics->numberOfTestCaseInstances                              \
+        [internal_nbp_get_test_case_instance_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_test_suites1(state)                       \
+    nbpParamStatistics                                                         \
+        ->numberOfTestSuites[internal_nbp_get_test_suite_state_position(       \
+            state)]
+#define INTERNAL_NBP_PS_st_number_of_test_suite_instances1(state)              \
+    nbpParamStatistics->numberOfTestSuiteInstances                             \
+        [internal_nbp_get_test_suite_instance_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_modules1(state)                           \
+    nbpParamStatistics                                                         \
+        ->numberOfModules[internal_nbp_get_module_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_module_instances1(state)                  \
+    nbpParamStatistics->numberOfModuleInstances                                \
+        [internal_nbp_get_module_instance_state_position(state)]
+
+#define INTERNAL_NBP_PS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_PS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_PS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_PS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_PS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_PS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_PS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_PS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_PS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_PS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_PS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_PS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_PS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tsis_ready   tsis_ready
+#define INTERNAL_NBP_PS_PARAM_tsis_running tsis_running
+#define INTERNAL_NBP_PS_PARAM_tsis_passed  tsis_passed
+#define INTERNAL_NBP_PS_PARAM_tsis_failed  tsis_failed
+#define INTERNAL_NBP_PS_PARAM_tsis_skipped tsis_skipped
+
+#define INTERNAL_NBP_PS_PARAM_ms_ready   ms_ready
+#define INTERNAL_NBP_PS_PARAM_ms_running ms_running
+#define INTERNAL_NBP_PS_PARAM_ms_passed  ms_passed
+#define INTERNAL_NBP_PS_PARAM_ms_failed  ms_failed
+#define INTERNAL_NBP_PS_PARAM_ms_skipped ms_skipped
+
+#define INTERNAL_NBP_PS_PARAM_mis_ready   mis_ready
+#define INTERNAL_NBP_PS_PARAM_mis_running mis_running
+#define INTERNAL_NBP_PS_PARAM_mis_passed  mis_passed
+#define INTERNAL_NBP_PS_PARAM_mis_failed  mis_failed
+#define INTERNAL_NBP_PS_PARAM_mis_skipped mis_skipped
 
 #endif // end if _H_NBP_INTERNAL_API_PRINTER

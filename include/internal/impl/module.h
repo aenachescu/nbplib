@@ -39,36 +39,6 @@ SOFTWARE.
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
-static unsigned int internal_nbp_get_module_state_position(
-    nbp_module_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) ms_ready
-        || (unsigned int) state > (unsigned int) ms_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid module state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) ms_ready);
-}
-
-static unsigned int internal_nbp_get_module_instance_state_position(
-    nbp_module_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) mis_ready
-        || (unsigned int) state > (unsigned int) mis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid module instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) mis_ready);
-}
-
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_module_state_e state,
@@ -161,6 +131,35 @@ static void internal_nbp_module_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_module_state_position(nbp_module_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) ms_ready
+        || (unsigned int) state > (unsigned int) ms_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) ms_ready);
+}
+
+unsigned int internal_nbp_get_module_instance_state_position(
+    nbp_module_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) mis_ready
+        || (unsigned int) state > (unsigned int) mis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) mis_ready);
 }
 
 void internal_nbp_module_update_state_stats(

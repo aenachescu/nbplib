@@ -1491,6 +1491,26 @@ typedef struct nbp_module_t nbp_module_t;
 
 struct nbp_printer_interface_t;
 
+struct nbp_printer_statistics_t
+{
+    unsigned int totalNumberOfTestCases;
+    unsigned int totalNumberOfTestCaseInstances;
+    unsigned int totalNumberOfTestSuites;
+    unsigned int totalNumberOfTestSuiteInstances;
+    unsigned int totalNumberOfModules;
+    unsigned int totalNumberOfModuleInstances;
+
+    unsigned int numberOfTestCases[NBP_NUMBER_OF_TEST_CASE_STATES];
+    unsigned int
+        numberOfTestCaseInstances[NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES];
+    unsigned int numberOfTestSuites[NBP_NUMBER_OF_TEST_SUITE_STATES];
+    unsigned int
+        numberOfTestSuiteInstances[NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES];
+    unsigned int numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
+    unsigned int numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
+};
+typedef struct nbp_printer_statistics_t nbp_printer_statistics_t;
+
 typedef void (*nbp_printer_config_pfn_t)(
     struct nbp_printer_interface_t* /* printerInterface */
 );
@@ -1507,6 +1527,14 @@ typedef void (*nbp_printer_callback_on_error_pfn_t)(
 
 typedef void (*nbp_printer_callback_on_exit_pfn_t)(
     nbp_error_code_e /* nbpParamErrorCode */
+);
+
+typedef void (*nbp_printer_callback_before_run_pfn_t)(
+    nbp_printer_statistics_t* /* nbpParamStatistics */
+);
+
+typedef void (*nbp_printer_callback_after_run_pfn_t)(
+    nbp_printer_statistics_t* /* nbpParamStatistics */
 );
 
 typedef void (*nbp_printer_callback_on_instantiate_test_case_pfn_t)(
@@ -1616,6 +1644,9 @@ struct nbp_printer_interface_t
     nbp_printer_callback_on_error_pfn_t errorCbk;
     nbp_printer_callback_on_exit_pfn_t exitCbk;
 
+    nbp_printer_callback_before_run_pfn_t beforeRunCbk;
+    nbp_printer_callback_after_run_pfn_t afterRunCbk;
+
     nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
 
     nbp_printer_callback_on_instantiate_test_suite_started_pfn_t
@@ -1713,6 +1744,28 @@ struct nbp_scheduler_interface_t
 };
 typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
 
+enum nbp_statistics_type_e
+{
+    st_total_number_of_test_cases           = 0x70000000,
+    st_total_number_of_test_case_instances  = 0x70000001,
+    st_total_number_of_test_suites          = 0x70000002,
+    st_total_number_of_test_suite_instances = 0x70000003,
+    st_total_number_of_modules              = 0x70000004,
+    st_total_number_of_module_instances     = 0x70000005,
+    st_number_of_test_cases                 = 0x70000006,
+    st_number_of_test_case_instances        = 0x70000007,
+    st_number_of_test_suites                = 0x70000008,
+    st_number_of_test_suite_instances       = 0x70000009,
+    st_number_of_modules                    = 0x7000000A,
+    st_number_of_module_instances           = 0x7000000B,
+};
+typedef enum nbp_statistics_type_e nbp_statistics_type_e;
+
+unsigned int internal_nbp_get_module_state_position(nbp_module_state_e state);
+
+unsigned int internal_nbp_get_module_instance_state_position(
+    nbp_module_instance_state_e state);
+
 void internal_nbp_module_update_state_stats(
     nbp_module_t* module,
     nbp_module_state_e oldState,
@@ -1772,6 +1825,10 @@ void internal_nbp_notify_printer_on_error_custom_context(
     void* context);
 
 void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
+
+void internal_nbp_notify_printer_before_run();
+
+void internal_nbp_notify_printer_after_run();
 
 void internal_nbp_notify_printer_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance);
@@ -1869,6 +1926,12 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event);
 
 #endif // end if NBP_MT_SUPPORT
 
+unsigned int internal_nbp_get_test_case_state_position(
+    nbp_test_case_state_e state);
+
+unsigned int internal_nbp_get_test_case_instance_state_position(
+    nbp_test_case_instance_state_e state);
+
 int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase);
 
 void internal_nbp_test_case_update_state_stats(
@@ -1900,6 +1963,12 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context);
+
+unsigned int internal_nbp_get_test_suite_state_position(
+    nbp_test_suite_state_e state);
+
+unsigned int internal_nbp_get_test_suite_instance_state_position(
+    nbp_test_suite_instance_state_e state);
 
 void internal_nbp_test_suite_update_state_stats(
     nbp_test_suite_t* testSuite,
@@ -1934,6 +2003,11 @@ void internal_nbp_initialize_array_of_atomic_uint(
     NBP_ATOMIC_UINT_TYPE* array,
     unsigned int size,
     unsigned int value);
+
+void internal_nbp_copy_array_of_atomic_uint(
+    NBP_ATOMIC_UINT_TYPE* source,
+    unsigned int* dest,
+    unsigned int size);
 
 /**
  * TODO: add docs
@@ -2510,6 +2584,22 @@ void internal_nbp_initialize_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
+#define NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                                  \
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+            nbpParamStatistics)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_PRINTER_CALLBACK_AFTER_RUN(func)                                   \
+    static void nbp_printer_callback_##func(                                   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+            nbpParamStatistics)
+
+/**
+ * TODO: add docs
+ */
 #define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                       \
     static void nbp_printer_callback_##func(                                   \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
@@ -2691,6 +2781,8 @@ void internal_nbp_initialize_array_of_atomic_uint(
         .handleVersionCommandCbk          = NBP_NULLPTR,                       \
         .errorCbk                         = NBP_NULLPTR,                       \
         .exitCbk                          = NBP_NULLPTR,                       \
+        .beforeRunCbk                     = NBP_NULLPTR,                       \
+        .afterRunCbk                      = NBP_NULLPTR,                       \
         .instantiateTestCaseCbk           = NBP_NULLPTR,                       \
         .instantiateTestSuiteStartedCbk   = NBP_NULLPTR,                       \
         .instantiateTestSuiteCompletedCbk = NBP_NULLPTR,                       \
@@ -2714,6 +2806,15 @@ void internal_nbp_initialize_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_THIS_ERROR nbpParamError
+
+/**
+ * TODO: add docs
+ */
+#define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_PS_,                                                      \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(__VA_ARGS__)))                        \
+    (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
 #define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
     nbp_printer_interface_config_function_##name
@@ -2743,6 +2844,10 @@ void internal_nbp_initialize_array_of_atomic_uint(
     printerInterface->errorCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
     printerInterface->exitCbk = nbp_printer_callback_##func;
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                  \
+    printerInterface->beforeRunCbk = nbp_printer_callback_##func;
+#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_AFTER_RUN(func)                   \
+    printerInterface->afterRunCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
     printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
@@ -2787,6 +2892,77 @@ void internal_nbp_initialize_array_of_atomic_uint(
     printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
 #define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
     printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
+
+#define INTERNAL_NBP_PS_PARAM_
+
+#define INTERNAL_NBP_PS_st_total_number_of_test_cases1(unused)                 \
+    unused nbpParamStatistics->totalNumberOfTestCases
+#define INTERNAL_NBP_PS_st_total_number_of_test_case_instances1(unused)        \
+    unused nbpParamStatistics->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_PS_st_total_number_of_test_suites1(unused)                \
+    unused nbpParamStatistics->totalNumberOfTestSuites
+#define INTERNAL_NBP_PS_st_total_number_of_test_suite_instances1(unused)       \
+    unused nbpParamStatistics->totalNumberOfTestSuiteInstances
+#define INTERNAL_NBP_PS_st_total_number_of_modules1(unused)                    \
+    unused nbpParamStatistics->totalNumberOfModules
+#define INTERNAL_NBP_PS_st_total_number_of_module_instances1(unused)           \
+    unused nbpParamStatistics->totalNumberOfModuleInstances
+
+#define INTERNAL_NBP_PS_st_number_of_test_cases1(state)                        \
+    nbpParamStatistics                                                         \
+        ->numberOfTestCases[internal_nbp_get_test_case_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_test_case_instances1(state)               \
+    nbpParamStatistics->numberOfTestCaseInstances                              \
+        [internal_nbp_get_test_case_instance_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_test_suites1(state)                       \
+    nbpParamStatistics                                                         \
+        ->numberOfTestSuites[internal_nbp_get_test_suite_state_position(       \
+            state)]
+#define INTERNAL_NBP_PS_st_number_of_test_suite_instances1(state)              \
+    nbpParamStatistics->numberOfTestSuiteInstances                             \
+        [internal_nbp_get_test_suite_instance_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_modules1(state)                           \
+    nbpParamStatistics                                                         \
+        ->numberOfModules[internal_nbp_get_module_state_position(state)]
+#define INTERNAL_NBP_PS_st_number_of_module_instances1(state)                  \
+    nbpParamStatistics->numberOfModuleInstances                                \
+        [internal_nbp_get_module_instance_state_position(state)]
+
+#define INTERNAL_NBP_PS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_PS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_PS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_PS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_PS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_PS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_PS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_PS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_PS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_PS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_PS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_PS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_PS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_PS_PARAM_tsis_ready   tsis_ready
+#define INTERNAL_NBP_PS_PARAM_tsis_running tsis_running
+#define INTERNAL_NBP_PS_PARAM_tsis_passed  tsis_passed
+#define INTERNAL_NBP_PS_PARAM_tsis_failed  tsis_failed
+#define INTERNAL_NBP_PS_PARAM_tsis_skipped tsis_skipped
+
+#define INTERNAL_NBP_PS_PARAM_ms_ready   ms_ready
+#define INTERNAL_NBP_PS_PARAM_ms_running ms_running
+#define INTERNAL_NBP_PS_PARAM_ms_passed  ms_passed
+#define INTERNAL_NBP_PS_PARAM_ms_failed  ms_failed
+#define INTERNAL_NBP_PS_PARAM_ms_skipped ms_skipped
+
+#define INTERNAL_NBP_PS_PARAM_mis_ready   mis_ready
+#define INTERNAL_NBP_PS_PARAM_mis_running mis_running
+#define INTERNAL_NBP_PS_PARAM_mis_passed  mis_passed
+#define INTERNAL_NBP_PS_PARAM_mis_failed  mis_failed
+#define INTERNAL_NBP_PS_PARAM_mis_skipped mis_skipped
 
 /**
  * TODO: add docs
@@ -3407,6 +3583,8 @@ void internal_nbp_initialize_array_of_atomic_uint(
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
+
 INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
 
 nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
@@ -3456,20 +3634,24 @@ static int internal_nbp_command_run_all()
         return ec_invalid_scheduler_interface;
     }
 
-    nbp_module_instance_t* mainModuleInstance = internal_nbp_instantiate_module(
+    gInternalNbpMainModuleInstance = internal_nbp_instantiate_module(
         gInternalNbpMainModuleDetails,
         NBP_NULLPTR,
         0,
         1,
         NBP_NULLPTR);
 
-    if (mainModuleInstance == NBP_NULLPTR) {
+    if (gInternalNbpMainModuleInstance == NBP_NULLPTR) {
         return ec_out_of_memory;
     }
 
     // TODO: send some stats to printers about instances
 
+    internal_nbp_notify_printer_before_run();
+
     internal_nbp_notify_scheduler_run();
+
+    internal_nbp_notify_printer_after_run();
 
     unsigned int numberOfRunTestsCases =
         NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);
@@ -3521,36 +3703,6 @@ int main(int argc, const char** argv)
 }
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
-
-static unsigned int internal_nbp_get_module_state_position(
-    nbp_module_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) ms_ready
-        || (unsigned int) state > (unsigned int) ms_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid module state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) ms_ready);
-}
-
-static unsigned int internal_nbp_get_module_instance_state_position(
-    nbp_module_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) mis_ready
-        || (unsigned int) state > (unsigned int) mis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid module instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) mis_ready);
-}
 
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
@@ -3644,6 +3796,35 @@ static void internal_nbp_module_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_module_state_position(nbp_module_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) ms_ready
+        || (unsigned int) state > (unsigned int) ms_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) ms_ready);
+}
+
+unsigned int internal_nbp_get_module_instance_state_position(
+    nbp_module_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) mis_ready
+        || (unsigned int) state > (unsigned int) mis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid module instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) mis_ready);
 }
 
 void internal_nbp_module_update_state_stats(
@@ -3950,11 +4131,62 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     return moduleInstance;
 }
 
+extern nbp_module_instance_t* gInternalNbpMainModuleInstance;
 extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;
 extern unsigned int gInternalNbpPrinterInterfacesSize;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
     gInternalNbpPrinterInterfaces[i]->cbk != NBP_NULLPTR
+
+static void internal_nbp_initialize_printer_statistics(
+    nbp_printer_statistics_t* statistics)
+{
+    statistics->totalNumberOfTestCases =
+        gInternalNbpMainModuleInstance->totalNumberOfTestCases;
+    statistics->totalNumberOfTestCaseInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfTestCaseInstances;
+    statistics->totalNumberOfTestSuites =
+        gInternalNbpMainModuleInstance->totalNumberOfTestSuites;
+    statistics->totalNumberOfTestSuiteInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfTestSuiteInstances;
+    statistics->totalNumberOfModules =
+        gInternalNbpMainModuleInstance->totalNumberOfModules;
+    statistics->totalNumberOfModuleInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfModuleInstances;
+
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestCases,
+        statistics->numberOfTestCases,
+        NBP_NUMBER_OF_TEST_CASE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestCaseInstances,
+        statistics->numberOfTestCaseInstances,
+        NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestSuites,
+        statistics->numberOfTestSuites,
+        NBP_NUMBER_OF_TEST_SUITE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestSuiteInstances,
+        statistics->numberOfTestSuiteInstances,
+        NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfModules,
+        statistics->numberOfModules,
+        NBP_NUMBER_OF_MODULE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfModuleInstances,
+        statistics->numberOfModuleInstances,
+        NBP_NUMBER_OF_MODULE_INSTANCE_STATES);
+
+    statistics->totalNumberOfModuleInstances += 1;
+    statistics->totalNumberOfModules +=
+        gInternalNbpMainModuleInstance->numberOfRuns;
+
+    unsigned int pos = internal_nbp_get_module_instance_state_position(
+        NBP_MODULE_INSTANCE_GET_STATE(gInternalNbpMainModuleInstance));
+    statistics->numberOfModuleInstances[pos] += 1;
+}
 
 void internal_nbp_notify_printer_init()
 {
@@ -4071,6 +4303,38 @@ void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode)
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(exitCbk)) {
             gInternalNbpPrinterInterfaces[i]->exitCbk(errorCode);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_before_run()
+{
+    nbp_printer_statistics_t statistics;
+
+    internal_nbp_initialize_printer_statistics(&statistics);
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(beforeRunCbk)) {
+            gInternalNbpPrinterInterfaces[i]->beforeRunCbk(&statistics);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_after_run()
+{
+    nbp_printer_statistics_t statistics;
+
+    internal_nbp_initialize_printer_statistics(&statistics);
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(afterRunCbk)) {
+            gInternalNbpPrinterInterfaces[i]->afterRunCbk(&statistics);
         }
     }
 }
@@ -5411,36 +5675,6 @@ nbp_error_code_e internal_nbp_linux_sync_event_notify(sem_t* event)
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
-static unsigned int internal_nbp_get_test_case_state_position(
-    nbp_test_case_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tcs_ready
-        || (unsigned int) state > (unsigned int) tcs_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test case state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tcs_ready);
-}
-
-static unsigned int internal_nbp_get_test_case_instance_state_position(
-    nbp_test_case_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tcis_ready
-        || (unsigned int) state > (unsigned int) tcis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test case instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tcis_ready);
-}
-
 static void internal_nbp_increment_number_of_test_cases(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_state_e state,
@@ -5573,6 +5807,36 @@ static void internal_nbp_test_case_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_test_case_state_position(
+    nbp_test_case_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcs_ready
+        || (unsigned int) state > (unsigned int) tcs_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcs_ready);
+}
+
+unsigned int internal_nbp_get_test_case_instance_state_position(
+    nbp_test_case_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcis_ready
+        || (unsigned int) state > (unsigned int) tcis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcis_ready);
 }
 
 int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase)
@@ -5816,36 +6080,6 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
     return testCaseInstance;
 }
 
-static unsigned int internal_nbp_get_test_suite_state_position(
-    nbp_test_suite_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tss_ready
-        || (unsigned int) state > (unsigned int) tss_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test suite state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tss_ready);
-}
-
-static unsigned int internal_nbp_get_test_suite_instance_state_position(
-    nbp_test_suite_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tsis_ready
-        || (unsigned int) state > (unsigned int) tsis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test suite instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tsis_ready);
-}
-
 static void internal_nbp_increment_number_of_test_suites(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_state_e state,
@@ -5946,6 +6180,36 @@ static void internal_nbp_test_suite_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_test_suite_state_position(
+    nbp_test_suite_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tss_ready
+        || (unsigned int) state > (unsigned int) tss_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tss_ready);
+}
+
+unsigned int internal_nbp_get_test_suite_instance_state_position(
+    nbp_test_suite_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tsis_ready
+        || (unsigned int) state > (unsigned int) tsis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tsis_ready);
 }
 
 void internal_nbp_test_suite_update_state_stats(
@@ -6197,6 +6461,16 @@ void internal_nbp_initialize_array_of_atomic_uint(
     }
 }
 
+void internal_nbp_copy_array_of_atomic_uint(
+    NBP_ATOMIC_UINT_TYPE* source,
+    unsigned int* dest,
+    unsigned int size)
+{
+    for (unsigned int i = 0; i < size; i++) {
+        dest[i] = NBP_ATOMIC_UINT_LOAD(&source[i]);
+    }
+}
+
 #endif // end if NBP_LIBRARY_MAIN
 
 #ifdef NBP_DEFAULT_PRINTER
@@ -6218,6 +6492,8 @@ void internal_nbp_initialize_array_of_atomic_uint(
 #define NBP_DP_COLOR_RED    "\x1B[31m"
 #define NBP_DP_COLOR_GREEN  "\x1B[32m"
 #define NBP_DP_COLOR_YELLOW "\x1B[33m"
+
+#define NBP_DP_CLEAR_LINE "\x1B[2K\r"
 
 #ifdef NBP_MT_SUPPORT
 
@@ -6272,15 +6548,35 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_unlock(
 
 #else
 
+static inline nbp_error_code_e internal_nbp_dp_mutex_init_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_uninit_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_lock_dummy()
+{
+    return ec_success;
+}
+
+static inline nbp_error_code_e internal_nbp_dp_mutex_unlock_dummy()
+{
+    return ec_success;
+}
+
 #define INTERNAL_NBP_DP_DECLARE_MUTEX(name)
 
-#define INTERNAL_NBP_DP_MUTEX_INIT(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_INIT(name) internal_nbp_dp_mutex_init_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) internal_nbp_dp_mutex_uninit_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_LOCK(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_LOCK(name) internal_nbp_dp_mutex_lock_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) ec_success
+#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) internal_nbp_dp_mutex_unlock_dummy()
 
 #endif // end if NBP_MT_SUPPORT
 
@@ -6381,7 +6677,12 @@ struct nbp_dp_task_tree_t
 };
 typedef struct nbp_dp_task_tree_t nbp_dp_task_tree_t;
 
-static nbp_dp_task_tree_t* gInternalNbpDpTaskTreeRoot = NBP_NULLPTR;
+static nbp_dp_task_tree_t* gInternalNbpDpTaskTreeRoot        = NBP_NULLPTR;
+static unsigned int gInternalNbpDpNumberOfTestCases          = 0;
+static unsigned int gInternalNbpDpNumberOfCompletedTestCases = 0;
+static int gInternalNbpDpProgressMessagePrinted              = 0;
+
+INTERNAL_NBP_DP_DECLARE_MUTEX(gInternalNbpDpMutex);
 
 static nbp_dp_task_tree_t* internal_nbp_dp_find_module_task(
     nbp_dp_task_tree_t* root,
@@ -6894,25 +7195,36 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
 
 NBP_PRINTER_CALLBACK_INIT(nbp_dp_init)
 {
+    INTERNAL_NBP_DP_MUTEX_INIT(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit)
 {
-    internal_nbp_dp_print_task_tree(gInternalNbpDpTaskTreeRoot);
     gInternalNbpDpTaskTreeRoot = NBP_NULLPTR;
+    INTERNAL_NBP_DP_MUTEX_UNINIT(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
 {
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
     printf("nbp version: %s\n", NBP_VERSION_STR);
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
 {
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    if (gInternalNbpDpProgressMessagePrinted == 1) {
+        printf(NBP_DP_CLEAR_LINE);
+    }
+
     switch (NBP_GET_ERROR_CONTEXT_TYPE(NBP_THIS_ERROR)) {
     case ect_string:
         printf(
-            "[error] code = %d, line = %d, file = %s, message = %s\n",
+            "[%serror%s] code = %d, line = %d, file = %s, message = %s\n",
+            NBP_DP_COLOR_RED,
+            NBP_DP_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR),
@@ -6920,12 +7232,24 @@ NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
         break;
     default:
         printf(
-            "[error] code = %d, line = %d, file = %s\n",
+            "[%serror%s] code = %d, line = %d, file = %s\n",
+            NBP_DP_COLOR_RED,
+            NBP_DP_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR));
         break;
     }
+
+    if (gInternalNbpDpProgressMessagePrinted) {
+        printf(
+            NBP_DP_CLEAR_LINE "Running... %u/%u",
+            gInternalNbpDpNumberOfCompletedTestCases,
+            gInternalNbpDpNumberOfTestCases);
+        fflush(stdout);
+    }
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
 }
 
 NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_dp_instantiate_test_case)
@@ -7115,6 +7439,139 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
     }
 }
 
+NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed)
+{
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    gInternalNbpDpNumberOfCompletedTestCases++;
+
+    printf(
+        NBP_DP_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDpNumberOfCompletedTestCases,
+        gInternalNbpDpNumberOfTestCases);
+    fflush(stdout);
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+}
+
+NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run)
+{
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    gInternalNbpDpNumberOfTestCases =
+        NBP_PRINTER_GET_STATISTICS(st_total_number_of_test_cases);
+
+    printf(
+        NBP_DP_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDpNumberOfCompletedTestCases,
+        gInternalNbpDpNumberOfTestCases);
+    fflush(stdout);
+
+    gInternalNbpDpProgressMessagePrinted = 1;
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+}
+
+NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
+{
+#define INTERNAL_NBP_DP_PRINT_STATS(                                           \
+    name,                                                                      \
+    totalType,                                                                 \
+    type,                                                                      \
+    passed,                                                                    \
+    failed,                                                                    \
+    skipped)                                                                   \
+    numPassed  = NBP_PRINTER_GET_STATISTICS(type, passed);                     \
+    numFailed  = NBP_PRINTER_GET_STATISTICS(type, failed);                     \
+    numSkipped = NBP_PRINTER_GET_STATISTICS(type, skipped);                    \
+    printf(                                                                    \
+        "| %-22s | %5u | %s%5u%s %s | %s%5u%s %s | %s%5u%s %s |\n",            \
+        name,                                                                  \
+        NBP_PRINTER_GET_STATISTICS(totalType),                                 \
+        NBP_DP_COLOR_GREEN,                                                    \
+        numPassed,                                                             \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "passed",                                                              \
+        numFailed > 0 ? NBP_DP_COLOR_RED : NBP_DP_COLOR_GREEN,                 \
+        numFailed,                                                             \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "failed",                                                              \
+        numSkipped > 0 ? NBP_DP_COLOR_YELLOW : NBP_DP_COLOR_GREEN,             \
+        numSkipped,                                                            \
+        NBP_DP_COLOR_NORMAL,                                                   \
+        "skipped");
+
+    unsigned int numPassed  = 0;
+    unsigned int numFailed  = 0;
+    unsigned int numSkipped = 0;
+
+    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+
+    if (gInternalNbpDpProgressMessagePrinted == 1) {
+        gInternalNbpDpProgressMessagePrinted = 0;
+        printf(NBP_DP_CLEAR_LINE);
+    }
+
+    internal_nbp_dp_print_task_tree(gInternalNbpDpTaskTreeRoot);
+
+    printf(
+        "----------------------------------------------------------------------"
+        "----------\n");
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test cases",
+        st_total_number_of_test_cases,
+        st_number_of_test_cases,
+        tcs_passed,
+        tcs_failed,
+        tcs_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test case instances",
+        st_total_number_of_test_case_instances,
+        st_number_of_test_case_instances,
+        tcis_passed,
+        tcis_failed,
+        tcis_skipped);
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test suites",
+        st_total_number_of_test_suites,
+        st_number_of_test_suites,
+        tss_passed,
+        tss_failed,
+        tss_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Test suite instances",
+        st_total_number_of_test_suite_instances,
+        st_number_of_test_suite_instances,
+        tsis_passed,
+        tsis_failed,
+        tsis_skipped);
+
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Modules",
+        st_total_number_of_modules,
+        st_number_of_modules,
+        ms_passed,
+        ms_failed,
+        ms_skipped);
+    INTERNAL_NBP_DP_PRINT_STATS(
+        "Module instances",
+        st_total_number_of_module_instances,
+        st_number_of_module_instances,
+        mis_passed,
+        mis_failed,
+        mis_skipped);
+
+    printf(
+        "----------------------------------------------------------------------"
+        "----------\n");
+
+    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+
+#undef INTERNAL_NBP_DP_PRINT_STATS
+}
+
 NBP_PRINTER(
     nbpDefaultPrinter,
     NBP_PRINTER_CALLBACKS(
@@ -7128,7 +7585,10 @@ NBP_PRINTER(
         NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
             nbp_dp_instantiate_test_suite_started),
         NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
-            nbp_dp_instantiate_module_started)));
+            nbp_dp_instantiate_module_started),
+        NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed),
+        NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run),
+        NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)));
 
 #undef NBP_DP_TEST_CASE_EMOJI
 #undef NBP_DP_TEST_SUITE_EMOJI
@@ -7138,6 +7598,8 @@ NBP_PRINTER(
 #undef NBP_DP_COLOR_RED
 #undef NBP_DP_COLOR_GREEN
 #undef NBP_DP_COLOR_YELLOW
+
+#undef NBP_DP_CLEAR_LINE
 
 #endif // end if NBP_OS_LINUX
 

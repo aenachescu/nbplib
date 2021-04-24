@@ -40,4 +40,14 @@ void internal_nbp_initialize_array_of_atomic_uint(
     }
 }
 
+void internal_nbp_copy_array_of_atomic_uint(
+    NBP_ATOMIC_UINT_TYPE* source,
+    unsigned int* dest,
+    unsigned int size)
+{
+    for (unsigned int i = 0; i < size; i++) {
+        dest[i] = NBP_ATOMIC_UINT_LOAD(&source[i]);
+    }
+}
+
 #endif // end if _H_NBP_INTERNAL_IMPL_UTILS

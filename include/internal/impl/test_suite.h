@@ -37,36 +37,6 @@ SOFTWARE.
 #include "../details/utils.h"
 #include "../types/flags.h"
 
-static unsigned int internal_nbp_get_test_suite_state_position(
-    nbp_test_suite_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tss_ready
-        || (unsigned int) state > (unsigned int) tss_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test suite state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tss_ready);
-}
-
-static unsigned int internal_nbp_get_test_suite_instance_state_position(
-    nbp_test_suite_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tsis_ready
-        || (unsigned int) state > (unsigned int) tsis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test suite instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tsis_ready);
-}
-
 static void internal_nbp_increment_number_of_test_suites(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_suite_state_e state,
@@ -167,6 +137,36 @@ static void internal_nbp_test_suite_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_test_suite_state_position(
+    nbp_test_suite_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tss_ready
+        || (unsigned int) state > (unsigned int) tss_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tss_ready);
+}
+
+unsigned int internal_nbp_get_test_suite_instance_state_position(
+    nbp_test_suite_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tsis_ready
+        || (unsigned int) state > (unsigned int) tsis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test suite instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tsis_ready);
 }
 
 void internal_nbp_test_suite_update_state_stats(

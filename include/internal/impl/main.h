@@ -45,6 +45,8 @@ SOFTWARE.
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
+nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
+
 INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
 
 nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
@@ -94,20 +96,24 @@ static int internal_nbp_command_run_all()
         return ec_invalid_scheduler_interface;
     }
 
-    nbp_module_instance_t* mainModuleInstance = internal_nbp_instantiate_module(
+    gInternalNbpMainModuleInstance = internal_nbp_instantiate_module(
         gInternalNbpMainModuleDetails,
         NBP_NULLPTR,
         0,
         1,
         NBP_NULLPTR);
 
-    if (mainModuleInstance == NBP_NULLPTR) {
+    if (gInternalNbpMainModuleInstance == NBP_NULLPTR) {
         return ec_out_of_memory;
     }
 
     // TODO: send some stats to printers about instances
 
+    internal_nbp_notify_printer_before_run();
+
     internal_nbp_notify_scheduler_run();
+
+    internal_nbp_notify_printer_after_run();
 
     unsigned int numberOfRunTestsCases =
         NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);

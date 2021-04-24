@@ -31,11 +31,62 @@ SOFTWARE.
 #include "../api/memory.h"
 #include "../details/printer_notifier.h"
 
+extern nbp_module_instance_t* gInternalNbpMainModuleInstance;
 extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;
 extern unsigned int gInternalNbpPrinterInterfacesSize;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
     gInternalNbpPrinterInterfaces[i]->cbk != NBP_NULLPTR
+
+static void internal_nbp_initialize_printer_statistics(
+    nbp_printer_statistics_t* statistics)
+{
+    statistics->totalNumberOfTestCases =
+        gInternalNbpMainModuleInstance->totalNumberOfTestCases;
+    statistics->totalNumberOfTestCaseInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfTestCaseInstances;
+    statistics->totalNumberOfTestSuites =
+        gInternalNbpMainModuleInstance->totalNumberOfTestSuites;
+    statistics->totalNumberOfTestSuiteInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfTestSuiteInstances;
+    statistics->totalNumberOfModules =
+        gInternalNbpMainModuleInstance->totalNumberOfModules;
+    statistics->totalNumberOfModuleInstances =
+        gInternalNbpMainModuleInstance->totalNumberOfModuleInstances;
+
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestCases,
+        statistics->numberOfTestCases,
+        NBP_NUMBER_OF_TEST_CASE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestCaseInstances,
+        statistics->numberOfTestCaseInstances,
+        NBP_NUMBER_OF_TEST_CASE_INSTANCE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestSuites,
+        statistics->numberOfTestSuites,
+        NBP_NUMBER_OF_TEST_SUITE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfTestSuiteInstances,
+        statistics->numberOfTestSuiteInstances,
+        NBP_NUMBER_OF_TEST_SUITE_INSTANCE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfModules,
+        statistics->numberOfModules,
+        NBP_NUMBER_OF_MODULE_STATES);
+    internal_nbp_copy_array_of_atomic_uint(
+        gInternalNbpMainModuleInstance->numberOfModuleInstances,
+        statistics->numberOfModuleInstances,
+        NBP_NUMBER_OF_MODULE_INSTANCE_STATES);
+
+    statistics->totalNumberOfModuleInstances += 1;
+    statistics->totalNumberOfModules +=
+        gInternalNbpMainModuleInstance->numberOfRuns;
+
+    unsigned int pos = internal_nbp_get_module_instance_state_position(
+        NBP_MODULE_INSTANCE_GET_STATE(gInternalNbpMainModuleInstance));
+    statistics->numberOfModuleInstances[pos] += 1;
+}
 
 void internal_nbp_notify_printer_init()
 {
@@ -152,6 +203,38 @@ void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode)
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(exitCbk)) {
             gInternalNbpPrinterInterfaces[i]->exitCbk(errorCode);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_before_run()
+{
+    nbp_printer_statistics_t statistics;
+
+    internal_nbp_initialize_printer_statistics(&statistics);
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(beforeRunCbk)) {
+            gInternalNbpPrinterInterfaces[i]->beforeRunCbk(&statistics);
+        }
+    }
+}
+
+void internal_nbp_notify_printer_after_run()
+{
+    nbp_printer_statistics_t statistics;
+
+    internal_nbp_initialize_printer_statistics(&statistics);
+
+    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
+        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+            continue;
+        }
+        if (INTERNAL_NBP_CALLBACK_IS_SET(afterRunCbk)) {
+            gInternalNbpPrinterInterfaces[i]->afterRunCbk(&statistics);
         }
     }
 }

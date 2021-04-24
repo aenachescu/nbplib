@@ -39,36 +39,6 @@ SOFTWARE.
 
 extern unsigned int gInternalNbpNumberOfTestCases;
 
-static unsigned int internal_nbp_get_test_case_state_position(
-    nbp_test_case_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tcs_ready
-        || (unsigned int) state > (unsigned int) tcs_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test case state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tcs_ready);
-}
-
-static unsigned int internal_nbp_get_test_case_instance_state_position(
-    nbp_test_case_instance_state_e state)
-{
-    if ((unsigned int) state < (unsigned int) tcis_ready
-        || (unsigned int) state > (unsigned int) tcis_skipped) {
-        NBP_REPORT_ERROR_STRING_CONTEXT(
-            ec_unexpected_state,
-            "invalid test case instance state");
-        NBP_EXIT(ec_unexpected_state);
-        return 0;
-    }
-
-    return ((unsigned int) state) - ((unsigned int) tcis_ready);
-}
-
 static void internal_nbp_increment_number_of_test_cases(
     NBP_ATOMIC_UINT_TYPE* statsArray,
     nbp_test_case_state_e state,
@@ -201,6 +171,36 @@ static void internal_nbp_test_case_instance_update_stats(
 
         parent = parent->moduleInstance->parent;
     }
+}
+
+unsigned int internal_nbp_get_test_case_state_position(
+    nbp_test_case_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcs_ready
+        || (unsigned int) state > (unsigned int) tcs_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcs_ready);
+}
+
+unsigned int internal_nbp_get_test_case_instance_state_position(
+    nbp_test_case_instance_state_e state)
+{
+    if ((unsigned int) state < (unsigned int) tcis_ready
+        || (unsigned int) state > (unsigned int) tcis_skipped) {
+        NBP_REPORT_ERROR_STRING_CONTEXT(
+            ec_unexpected_state,
+            "invalid test case instance state");
+        NBP_EXIT(ec_unexpected_state);
+        return 0;
+    }
+
+    return ((unsigned int) state) - ((unsigned int) tcis_ready);
 }
 
 int internal_nbp_is_failed_test_case(nbp_test_case_t* testCase)
