@@ -67,6 +67,8 @@ fieldValueExceptions = [
 ]
 
 macroNameExceptions = [
+    "_DEFAULT_SOURCE",
+
     "INTERNAL_NBP_GSCF_",
     "INTERNAL_NBP_SC_",
     "INTERNAL_NBP_GPCF_",
@@ -78,6 +80,57 @@ macroNameExceptions = [
     "INTERNAL_NBP_TCPIO_",
     "INTERNAL_NBP_TSPIO_",
     "INTERNAL_NBP_MPIO_",
+    "INTERNAL_NBP_PS_PARAM_",
+
+    "INTERNAL_NBP_PS_st_total_number_of_test_cases1",
+    "INTERNAL_NBP_PS_st_total_number_of_test_case_instances1",
+    "INTERNAL_NBP_PS_st_total_number_of_test_suites1",
+    "INTERNAL_NBP_PS_st_total_number_of_test_suite_instances1",
+    "INTERNAL_NBP_PS_st_total_number_of_modules1",
+    "INTERNAL_NBP_PS_st_total_number_of_module_instances1",
+
+    "INTERNAL_NBP_PS_st_number_of_test_cases1",
+    "INTERNAL_NBP_PS_st_number_of_test_case_instances1",
+    "INTERNAL_NBP_PS_st_number_of_test_suites1",
+    "INTERNAL_NBP_PS_st_number_of_test_suite_instances1",
+    "INTERNAL_NBP_PS_st_number_of_modules1",
+    "INTERNAL_NBP_PS_st_number_of_module_instances1",
+
+    "INTERNAL_NBP_PS_PARAM_tcs_ready",
+    "INTERNAL_NBP_PS_PARAM_tcs_running",
+    "INTERNAL_NBP_PS_PARAM_tcs_passed",
+    "INTERNAL_NBP_PS_PARAM_tcs_failed",
+    "INTERNAL_NBP_PS_PARAM_tcs_skipped",
+
+    "INTERNAL_NBP_PS_PARAM_tcis_ready",
+    "INTERNAL_NBP_PS_PARAM_tcis_running",
+    "INTERNAL_NBP_PS_PARAM_tcis_passed",
+    "INTERNAL_NBP_PS_PARAM_tcis_failed",
+    "INTERNAL_NBP_PS_PARAM_tcis_skipped",
+
+    "INTERNAL_NBP_PS_PARAM_tss_ready",
+    "INTERNAL_NBP_PS_PARAM_tss_running",
+    "INTERNAL_NBP_PS_PARAM_tss_passed",
+    "INTERNAL_NBP_PS_PARAM_tss_failed",
+    "INTERNAL_NBP_PS_PARAM_tss_skipped",
+
+    "INTERNAL_NBP_PS_PARAM_tsis_ready",
+    "INTERNAL_NBP_PS_PARAM_tsis_running",
+    "INTERNAL_NBP_PS_PARAM_tsis_passed",
+    "INTERNAL_NBP_PS_PARAM_tsis_failed",
+    "INTERNAL_NBP_PS_PARAM_tsis_skipped",
+
+    "INTERNAL_NBP_PS_PARAM_ms_ready",
+    "INTERNAL_NBP_PS_PARAM_ms_running",
+    "INTERNAL_NBP_PS_PARAM_ms_passed",
+    "INTERNAL_NBP_PS_PARAM_ms_failed",
+    "INTERNAL_NBP_PS_PARAM_ms_skipped",
+
+    "INTERNAL_NBP_PS_PARAM_mis_ready",
+    "INTERNAL_NBP_PS_PARAM_mis_running",
+    "INTERNAL_NBP_PS_PARAM_mis_passed",
+    "INTERNAL_NBP_PS_PARAM_mis_failed",
+    "INTERNAL_NBP_PS_PARAM_mis_skipped",
 ]
 
 functionNameExceptions = [
