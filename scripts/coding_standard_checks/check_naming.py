@@ -67,70 +67,39 @@ fieldValueExceptions = [
 ]
 
 macroNameExceptions = [
-    "_DEFAULT_SOURCE",
+    "^_DEFAULT_SOURCE$",
 
-    "INTERNAL_NBP_GSCF_",
-    "INTERNAL_NBP_SC_",
-    "INTERNAL_NBP_GPCF_",
-    "INTERNAL_NBP_PC_",
-    "INTERNAL_NBP_GMCF_",
-    "INTERNAL_NBP_GMMCF_",
-    "INTERNAL_NBP_GTSCF_",
-    "INTERNAL_NBP_GTCCF_",
-    "INTERNAL_NBP_TCPIO_",
-    "INTERNAL_NBP_TSPIO_",
-    "INTERNAL_NBP_MPIO_",
-    "INTERNAL_NBP_PS_PARAM_",
+    "^INTERNAL_NBP_GSCF_$",
+    "^INTERNAL_NBP_SC_$",
+    "^INTERNAL_NBP_GPCF_$",
+    "^INTERNAL_NBP_PC_$",
+    "^INTERNAL_NBP_GMCF_$",
+    "^INTERNAL_NBP_GMMCF_$",
+    "^INTERNAL_NBP_GTSCF_$",
+    "^INTERNAL_NBP_GTCCF_$",
+    "^INTERNAL_NBP_TCPIO_$",
+    "^INTERNAL_NBP_TSPIO_$",
+    "^INTERNAL_NBP_MPIO_$",
 
-    "INTERNAL_NBP_PS_st_total_number_of_test_cases1",
-    "INTERNAL_NBP_PS_st_total_number_of_test_case_instances1",
-    "INTERNAL_NBP_PS_st_total_number_of_test_suites1",
-    "INTERNAL_NBP_PS_st_total_number_of_test_suite_instances1",
-    "INTERNAL_NBP_PS_st_total_number_of_modules1",
-    "INTERNAL_NBP_PS_st_total_number_of_module_instances1",
+    "^INTERNAL_NBP_PS_PARAM_$",
+    "^INTERNAL_NBP_TCGS_PARAM_$",
+    "^INTERNAL_NBP_TCIGS_PARAM_$",
+    "^INTERNAL_NBP_TSGS_PARAM_$",
+    "^INTERNAL_NBP_TSIGS_PARAM_$",
+    "^INTERNAL_NBP_MGS_PARAM_$",
+    "^INTERNAL_NBP_MIGS_PARAM_$",
 
-    "INTERNAL_NBP_PS_st_number_of_test_cases1",
-    "INTERNAL_NBP_PS_st_number_of_test_case_instances1",
-    "INTERNAL_NBP_PS_st_number_of_test_suites1",
-    "INTERNAL_NBP_PS_st_number_of_test_suite_instances1",
-    "INTERNAL_NBP_PS_st_number_of_modules1",
-    "INTERNAL_NBP_PS_st_number_of_module_instances1",
+    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_PARAM_"
+    "(tcs|tcis|tss|tsis|ms|mis)_"
+    "(ready|running|passed|failed|skipped)$",
 
-    "INTERNAL_NBP_PS_PARAM_tcs_ready",
-    "INTERNAL_NBP_PS_PARAM_tcs_running",
-    "INTERNAL_NBP_PS_PARAM_tcs_passed",
-    "INTERNAL_NBP_PS_PARAM_tcs_failed",
-    "INTERNAL_NBP_PS_PARAM_tcs_skipped",
+    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_total_number_of_"
+    "(test_cases|test_case_instances|test_suites|test_suite_instances|"
+    "modules|module_instances)1$",
 
-    "INTERNAL_NBP_PS_PARAM_tcis_ready",
-    "INTERNAL_NBP_PS_PARAM_tcis_running",
-    "INTERNAL_NBP_PS_PARAM_tcis_passed",
-    "INTERNAL_NBP_PS_PARAM_tcis_failed",
-    "INTERNAL_NBP_PS_PARAM_tcis_skipped",
-
-    "INTERNAL_NBP_PS_PARAM_tss_ready",
-    "INTERNAL_NBP_PS_PARAM_tss_running",
-    "INTERNAL_NBP_PS_PARAM_tss_passed",
-    "INTERNAL_NBP_PS_PARAM_tss_failed",
-    "INTERNAL_NBP_PS_PARAM_tss_skipped",
-
-    "INTERNAL_NBP_PS_PARAM_tsis_ready",
-    "INTERNAL_NBP_PS_PARAM_tsis_running",
-    "INTERNAL_NBP_PS_PARAM_tsis_passed",
-    "INTERNAL_NBP_PS_PARAM_tsis_failed",
-    "INTERNAL_NBP_PS_PARAM_tsis_skipped",
-
-    "INTERNAL_NBP_PS_PARAM_ms_ready",
-    "INTERNAL_NBP_PS_PARAM_ms_running",
-    "INTERNAL_NBP_PS_PARAM_ms_passed",
-    "INTERNAL_NBP_PS_PARAM_ms_failed",
-    "INTERNAL_NBP_PS_PARAM_ms_skipped",
-
-    "INTERNAL_NBP_PS_PARAM_mis_ready",
-    "INTERNAL_NBP_PS_PARAM_mis_running",
-    "INTERNAL_NBP_PS_PARAM_mis_passed",
-    "INTERNAL_NBP_PS_PARAM_mis_failed",
-    "INTERNAL_NBP_PS_PARAM_mis_skipped",
+    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_number_of_"
+    "(test_cases|test_case_instances|test_suites|test_suite_instances|"
+    "modules|module_instances)1$",
 ]
 
 functionNameExceptions = [
@@ -1415,7 +1384,13 @@ def check_macros(log, root, filePath):
             )
             continue
 
-        if macro.spelling in macroNameExceptions:
+        isException = False
+        for pattern in macroNameExceptions:
+            if re.search(pattern, macro.spelling):
+                isException = True
+                break
+
+        if isException:
             continue
 
         hasPrefix, prefix = starts_with_prefix(macro.spelling, prefixes)
