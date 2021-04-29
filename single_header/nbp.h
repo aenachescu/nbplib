@@ -2286,20 +2286,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_MODULE_INSTANCE_GET_NAME(moduleInstance)                           \
-    moduleInstance->moduleDetails->name
-
-/**
- * TODO: add docs
- */
 #define NBP_MODULE_GET_NAME(module)                                            \
     NBP_MODULE_INSTANCE_GET_NAME(module->moduleInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_STATE(moduleInstance)                          \
-    (nbp_module_instance_state_e) NBP_ATOMIC_INT_LOAD(&(moduleInstance)->state)
 
 /**
  * TODO: add docs
@@ -2310,19 +2298,48 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstance) moduleInstance->depth
-
-/**
- * TODO: add docs
- */
 #define NBP_MODULE_GET_DEPTH(module)                                           \
     NBP_MODULE_INSTANCE_GET_DEPTH(module->moduleInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_MODULE_INSTANCE_GET_MODULE(moduleInstance, runId)                  \
-    internal_nbp_get_module_from_instance(moduleInstance, runId)
+#define NBP_MODULE_GET_STATISTICS(module, type, ...)                           \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_MGS_,                                                     \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (module, INTERNAL_NBP_MGS_PARAM_##__VA_ARGS__)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_GET_INSTANCE(module) module->moduleInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_NAME(moduleInstance)                           \
+    moduleInstance->moduleDetails->name
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_STATE(moduleInstance)                          \
+    (nbp_module_instance_state_e) NBP_ATOMIC_INT_LOAD(&(moduleInstance)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstance) moduleInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_MODULE_INSTANCE_GET_STATISTICS(moduleInstance, type, ...)          \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_MIGS_,                                                    \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (moduleInstance, INTERNAL_NBP_MIGS_PARAM_##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -2333,178 +2350,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_MODULE_GET_INSTANCE(module) module->moduleInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(moduleInstance)     \
-    moduleInstance->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASES(moduleInstance, state)    \
-    internal_nbp_get_number_of_test_cases(                                     \
-        moduleInstance->numberOfTestCases,                                     \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(           \
-    moduleInstance)                                                            \
-    moduleInstance->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(                 \
-    moduleInstance,                                                            \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        moduleInstance->numberOfTestCaseInstances,                             \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(moduleInstance)    \
-    moduleInstance->totalNumberOfTestSuites
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(moduleInstance, state)   \
-    internal_nbp_get_number_of_test_suites(                                    \
-        moduleInstance->numberOfTestSuites,                                    \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(          \
-    moduleInstance)                                                            \
-    moduleInstance->totalNumberOfTestSuiteInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(                \
-    moduleInstance,                                                            \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_suite_instances(                           \
-        moduleInstance->numberOfTestSuiteInstances,                            \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULES(moduleInstance)        \
-    moduleInstance->totalNumberOfModules
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULES(moduleInstance, state)       \
-    internal_nbp_get_number_of_modules(moduleInstance->numberOfModules, state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(              \
-    moduleInstance)                                                            \
-    moduleInstance->totalNumberOfModuleInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_INSTANCE_GET_NUMBER_OF_MODULE_INSTANCES(                    \
-    moduleInstance,                                                            \
-    state)                                                                     \
-    internal_nbp_get_number_of_module_instances(                               \
-        moduleInstance->numberOfModuleInstances,                               \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASES(module)                      \
-    module->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_TEST_CASES(module, state)                     \
-    internal_nbp_get_number_of_test_cases(module->numberOfTestCases, state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(module)             \
-    module->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_TEST_CASE_INSTANCES(module, state)            \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        module->numberOfTestCaseInstances,                                     \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITES(module)                     \
-    module->totalNumberOfTestSuites
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITES(module, state)                    \
-    internal_nbp_get_number_of_test_suites(                                    \
-        moduleInstance->numberOfTestSuites,                                    \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_TEST_SUITE_INSTANCES(module)            \
-    module->totalNumberOfTestSuiteInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_TEST_SUITE_INSTANCES(module, state)           \
-    internal_nbp_get_number_of_test_suite_instances(                           \
-        module->numberOfTestSuiteInstances,                                    \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULES(module)                         \
-    module->totalNumberOfModules
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_MODULES(module, state)                        \
-    internal_nbp_get_number_of_modules(module->numberOfModules, state)
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_TOTAL_NUMBER_OF_MODULE_INSTANCES(module)                \
-    module->totalNumberOfModuleInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_MODULE_GET_NUMBER_OF_MODULE_INSTANCES(module, state)               \
-    internal_nbp_get_number_of_module_instances(                               \
-        module->numberOfModuleInstances,                                       \
-        state)
+#define NBP_MODULE_INSTANCE_GET_MODULE(moduleInstance, runId)                  \
+    internal_nbp_get_module_from_instance(moduleInstance, runId)
 
 /**
  * TODO: add docs
@@ -2548,6 +2395,150 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_MPIO_
 
 #define INTERNAL_NBP_MPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
+// Helpers for NBP_MODULE_GET_STATISTICS
+
+#define INTERNAL_NBP_MGS_PARAM_
+
+#define INTERNAL_NBP_MGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_MGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_MGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_MGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_MGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_MGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_MGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_MGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_MGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_MGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_MGS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_MGS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_MGS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_MGS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_MGS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_MGS_PARAM_tsis_ready   tsis_ready
+#define INTERNAL_NBP_MGS_PARAM_tsis_running tsis_running
+#define INTERNAL_NBP_MGS_PARAM_tsis_passed  tsis_passed
+#define INTERNAL_NBP_MGS_PARAM_tsis_failed  tsis_failed
+#define INTERNAL_NBP_MGS_PARAM_tsis_skipped tsis_skipped
+
+#define INTERNAL_NBP_MGS_PARAM_ms_ready   ms_ready
+#define INTERNAL_NBP_MGS_PARAM_ms_running ms_running
+#define INTERNAL_NBP_MGS_PARAM_ms_passed  ms_passed
+#define INTERNAL_NBP_MGS_PARAM_ms_failed  ms_failed
+#define INTERNAL_NBP_MGS_PARAM_ms_skipped ms_skipped
+
+#define INTERNAL_NBP_MGS_PARAM_mis_ready   mis_ready
+#define INTERNAL_NBP_MGS_PARAM_mis_running mis_running
+#define INTERNAL_NBP_MGS_PARAM_mis_passed  mis_passed
+#define INTERNAL_NBP_MGS_PARAM_mis_failed  mis_failed
+#define INTERNAL_NBP_MGS_PARAM_mis_skipped mis_skipped
+
+#define INTERNAL_NBP_MGS_st_total_number_of_test_cases1(m, unused)             \
+    unused m->totalNumberOfTestCases
+#define INTERNAL_NBP_MGS_st_total_number_of_test_case_instances1(m, unused)    \
+    unused m->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_MGS_st_total_number_of_test_suites1(m, unused)            \
+    unused m->totalNumberOfTestSuites
+#define INTERNAL_NBP_MGS_st_total_number_of_test_suite_instances1(m, unused)   \
+    unused m->totalNumberOfTestSuiteInstances
+#define INTERNAL_NBP_MGS_st_total_number_of_modules1(m, unused)                \
+    unused m->totalNumberOfModules
+#define INTERNAL_NBP_MGS_st_total_number_of_module_instances1(m, unused)       \
+    unused m->totalNumberOfModuleInstances
+
+#define INTERNAL_NBP_MGS_st_number_of_test_cases1(m, state)                    \
+    internal_nbp_get_number_of_test_cases(m->numberOfTestCases, state)
+#define INTERNAL_NBP_MGS_st_number_of_test_case_instances1(m, state)           \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        m->numberOfTestCaseInstances,                                          \
+        state)
+#define INTERNAL_NBP_MGS_st_number_of_test_suites1(m, state)                   \
+    internal_nbp_get_number_of_test_suites(m->numberOfTestSuites, state)
+#define INTERNAL_NBP_MGS_st_number_of_test_suite_instances1(m, state)          \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        m->numberOfTestSuiteInstances,                                         \
+        state)
+#define INTERNAL_NBP_MGS_st_number_of_modules1(m, state)                       \
+    internal_nbp_get_number_of_modules(m->numberOfModules, state)
+#define INTERNAL_NBP_MGS_st_number_of_module_instances1(m, state)              \
+    internal_nbp_get_number_of_module_instances(                               \
+        m->numberOfModuleInstances,                                            \
+        state)
+
+// Helpers for NBP_MODULE_INSTANCE_GET_STATISTICS
+
+#define INTERNAL_NBP_MIGS_PARAM_
+
+#define INTERNAL_NBP_MIGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_MIGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_MIGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_MIGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_MIGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_MIGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_MIGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_MIGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_MIGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_MIGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_MIGS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_MIGS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_MIGS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_MIGS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_MIGS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_MIGS_PARAM_tsis_ready   tsis_ready
+#define INTERNAL_NBP_MIGS_PARAM_tsis_running tsis_running
+#define INTERNAL_NBP_MIGS_PARAM_tsis_passed  tsis_passed
+#define INTERNAL_NBP_MIGS_PARAM_tsis_failed  tsis_failed
+#define INTERNAL_NBP_MIGS_PARAM_tsis_skipped tsis_skipped
+
+#define INTERNAL_NBP_MIGS_PARAM_ms_ready   ms_ready
+#define INTERNAL_NBP_MIGS_PARAM_ms_running ms_running
+#define INTERNAL_NBP_MIGS_PARAM_ms_passed  ms_passed
+#define INTERNAL_NBP_MIGS_PARAM_ms_failed  ms_failed
+#define INTERNAL_NBP_MIGS_PARAM_ms_skipped ms_skipped
+
+#define INTERNAL_NBP_MIGS_PARAM_mis_ready   mis_ready
+#define INTERNAL_NBP_MIGS_PARAM_mis_running mis_running
+#define INTERNAL_NBP_MIGS_PARAM_mis_passed  mis_passed
+#define INTERNAL_NBP_MIGS_PARAM_mis_failed  mis_failed
+#define INTERNAL_NBP_MIGS_PARAM_mis_skipped mis_skipped
+
+#define INTERNAL_NBP_MIGS_st_total_number_of_test_cases1(mi, unused)           \
+    unused mi->totalNumberOfTestCases
+#define INTERNAL_NBP_MIGS_st_total_number_of_test_case_instances1(mi, unused)  \
+    unused mi->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_MIGS_st_total_number_of_test_suites1(mi, unused)          \
+    unused mi->totalNumberOfTestSuites
+#define INTERNAL_NBP_MIGS_st_total_number_of_test_suite_instances1(mi, unused) \
+    unused mi->totalNumberOfTestSuiteInstances
+#define INTERNAL_NBP_MIGS_st_total_number_of_modules1(mi, unused)              \
+    unused mi->totalNumberOfModules
+#define INTERNAL_NBP_MIGS_st_total_number_of_module_instances1(mi, unused)     \
+    unused mi->totalNumberOfModuleInstances
+
+#define INTERNAL_NBP_MIGS_st_number_of_test_cases1(mi, state)                  \
+    internal_nbp_get_number_of_test_cases(mi->numberOfTestCases, state)
+#define INTERNAL_NBP_MIGS_st_number_of_test_case_instances1(mi, state)         \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        mi->numberOfTestCaseInstances,                                         \
+        state)
+#define INTERNAL_NBP_MIGS_st_number_of_test_suites1(mi, state)                 \
+    internal_nbp_get_number_of_test_suites(mi->numberOfTestSuites, state)
+#define INTERNAL_NBP_MIGS_st_number_of_test_suite_instances1(mi, state)        \
+    internal_nbp_get_number_of_test_suite_instances(                           \
+        mi->numberOfTestSuiteInstances,                                        \
+        state)
+#define INTERNAL_NBP_MIGS_st_number_of_modules1(mi, state)                     \
+    internal_nbp_get_number_of_modules(mi->numberOfModules, state)
+#define INTERNAL_NBP_MIGS_st_number_of_module_instances1(mi, state)            \
+    internal_nbp_get_number_of_module_instances(                               \
+        mi->numberOfModuleInstances,                                           \
+        state)
 
 /**
  * TODO: add docs
@@ -2813,7 +2804,7 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
     NBP_PP_CONCAT(                                                             \
         INTERNAL_NBP_PS_,                                                      \
-        NBP_PP_CONCAT(type, NBP_PP_COUNT(__VA_ARGS__)))                        \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
     (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
 #define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
@@ -3093,14 +3084,46 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
-    testSuiteInstance->testSuiteDetails->name
+#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
+    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
-    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
+#define NBP_TEST_SUITE_GET_STATE(testSuite)                                    \
+    (nbp_test_suite_state_e) NBP_ATOMIC_INT_LOAD(&(testSuite)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
+    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
+    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_STATISTICS(testSuite, type, ...)                    \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TSGS_,                                                    \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testSuite, INTERNAL_NBP_TSGS_PARAM_##__VA_ARGS__)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
+    testSuiteInstance->testSuiteDetails->name
 
 /**
  * TODO: add docs
@@ -3112,8 +3135,23 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_GET_STATE(testSuite)                                    \
-    (nbp_test_suite_state_e) NBP_ATOMIC_INT_LOAD(&(testSuite)->state)
+#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
+    testSuiteInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
+    testSuiteInstance->module
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_STATISTICS(testSuiteInstance, type, ...)   \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TSIGS_,                                                   \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testSuiteInstance, INTERNAL_NBP_TSIGS_PARAM_##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -3126,112 +3164,6 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_TEST_SUITE_INSTANCE_GET_TEST_SUITE(testSuiteInstance, runId)       \
     internal_nbp_get_test_suite_from_instance(testSuiteInstance, runId)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
-    testSuiteInstance->depth
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
-    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
-    testSuiteInstance->module
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
-    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                      \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_cases(                                     \
-        testSuiteInstance->numberOfTestCases,                                  \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(       \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(             \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        testSuiteInstance->numberOfTestCaseInstances,                          \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(               \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->numberOfRuns
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(                     \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_suites(                                    \
-        testSuiteInstance->numberOfTestSuites,                                 \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASES(testSuite)               \
-    testSuite->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASES(testSuite, state)              \
-    internal_nbp_get_number_of_test_cases(testSuite->numberOfTestCases, state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(testSuite)      \
-    testSuite->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASE_INSTANCES(testSuite, state)     \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        testSuite->numberOfTestCaseInstances,                                  \
-        state)
 
 /**
  * TODO: add docs
@@ -3276,6 +3208,74 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_TSPIO_
 
 #define INTERNAL_NBP_TSPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
+// Helpers for NBP_TEST_SUITE_GET_STATISTICS
+
+#define INTERNAL_NBP_TSGS_PARAM_
+
+#define INTERNAL_NBP_TSGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TSGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TSGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TSGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TSGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TSGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_TSGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_TSGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_TSGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_TSGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_TSGS_st_total_number_of_test_cases1(ts, unused)           \
+    unused ts->totalNumberOfTestCases
+#define INTERNAL_NBP_TSGS_st_total_number_of_test_case_instances1(ts, unused)  \
+    unused ts->totalNumberOfTestCaseInstances
+
+#define INTERNAL_NBP_TSGS_st_number_of_test_cases1(ts, state)                  \
+    internal_nbp_get_number_of_test_cases(ts->numberOfTestCases, state)
+#define INTERNAL_NBP_TSGS_st_number_of_test_case_instances1(ts, state)         \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        ts->numberOfTestCaseInstances,                                         \
+        state)
+
+// Helpers for NBP_TEST_SUITE_INSTANCE_GET_STATISTICS
+
+#define INTERNAL_NBP_TSIGS_PARAM_
+
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_TSIGS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_TSIGS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_cases1(tsi, unused)         \
+    unused tsi->totalNumberOfTestCases
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_case_instances1(            \
+    tsi,                                                                       \
+    unused)                                                                    \
+    unused tsi->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_suites1(tsi, unused)        \
+    unused tsi->numberOfRuns
+
+#define INTERNAL_NBP_TSIGS_st_number_of_test_cases1(tsi, state)                \
+    internal_nbp_get_number_of_test_cases(tsi->numberOfTestCases, state)
+#define INTERNAL_NBP_TSIGS_st_number_of_test_case_instances1(tsi, state)       \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        tsi->numberOfTestCaseInstances,                                        \
+        state)
+#define INTERNAL_NBP_TSIGS_st_number_of_test_suites1(tsi, state)               \
+    internal_nbp_get_number_of_test_suites(tsi->numberOfTestSuites, state)
 
 /**
  * TODO: add docs
@@ -3397,14 +3397,40 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
-    testCaseInstance->testCaseDetails->name
+#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
+    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
-    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
+#define NBP_TEST_CASE_GET_STATE(testCase)                                      \
+    (nbp_test_case_state_e) NBP_ATOMIC_INT_LOAD(&(testCase)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
+    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_STATISTICS(testCase, type, ...)                      \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TCGS_,                                                    \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testCase, INTERNAL_NBP_TCGS_PARAM_##__VA_ARGS__)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
+    testCaseInstance->testCaseDetails->name
 
 /**
  * TODO: add docs
@@ -3416,8 +3442,17 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_GET_STATE(testCase)                                      \
-    (nbp_test_case_state_e) NBP_ATOMIC_INT_LOAD(&(testCase)->state)
+#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
+    testCaseInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_STATISTICS(testCaseInstance, type, ...)     \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TCIGS_,                                                   \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testCaseInstance, INTERNAL_NBP_TCIGS_PARAM_##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -3430,40 +3465,6 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_TEST_CASE_INSTANCE_GET_TEST_CASE(testCaseInstance, runId)          \
     internal_nbp_get_test_case_from_instance(testCaseInstance, runId)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
-    testCaseInstance->depth
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
-    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                 \
-    testCaseInstance)                                                          \
-    testCaseInstance->numberOfRuns
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                       \
-    testCaseInstance,                                                          \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_cases(                                     \
-        testCaseInstance->numberOfTestCases,                                   \
-        state)
 
 /**
  * TODO: add docs
@@ -3485,7 +3486,8 @@ void internal_nbp_copy_array_of_atomic_uint(
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
     (GTCCF_, GTCC##__VA_ARGS__)
 
-// This macro is generated when NBP_TEST_CASE macro is used without parameters
+// This macro is generated when NBP_TEST_CASE macro is used without
+// parameters
 #define INTERNAL_NBP_GTCCF_
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
@@ -3504,11 +3506,31 @@ void internal_nbp_copy_array_of_atomic_uint(
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
-// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used without
-// parameters
+// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used
+// without parameters
 #define INTERNAL_NBP_TCPIO_
 
 #define INTERNAL_NBP_TCPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
+// Helpers for NBP_TEST_CASE_GET_STATISTICS
+
+#define INTERNAL_NBP_TCGS_PARAM_
+
+// Helpers for NBP_TEST_CASE_INSTANCE_GET_STATISTICS
+
+#define INTERNAL_NBP_TCIGS_PARAM_
+
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TCIGS_st_total_number_of_test_cases1(tci, unused)         \
+    unused tci->numberOfRuns
+
+#define INTERNAL_NBP_TCIGS_st_number_of_test_cases1(tci, state)                \
+    internal_nbp_get_number_of_test_cases(tci->numberOfTestCases, state)
 
 #ifdef NBP_LIBRARY_MAIN
 

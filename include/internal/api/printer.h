@@ -297,7 +297,7 @@ SOFTWARE.
 #define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
     NBP_PP_CONCAT(                                                             \
         INTERNAL_NBP_PS_,                                                      \
-        NBP_PP_CONCAT(type, NBP_PP_COUNT(__VA_ARGS__)))                        \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
     (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
 #define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \

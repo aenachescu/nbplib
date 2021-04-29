@@ -155,14 +155,40 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
-    testCaseInstance->testCaseDetails->name
+#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
+    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_GET_NAME(testCase)                                       \
-    NBP_TEST_CASE_INSTANCE_GET_NAME(testCase->testCaseInstance)
+#define NBP_TEST_CASE_GET_STATE(testCase)                                      \
+    (nbp_test_case_state_e) NBP_ATOMIC_INT_LOAD(&(testCase)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
+    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_STATISTICS(testCase, type, ...)                      \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TCGS_,                                                    \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testCase, INTERNAL_NBP_TCGS_PARAM_##__VA_ARGS__)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
+    testCaseInstance->testCaseDetails->name
 
 /**
  * TODO: add docs
@@ -174,8 +200,17 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_TEST_CASE_GET_STATE(testCase)                                      \
-    (nbp_test_case_state_e) NBP_ATOMIC_INT_LOAD(&(testCase)->state)
+#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
+    testCaseInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_CASE_INSTANCE_GET_STATISTICS(testCaseInstance, type, ...)     \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TCIGS_,                                                   \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testCaseInstance, INTERNAL_NBP_TCIGS_PARAM_##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -188,40 +223,6 @@ SOFTWARE.
  */
 #define NBP_TEST_CASE_INSTANCE_GET_TEST_CASE(testCaseInstance, runId)          \
     internal_nbp_get_test_case_from_instance(testCaseInstance, runId)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCaseInstance)                     \
-    testCaseInstance->depth
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_GET_DEPTH(testCase)                                      \
-    NBP_TEST_CASE_INSTANCE_GET_DEPTH(testCase->testCaseInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_GET_INSTANCE(testCase) testCase->testCaseInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                 \
-    testCaseInstance)                                                          \
-    testCaseInstance->numberOfRuns
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                       \
-    testCaseInstance,                                                          \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_cases(                                     \
-        testCaseInstance->numberOfTestCases,                                   \
-        state)
 
 /**
  * TODO: add docs
@@ -243,7 +244,8 @@ SOFTWARE.
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GTCC##__VA_ARGS__))    \
     (GTCCF_, GTCC##__VA_ARGS__)
 
-// This macro is generated when NBP_TEST_CASE macro is used without parameters
+// This macro is generated when NBP_TEST_CASE macro is used without
+// parameters
 #define INTERNAL_NBP_GTCCF_
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
@@ -262,10 +264,30 @@ SOFTWARE.
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(teardownFunc)
 
-// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used without
-// parameters
+// This macro is generated when NBP_INSTANTIATE_TEST_CASE macro is used
+// without parameters
 #define INTERNAL_NBP_TCPIO_
 
 #define INTERNAL_NBP_TCPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
+// Helpers for NBP_TEST_CASE_GET_STATISTICS
+
+#define INTERNAL_NBP_TCGS_PARAM_
+
+// Helpers for NBP_TEST_CASE_INSTANCE_GET_STATISTICS
+
+#define INTERNAL_NBP_TCIGS_PARAM_
+
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TCIGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TCIGS_st_total_number_of_test_cases1(tci, unused)         \
+    unused tci->numberOfRuns
+
+#define INTERNAL_NBP_TCIGS_st_number_of_test_cases1(tci, state)                \
+    internal_nbp_get_number_of_test_cases(tci->numberOfTestCases, state)
 
 #endif // end if _H_NBP_INTERNAL_API_TEST_CASE

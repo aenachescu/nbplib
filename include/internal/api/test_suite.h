@@ -163,14 +163,46 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
-    testSuiteInstance->testSuiteDetails->name
+#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
+    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_GET_NAME(testSuite)                                     \
-    NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuite->testSuiteInstance)
+#define NBP_TEST_SUITE_GET_STATE(testSuite)                                    \
+    (nbp_test_suite_state_e) NBP_ATOMIC_INT_LOAD(&(testSuite)->state)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
+    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
+    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_STATISTICS(testSuite, type, ...)                    \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TSGS_,                                                    \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testSuite, INTERNAL_NBP_TSGS_PARAM_##__VA_ARGS__)
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
+    testSuiteInstance->testSuiteDetails->name
 
 /**
  * TODO: add docs
@@ -182,8 +214,23 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_TEST_SUITE_GET_STATE(testSuite)                                    \
-    (nbp_test_suite_state_e) NBP_ATOMIC_INT_LOAD(&(testSuite)->state)
+#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
+    testSuiteInstance->depth
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
+    testSuiteInstance->module
+
+/**
+ * TODO: add docs
+ */
+#define NBP_TEST_SUITE_INSTANCE_GET_STATISTICS(testSuiteInstance, type, ...)   \
+    NBP_PP_CONCAT(                                                             \
+        INTERNAL_NBP_TSIGS_,                                                   \
+        NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
+    (testSuiteInstance, INTERNAL_NBP_TSIGS_PARAM_##__VA_ARGS__)
 
 /**
  * TODO: add docs
@@ -196,112 +243,6 @@ SOFTWARE.
  */
 #define NBP_TEST_SUITE_INSTANCE_GET_TEST_SUITE(testSuiteInstance, runId)       \
     internal_nbp_get_test_suite_from_instance(testSuiteInstance, runId)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuiteInstance)                   \
-    testSuiteInstance->depth
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_DEPTH(testSuite)                                    \
-    NBP_TEST_SUITE_INSTANCE_GET_DEPTH(testSuite->testSuiteInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_INSTANCE(testSuite) testSuite->testSuiteInstance
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuiteInstance)                  \
-    testSuiteInstance->module
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_MODULE(testSuite)                                   \
-    NBP_TEST_SUITE_INSTANCE_GET_MODULE(testSuite->testSuiteInstance)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASES(                \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASES(                      \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_cases(                                     \
-        testSuiteInstance->numberOfTestCases,                                  \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(       \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_CASE_INSTANCES(             \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        testSuiteInstance->numberOfTestCaseInstances,                          \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_TOTAL_NUMBER_OF_TEST_SUITES(               \
-    testSuiteInstance)                                                         \
-    testSuiteInstace->numberOfRuns
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_TEST_SUITES(                     \
-    testSuiteInstance,                                                         \
-    state)                                                                     \
-    internal_nbp_get_number_of_test_suites(                                    \
-        testSuiteInstance->numberOfTestSuites,                                 \
-        state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASES(testSuite)               \
-    testSuite->totalNumberOfTestCases
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASES(testSuite, state)              \
-    internal_nbp_get_number_of_test_cases(testSuite->numberOfTestCases, state)
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_TOTAL_NUMBER_OF_TEST_CASE_INSTANCES(testSuite)      \
-    testSuite->totalNumberOfTestCaseInstances
-
-/**
- * TODO: add docs
- */
-#define NBP_TEST_SUITE_GET_NUMBER_OF_TEST_CASE_INSTANCES(testSuite, state)     \
-    internal_nbp_get_number_of_test_case_instances(                            \
-        testSuite->numberOfTestCaseInstances,                                  \
-        state)
 
 /**
  * TODO: add docs
@@ -346,5 +287,73 @@ SOFTWARE.
 #define INTERNAL_NBP_TSPIO_
 
 #define INTERNAL_NBP_TSPIO_NBP_NUMBER_OF_RUNS(num) nbpParamNumberOfRuns = num;
+
+// Helpers for NBP_TEST_SUITE_GET_STATISTICS
+
+#define INTERNAL_NBP_TSGS_PARAM_
+
+#define INTERNAL_NBP_TSGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TSGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TSGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TSGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TSGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TSGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_TSGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_TSGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_TSGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_TSGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_TSGS_st_total_number_of_test_cases1(ts, unused)           \
+    unused ts->totalNumberOfTestCases
+#define INTERNAL_NBP_TSGS_st_total_number_of_test_case_instances1(ts, unused)  \
+    unused ts->totalNumberOfTestCaseInstances
+
+#define INTERNAL_NBP_TSGS_st_number_of_test_cases1(ts, state)                  \
+    internal_nbp_get_number_of_test_cases(ts->numberOfTestCases, state)
+#define INTERNAL_NBP_TSGS_st_number_of_test_case_instances1(ts, state)         \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        ts->numberOfTestCaseInstances,                                         \
+        state)
+
+// Helpers for NBP_TEST_SUITE_INSTANCE_GET_STATISTICS
+
+#define INTERNAL_NBP_TSIGS_PARAM_
+
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_ready   tcs_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_running tcs_running
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_passed  tcs_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_failed  tcs_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tcs_skipped tcs_skipped
+
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_ready   tcis_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_running tcis_running
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_passed  tcis_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_failed  tcis_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tcis_skipped tcis_skipped
+
+#define INTERNAL_NBP_TSIGS_PARAM_tss_ready   tss_ready
+#define INTERNAL_NBP_TSIGS_PARAM_tss_running tss_running
+#define INTERNAL_NBP_TSIGS_PARAM_tss_passed  tss_passed
+#define INTERNAL_NBP_TSIGS_PARAM_tss_failed  tss_failed
+#define INTERNAL_NBP_TSIGS_PARAM_tss_skipped tss_skipped
+
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_cases1(tsi, unused)         \
+    unused tsi->totalNumberOfTestCases
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_case_instances1(            \
+    tsi,                                                                       \
+    unused)                                                                    \
+    unused tsi->totalNumberOfTestCaseInstances
+#define INTERNAL_NBP_TSIGS_st_total_number_of_test_suites1(tsi, unused)        \
+    unused tsi->numberOfRuns
+
+#define INTERNAL_NBP_TSIGS_st_number_of_test_cases1(tsi, state)                \
+    internal_nbp_get_number_of_test_cases(tsi->numberOfTestCases, state)
+#define INTERNAL_NBP_TSIGS_st_number_of_test_case_instances1(tsi, state)       \
+    internal_nbp_get_number_of_test_case_instances(                            \
+        tsi->numberOfTestCaseInstances,                                        \
+        state)
+#define INTERNAL_NBP_TSIGS_st_number_of_test_suites1(tsi, state)               \
+    internal_nbp_get_number_of_test_suites(tsi->numberOfTestSuites, state)
 
 #endif // end if _H_NBP_INTERNAL_API_TEST_SUITE
