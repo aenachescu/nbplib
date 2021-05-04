@@ -35,12 +35,12 @@ SOFTWARE.
 #include "../details/module.h"
 #include "../details/printer.h"
 #include "../details/printer_notifier.h"
-#include "../details/scheduler.h"
-#include "../details/scheduler_notifier.h"
+#include "../details/runner.h"
+#include "../details/runner_notifier.h"
 #include "../types/error.h"
 #include "../types/module.h"
 #include "../types/printer.h"
-#include "../types/scheduler.h"
+#include "../types/runner.h"
 #include "../types/sync.h"
 
 extern nbp_module_details_t* gInternalNbpMainModuleDetails;
@@ -58,17 +58,17 @@ unsigned int gInternalNbpPrinterInterfacesSize          = 0;
 unsigned int gInternalNbpNumberOfTestCases            = 0;
 NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases = NBP_ATOMIC_UINT_INIT(0);
 
-int gInternalNbpSchedulerRunEnabled = 0;
+int gInternalNbpRunnerRunEnabled = 0;
 
-#ifdef NBP_BASIC_SCHEDULER
-INTERNAL_NBP_INCLUDE_SCHEDULER(nbpBasicScheduler);
-nbp_scheduler_interface_t* gInternalNbpSchedulerInterface =
-    INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(nbpBasicScheduler);
-#endif // end if NBP_BASIC_SCHEDULER
+#ifdef NBP_BASIC_RUNNER
+INTERNAL_NBP_INCLUDE_RUNNER(nbpBasicRunner);
+nbp_runner_interface_t* gInternalNbpRunnerInterface =
+    INTERNAL_NBP_GET_POINTER_TO_RUNNER(nbpBasicRunner);
+#endif // end if NBP_BASIC_RUNNER
 
-#ifdef NBP_MT_SCHEDULER
-nbp_scheduler_interface_t* gInternalNbpSchedulerInterface = NBP_NULLPTR;
-#endif // end if NBP_MT_SCHEDULER
+#ifdef NBP_MT_RUNNER
+nbp_runner_interface_t* gInternalNbpRunnerInterface = NBP_NULLPTR;
+#endif // end if NBP_MT_RUNNER
 
 static int internal_nbp_string_equal(const char* a, const char* b)
 {
@@ -83,17 +83,17 @@ static int internal_nbp_string_equal(const char* a, const char* b)
 static int internal_nbp_command_run_all()
 {
     internal_nbp_notify_printer_init();
-    internal_nbp_notify_scheduler_init();
+    internal_nbp_notify_runner_init();
 
-    if (gInternalNbpSchedulerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
-        NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
-        NBP_EXIT(ec_invalid_scheduler_interface);
-        return ec_invalid_scheduler_interface;
+    if (gInternalNbpRunnerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
+        NBP_REPORT_ERROR(ec_invalid_runner_interface);
+        NBP_EXIT(ec_invalid_runner_interface);
+        return ec_invalid_runner_interface;
     }
-    if (gInternalNbpSchedulerInterface->runCbk == NBP_NULLPTR) {
-        NBP_REPORT_ERROR(ec_invalid_scheduler_interface);
-        NBP_EXIT(ec_invalid_scheduler_interface);
-        return ec_invalid_scheduler_interface;
+    if (gInternalNbpRunnerInterface->runCbk == NBP_NULLPTR) {
+        NBP_REPORT_ERROR(ec_invalid_runner_interface);
+        NBP_EXIT(ec_invalid_runner_interface);
+        return ec_invalid_runner_interface;
     }
 
     gInternalNbpMainModuleInstance = internal_nbp_instantiate_module(
@@ -111,7 +111,7 @@ static int internal_nbp_command_run_all()
 
     internal_nbp_notify_printer_before_run();
 
-    internal_nbp_notify_scheduler_run();
+    internal_nbp_notify_runner_run();
 
     internal_nbp_notify_printer_after_run();
 
@@ -125,7 +125,7 @@ static int internal_nbp_command_run_all()
 
     // TODO: send some stats to printers about asserts, test cases etc
 
-    internal_nbp_notify_scheduler_uninit();
+    internal_nbp_notify_runner_uninit();
     internal_nbp_notify_printer_uninit();
 
     // TODO: return error if main module state is not passed

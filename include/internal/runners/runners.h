@@ -25,18 +25,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_SCHEDULER
-#define _H_NBP_INTERNAL_DETAILS_SCHEDULER
+#ifndef _H_NBP_INTERNAL_RUNNERS_RUNNERS
+#define _H_NBP_INTERNAL_RUNNERS_RUNNERS
 
-#include "../types/scheduler.h"
+/*
+ * if custom runner is not used then use a default runner
+ */
+#ifndef NBP_CUSTOM_RUNNER
 
-#define INTERNAL_NBP_INCLUDE_SCHEDULER(name)                                   \
-    extern nbp_scheduler_interface_t gInternalNbpSchedulerInterface##name
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_MT_RUNNER
+#error "Not supported yet"
+#endif // end if NBP_MT_RUNNER
 
-#define INTERNAL_NBP_GET_POINTER_TO_SCHEDULER(name)                            \
-    &gInternalNbpSchedulerInterface##name
+/**
+ * TODO: add docs
+ */
+#ifdef NBP_BASIC_RUNNER
+#include "basic_runner.h"
+#endif // end if NBP_BASIC_RUNNER
 
-void internal_nbp_scheduler_run_test_case_instance(
-    nbp_test_case_instance_t* testCaseInstance);
+#endif // end if NBP_CUSTOM_RUNNER
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_SCHEDULER
+#endif // end if _H_NBP_INTERNAL_RUNNERS_RUNNERS

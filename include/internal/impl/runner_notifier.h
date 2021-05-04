@@ -25,53 +25,52 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_IMPL_SCHEDULER_NOTIFIER
-#define _H_NBP_INTERNAL_IMPL_SCHEDULER_NOTIFIER
+#ifndef _H_NBP_INTERNAL_IMPL_RUNNER_NOTIFIER
+#define _H_NBP_INTERNAL_IMPL_RUNNER_NOTIFIER
 
 #include "../api/memory.h"
-#include "../details/scheduler_notifier.h"
+#include "../details/runner_notifier.h"
 
-extern nbp_scheduler_interface_t* gInternalNbpSchedulerInterface;
+extern nbp_runner_interface_t* gInternalNbpRunnerInterface;
 
-extern int gInternalNbpSchedulerRunEnabled;
+extern int gInternalNbpRunnerRunEnabled;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
-    gInternalNbpSchedulerInterface->cbk != NBP_NULLPTR
+    gInternalNbpRunnerInterface->cbk != NBP_NULLPTR
 
-void internal_nbp_notify_scheduler_init()
+void internal_nbp_notify_runner_init()
 {
-    gInternalNbpSchedulerInterface->configFunction(
-        gInternalNbpSchedulerInterface);
+    gInternalNbpRunnerInterface->configFunction(gInternalNbpRunnerInterface);
 
     if (INTERNAL_NBP_CALLBACK_IS_SET(initCbk)) {
-        gInternalNbpSchedulerInterface->initCbk();
+        gInternalNbpRunnerInterface->initCbk();
     }
 }
 
-void internal_nbp_notify_scheduler_uninit()
+void internal_nbp_notify_runner_uninit()
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(uninitCbk)) {
-        gInternalNbpSchedulerInterface->uninitCbk();
+        gInternalNbpRunnerInterface->uninitCbk();
     }
 }
 
-void internal_nbp_notify_scheduler_run()
+void internal_nbp_notify_runner_run()
 {
-    gInternalNbpSchedulerRunEnabled = 1;
+    gInternalNbpRunnerRunEnabled = 1;
 
     if (INTERNAL_NBP_CALLBACK_IS_SET(runCbk)) {
-        gInternalNbpSchedulerInterface->runCbk();
+        gInternalNbpRunnerInterface->runCbk();
     }
 
-    gInternalNbpSchedulerRunEnabled = 0;
+    gInternalNbpRunnerRunEnabled = 0;
 }
 
-void internal_nbp_notify_scheduler_instantiate_test_case(
+void internal_nbp_notify_runner_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance,
     void* context)
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestCaseCbk)) {
-        gInternalNbpSchedulerInterface->instantiateTestCaseCbk(
+        gInternalNbpRunnerInterface->instantiateTestCaseCbk(
             testCaseInstance,
             testCaseInstance->testSuite,
             testCaseInstance->module,
@@ -79,45 +78,45 @@ void internal_nbp_notify_scheduler_instantiate_test_case(
     }
 }
 
-void internal_nbp_notify_scheduler_instantiate_test_suite_started(
+void internal_nbp_notify_runner_instantiate_test_suite_started(
     nbp_test_suite_instance_t* testSuiteInstance,
     void* context)
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteStartedCbk)) {
-        gInternalNbpSchedulerInterface->instantiateTestSuiteStartedCbk(
+        gInternalNbpRunnerInterface->instantiateTestSuiteStartedCbk(
             testSuiteInstance,
             testSuiteInstance->module,
             context);
     }
 }
 
-void internal_nbp_notify_scheduler_instantiate_test_suite_completed(
+void internal_nbp_notify_runner_instantiate_test_suite_completed(
     nbp_test_suite_instance_t* testSuiteInstance)
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteCompletedCbk)) {
-        gInternalNbpSchedulerInterface->instantiateTestSuiteCompletedCbk(
+        gInternalNbpRunnerInterface->instantiateTestSuiteCompletedCbk(
             testSuiteInstance,
             testSuiteInstance->module);
     }
 }
 
-void internal_nbp_notify_scheduler_instantiate_module_started(
+void internal_nbp_notify_runner_instantiate_module_started(
     nbp_module_instance_t* moduleInstance,
     void* context)
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleStartedCbk)) {
-        gInternalNbpSchedulerInterface->instantiateModuleStartedCbk(
+        gInternalNbpRunnerInterface->instantiateModuleStartedCbk(
             moduleInstance,
             moduleInstance->parent,
             context);
     }
 }
 
-void internal_nbp_notify_scheduler_instantiate_module_completed(
+void internal_nbp_notify_runner_instantiate_module_completed(
     nbp_module_instance_t* moduleInstance)
 {
     if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleCompletedCbk)) {
-        gInternalNbpSchedulerInterface->instantiateModuleCompletedCbk(
+        gInternalNbpRunnerInterface->instantiateModuleCompletedCbk(
             moduleInstance,
             moduleInstance->parent);
     }
@@ -125,4 +124,4 @@ void internal_nbp_notify_scheduler_instantiate_module_completed(
 
 #undef INTERNAL_NBP_CALLBACK_IS_SET
 
-#endif // end if _H_NBP_INTERNAL_IMPL_SCHEDULER_NOTIFIER
+#endif // end if _H_NBP_INTERNAL_IMPL_RUNNER_NOTIFIER

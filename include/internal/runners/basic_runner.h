@@ -25,79 +25,81 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER
-#define _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER
+#ifndef _H_NBP_INTERNAL_RUNNERS_BASIC_RUNNER
+#define _H_NBP_INTERNAL_RUNNERS_BASIC_RUNNER
 
 #ifdef NBP_LIBRARY_MAIN
 
-#include "../api/scheduler.h"
+#include "../api/error.h"
+#include "../api/exit.h"
+#include "../api/runner.h"
 #include "../api/test_case.h"
 
-struct nbp_bs_task_queue_t
+struct nbp_br_task_queue_t
 {
     nbp_test_case_instance_t* testCaseInstance;
-    struct nbp_bs_task_queue_t* next;
+    struct nbp_br_task_queue_t* next;
 };
-typedef struct nbp_bs_task_queue_t nbp_bs_task_queue_t;
+typedef struct nbp_br_task_queue_t nbp_br_task_queue_t;
 
-static nbp_bs_task_queue_t* gInternalNbpBsFirstTask = NBP_NULLPTR;
-static nbp_bs_task_queue_t* gInternalNbpBsLastTask  = NBP_NULLPTR;
+static nbp_br_task_queue_t* gInternalNbpBrFirstTask = NBP_NULLPTR;
+static nbp_br_task_queue_t* gInternalNbpBrLastTask  = NBP_NULLPTR;
 
-NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit)
+NBP_RUNNER_CALLBACK_UNINIT(nbp_br_uninit)
 {
-    nbp_bs_task_queue_t* task = gInternalNbpBsFirstTask;
-    nbp_bs_task_queue_t* tmp  = NBP_NULLPTR;
+    nbp_br_task_queue_t* task = gInternalNbpBrFirstTask;
+    nbp_br_task_queue_t* tmp  = NBP_NULLPTR;
 
     while (task != NBP_NULLPTR) {
         tmp  = task;
         task = task->next;
 
-        NBP_MEMORY_FREE_TAG(tmp, mt_basic_scheduler);
+        NBP_MEMORY_FREE_TAG(tmp, mt_basic_runner);
     }
 }
 
-NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run)
+NBP_RUNNER_CALLBACK_RUN(nbp_br_run)
 {
-    nbp_bs_task_queue_t* task = gInternalNbpBsFirstTask;
+    nbp_br_task_queue_t* task = gInternalNbpBrFirstTask;
     while (task != NBP_NULLPTR) {
-        NBP_SCHEDULER_RUN_TEST_CASE_INSTANCE(task->testCaseInstance);
+        NBP_RUNNER_RUN_TEST_CASE_INSTANCE(task->testCaseInstance);
         task = task->next;
     }
 }
 
-NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_bs_instantiate_test_case)
+NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_br_instantiate_test_case)
 {
-    nbp_bs_task_queue_t* task = (nbp_bs_task_queue_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_bs_task_queue_t),
-        mt_basic_scheduler);
+    nbp_br_task_queue_t* task = (nbp_br_task_queue_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_br_task_queue_t),
+        mt_basic_runner);
 
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
-            "failed to allocate basic scheduler task");
+            "failed to allocate basic runner task");
         NBP_EXIT(ec_out_of_memory);
     }
 
     task->testCaseInstance = NBP_THIS_TEST_CASE_INSTANCE;
     task->next             = NBP_NULLPTR;
 
-    if (gInternalNbpBsFirstTask == NBP_NULLPTR) {
-        gInternalNbpBsFirstTask = task;
-        gInternalNbpBsLastTask  = task;
+    if (gInternalNbpBrFirstTask == NBP_NULLPTR) {
+        gInternalNbpBrFirstTask = task;
+        gInternalNbpBrLastTask  = task;
     } else {
-        gInternalNbpBsLastTask->next = task;
-        gInternalNbpBsLastTask       = task;
+        gInternalNbpBrLastTask->next = task;
+        gInternalNbpBrLastTask       = task;
     }
 }
 
-NBP_SCHEDULER(
-    nbpBasicScheduler,
-    NBP_SCHEDULER_CALLBACKS(
-        NBP_SCHEDULER_CALLBACK_UNINIT(nbp_bs_uninit),
-        NBP_SCHEDULER_CALLBACK_RUN(nbp_bs_run),
-        NBP_SCHEDULER_CALLBACK_INSTANTIATE_TEST_CASE(
-            nbp_bs_instantiate_test_case)));
+NBP_RUNNER(
+    nbpBasicRunner,
+    NBP_RUNNER_CALLBACKS(
+        NBP_RUNNER_CALLBACK_UNINIT(nbp_br_uninit),
+        NBP_RUNNER_CALLBACK_RUN(nbp_br_run),
+        NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(
+            nbp_br_instantiate_test_case)));
 
 #endif // end if NBP_LIBRARY_MAIN
 
-#endif // end if _H_NBP_INTERNAL_SCHEDULERS_BASIC_SCHEDULER
+#endif // end if _H_NBP_INTERNAL_RUNNERS_BASIC_RUNNER

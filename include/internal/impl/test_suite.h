@@ -32,7 +32,7 @@ SOFTWARE.
 #include "../api/exit.h"
 #include "../api/memory.h"
 #include "../details/printer_notifier.h"
-#include "../details/scheduler_notifier.h"
+#include "../details/runner_notifier.h"
 #include "../details/test_suite.h"
 #include "../details/utils.h"
 #include "../types/flags.h"
@@ -380,7 +380,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     internal_nbp_notify_printer_instantiate_test_suite_started(
         testSuiteInstance);
 
-    internal_nbp_notify_scheduler_instantiate_test_suite_started(
+    internal_nbp_notify_runner_instantiate_test_suite_started(
         testSuiteInstance,
         context);
 
@@ -402,7 +402,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
     internal_nbp_notify_printer_instantiate_test_suite_completed(
         testSuiteInstance);
 
-    internal_nbp_notify_scheduler_instantiate_test_suite_completed(
+    internal_nbp_notify_runner_instantiate_test_suite_completed(
         testSuiteInstance);
 
     return testSuiteInstance;

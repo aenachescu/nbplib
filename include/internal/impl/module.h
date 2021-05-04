@@ -33,7 +33,7 @@ SOFTWARE.
 #include "../api/memory.h"
 #include "../details/module.h"
 #include "../details/printer_notifier.h"
-#include "../details/scheduler_notifier.h"
+#include "../details/runner_notifier.h"
 #include "../details/utils.h"
 #include "../types/flags.h"
 
@@ -438,7 +438,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
 
-    internal_nbp_notify_scheduler_instantiate_module_started(
+    internal_nbp_notify_runner_instantiate_module_started(
         moduleInstance,
         context);
 
@@ -459,7 +459,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         }
     }
 
-    internal_nbp_notify_scheduler_instantiate_module_completed(moduleInstance);
+    internal_nbp_notify_runner_instantiate_module_completed(moduleInstance);
 
     internal_nbp_notify_printer_instantiate_module_completed(moduleInstance);
 

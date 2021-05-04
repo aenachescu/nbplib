@@ -310,39 +310,39 @@ SOFTWARE.
 #undef INTERNAL_NBP_OS_DEFINED
 
 /*
- * Make sure there is only one defined scheduler
+ * Make sure there is only one defined runner
  */
-#undef INTERNAL_NBP_SCHEDULER_DEFINED
+#undef INTERNAL_NBP_RUNNER_DEFINED
 
-#ifdef NBP_CUSTOM_SCHEDULER
-#define INTERNAL_NBP_SCHEDULER_DEFINED
-#endif // end if NBP_CUSTOM_SCHEDULER
+#ifdef NBP_CUSTOM_RUNNER
+#define INTERNAL_NBP_RUNNER_DEFINED
+#endif // end if NBP_CUSTOM_RUNNER
 
-#ifdef NBP_MT_SCHEDULER
-#ifdef INTERNAL_NBP_SCHEDULER_DEFINED
-#error "Cannot enable NBP_MT_SCHEDULER because another scheduler is enabled"
-#else // INTERNAL_NBP_SCHEDULER_DEFINED not defined
-#define INTERNAL_NBP_SCHEDULER_DEFINED
+#ifdef NBP_MT_RUNNER
+#ifdef INTERNAL_NBP_RUNNER_DEFINED
+#error "Cannot enable NBP_MT_RUNNER because another runner is enabled"
+#else // INTERNAL_NBP_RUNNER_DEFINED not defined
+#define INTERNAL_NBP_RUNNER_DEFINED
 #define NBP_MT_SUPPORT
-#endif // end if INTERNAL_NBP_SCHEDULER_DEFINED
-#endif // end if NBP_MT_SCHEDULER
+#endif // end if INTERNAL_NBP_RUNNER_DEFINED
+#endif // end if NBP_MT_RUNNER
 
-#ifdef NBP_BASIC_SCHEDULER
-#ifdef INTERNAL_NBP_SCHEDULER_DEFINED
-#error "Cannot enable NBP_BASIC_SCHEDULER because another scheduler is enabled"
-#else // INTERNAL_NBP_SCHEDULER_DEFINED not defined
-#define INTERNAL_NBP_SCHEDULER_DEFINED
-#endif // end if INTERNAL_NBP_SCHEDULER_DEFINED
-#endif // end if NBP_BASIC_SCHEDULER
+#ifdef NBP_BASIC_RUNNER
+#ifdef INTERNAL_NBP_RUNNER_DEFINED
+#error "Cannot enable NBP_BASIC_RUNNER because another runner is enabled"
+#else // INTERNAL_NBP_RUNNER_DEFINED not defined
+#define INTERNAL_NBP_RUNNER_DEFINED
+#endif // end if INTERNAL_NBP_RUNNER_DEFINED
+#endif // end if NBP_BASIC_RUNNER
 
 /*
- * If no scheduler is defined then define the default scheduler
+ * If no runner is defined then define the default runner
  */
-#ifndef INTERNAL_NBP_SCHEDULER_DEFINED
-#define NBP_BASIC_SCHEDULER
-#endif // end if INTERNAL_NBP_SCHEDULER_DEFINED
+#ifndef INTERNAL_NBP_RUNNER_DEFINED
+#define NBP_BASIC_RUNNER
+#endif // end if INTERNAL_NBP_RUNNER_DEFINED
 
-#undef INTERNAL_NBP_SCHEDULER_DEFINED
+#undef INTERNAL_NBP_RUNNER_DEFINED
 
 /*
  * If no printer is defined then define the default printer

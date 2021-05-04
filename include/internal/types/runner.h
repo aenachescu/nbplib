@@ -25,73 +25,71 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_SCHEDULER
-#define _H_NBP_INTERNAL_TYPES_SCHEDULER
+#ifndef _H_NBP_INTERNAL_TYPES_RUNNER
+#define _H_NBP_INTERNAL_TYPES_RUNNER
 
 #include "module.h"
 #include "test_case.h"
 #include "test_suite.h"
 
-struct nbp_scheduler_interface_t;
+struct nbp_runner_interface_t;
 
-typedef void (*nbp_scheduler_config_pfn_t)(
-    struct nbp_scheduler_interface_t* /* schedulerInterface */
+typedef void (*nbp_runner_config_pfn_t)(
+    struct nbp_runner_interface_t* /* runnerInterface */
 );
 
-typedef void (*nbp_scheduler_callback_init_pfn_t)(void);
+typedef void (*nbp_runner_callback_init_pfn_t)(void);
 
-typedef void (*nbp_scheduler_callback_uninit_pfn_t)(void);
+typedef void (*nbp_runner_callback_uninit_pfn_t)(void);
 
-typedef void (*nbp_scheduler_callback_run_pfn_t)(void);
+typedef void (*nbp_runner_callback_run_pfn_t)(void);
 
-typedef void (*nbp_scheduler_callback_on_instantiate_test_case_pfn_t)(
+typedef void (*nbp_runner_callback_on_instantiate_test_case_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */,
     void* /* nbpParamContext */
 );
-typedef void (*nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t)(
+typedef void (*nbp_runner_callback_on_instantiate_test_suite_started_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */,
     void* /* nbpParamContext */
 );
 
-typedef void (
-    *nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t)(
+typedef void (*nbp_runner_callback_on_instantiate_test_suite_completed_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_scheduler_callback_on_instantiate_module_started_pfn_t)(
+typedef void (*nbp_runner_callback_on_instantiate_module_started_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */,
     void* /* nbpParamContext */
 );
 
-typedef void (*nbp_scheduler_callback_on_instantiate_module_completed_pfn_t)(
+typedef void (*nbp_runner_callback_on_instantiate_module_completed_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-struct nbp_scheduler_interface_t
+struct nbp_runner_interface_t
 {
-    const char* schedulerName;
-    nbp_scheduler_config_pfn_t configFunction;
+    const char* runnerName;
+    nbp_runner_config_pfn_t configFunction;
 
-    nbp_scheduler_callback_init_pfn_t initCbk;
-    nbp_scheduler_callback_uninit_pfn_t uninitCbk;
-    nbp_scheduler_callback_run_pfn_t runCbk;
-    nbp_scheduler_callback_on_instantiate_test_case_pfn_t
-        instantiateTestCaseCbk;
-    nbp_scheduler_callback_on_instantiate_test_suite_started_pfn_t
+    nbp_runner_callback_init_pfn_t initCbk;
+    nbp_runner_callback_uninit_pfn_t uninitCbk;
+    nbp_runner_callback_run_pfn_t runCbk;
+    nbp_runner_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
+    nbp_runner_callback_on_instantiate_test_suite_started_pfn_t
         instantiateTestSuiteStartedCbk;
-    nbp_scheduler_callback_on_instantiate_test_suite_completed_pfn_t
+    nbp_runner_callback_on_instantiate_test_suite_completed_pfn_t
         instantiateTestSuiteCompletedCbk;
-    nbp_scheduler_callback_on_instantiate_module_started_pfn_t
+    nbp_runner_callback_on_instantiate_module_started_pfn_t
         instantiateModuleStartedCbk;
-    nbp_scheduler_callback_on_instantiate_module_completed_pfn_t
+    nbp_runner_callback_on_instantiate_module_completed_pfn_t
         instantiateModuleCompletedCbk;
 };
-typedef struct nbp_scheduler_interface_t nbp_scheduler_interface_t;
+typedef struct nbp_runner_interface_t nbp_runner_interface_t;
 
-#endif // end if _H_NBP_INTERNAL_TYPES_SCHEDULER
+#endif // end if _H_NBP_INTERNAL_TYPES_RUNNER

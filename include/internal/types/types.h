@@ -33,7 +33,7 @@ SOFTWARE.
 #include "memory.h"
 #include "module.h"
 #include "printer.h"
-#include "scheduler.h"
+#include "runner.h"
 #include "statistics.h"
 #include "sync.h"
 #include "test_case.h"

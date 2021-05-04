@@ -37,7 +37,7 @@ enum nbp_memory_tag_e
     mt_module_instance     = 0x4E425004,
     mt_module              = 0x4E425005,
     mt_default_printer     = 0x4E425006,
-    mt_basic_scheduler     = 0x4E425007,
+    mt_basic_runner        = 0x4E425007,
 };
 typedef enum nbp_memory_tag_e nbp_memory_tag_e;
 
