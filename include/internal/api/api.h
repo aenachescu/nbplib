@@ -33,7 +33,7 @@ SOFTWARE.
 #include "instantiation_options.h"
 #include "memory.h"
 #include "module.h"
-#include "printer.h"
+#include "reporter.h"
 #include "test_case.h"
 #include "test_suite.h"
 

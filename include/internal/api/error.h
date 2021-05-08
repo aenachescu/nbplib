@@ -28,14 +28,14 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_ERROR
 #define _H_NBP_INTERNAL_API_ERROR
 
-#include "../details/printer_notifier.h"
+#include "../details/reporter_notifier.h"
 #include "../utils/compiler.h"
 
 /**
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR(errCode)                                              \
-    internal_nbp_notify_printer_on_error(                                      \
+    internal_nbp_notify_reporter_on_error(                                     \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE)
@@ -44,7 +44,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR_STRING_CONTEXT(errCode, context)                      \
-    internal_nbp_notify_printer_on_error_string_context(                       \
+    internal_nbp_notify_reporter_on_error_string_context(                      \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \
@@ -54,7 +54,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR_CUSTOM_CONTEXT(errCode, context)                      \
-    internal_nbp_notify_printer_on_error_custom_context(                       \
+    internal_nbp_notify_reporter_on_error_custom_context(                      \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \

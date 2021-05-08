@@ -25,10 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_API_PRINTER
-#define _H_NBP_INTERNAL_API_PRINTER
+#ifndef _H_NBP_INTERNAL_API_REPORTER
+#define _H_NBP_INTERNAL_API_REPORTER
 
-#include "../types/printer.h"
+#include "../types/reporter.h"
 #include "../types/statistics.h"
 #include "../utils/utils.h"
 #include "memory.h"
@@ -36,56 +36,56 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INIT(func)                                        \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_INIT(func)                                       \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_UNINIT(func)                                      \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_UNINIT(func)                                     \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                      \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                     \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_ON_ERROR(func)                                    \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_ON_ERROR(func)                                   \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_ON_EXIT(func)                                     \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_ON_EXIT(func)                                    \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_code_e nbpParamErrorCode)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                                  \
-    static void nbp_printer_callback_##func(                                   \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+#define NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                                 \
+    static void nbp_reporter_callback_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_AFTER_RUN(func)                                   \
-    static void nbp_printer_callback_##func(                                   \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+#define NBP_REPORTER_CALLBACK_AFTER_RUN(func)                                  \
+    static void nbp_reporter_callback_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                       \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                      \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -94,8 +94,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)              \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)             \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -103,8 +103,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)            \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)           \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -112,8 +112,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                  \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                 \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -121,8 +121,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)                \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)               \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -130,8 +130,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)                           \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)                          \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -141,8 +141,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)                         \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)                        \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -152,8 +152,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                  \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                 \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -162,8 +162,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)                \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)               \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -172,8 +172,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)                          \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)                         \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -182,8 +182,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)                        \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)                       \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -192,8 +192,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                 \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -201,8 +201,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)               \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)              \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -210,8 +210,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_STARTED(func)                              \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_STARTED(func)                             \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -219,8 +219,8 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)                            \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)                           \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -228,37 +228,38 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                     \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                    \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                   \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                  \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACKS(...)
+#define NBP_REPORTER_CALLBACKS(...)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER(name, ...)                                                 \
-    void nbp_printer_interface_config_function_##name(                         \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_interface_t* printerInterface)  \
+#define NBP_REPORTER(name, ...)                                                \
+    void nbp_reporter_interface_config_function_##name(                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_interface_t*                   \
+            reporterInterface)                                                 \
     {                                                                          \
-        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(F_##__VA_ARGS__)         \
+        INTERNAL_NBP_GENERATE_REPORTER_CONFIG_FUNCTION(F_##__VA_ARGS__)        \
         return;                                                                \
     }                                                                          \
-    nbp_printer_interface_t gInternalNbpPrinterInterface##name = {             \
-        .printerName    = #name,                                               \
-        .configFunction = INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name),  \
+    nbp_reporter_interface_t gInternalNbpReporterInterface##name = {           \
+        .reporterName   = #name,                                               \
+        .configFunction = INTERNAL_NBP_GENERATE_REPORTER_INTERFACE_NAME(name), \
         .isInitialized  = 0,                                                   \
         .initCbk        = NBP_NULLPTR,                                         \
         .uninitCbk      = NBP_NULLPTR,                                         \
@@ -294,88 +295,93 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
+#define NBP_REPORTER_GET_STATISTICS(type, ...)                                 \
     NBP_PP_CONCAT(                                                             \
         INTERNAL_NBP_PS_,                                                      \
         NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
     (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
-#define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
-    nbp_printer_interface_config_function_##name
+#define INTERNAL_NBP_GENERATE_REPORTER_INTERFACE_NAME(name)                    \
+    nbp_reporter_interface_config_function_##name
 
-#define INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(...)                     \
+#define INTERNAL_NBP_GENERATE_REPORTER_CONFIG_FUNCTION(...)                    \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GPC##__VA_ARGS__))     \
     (GPCF_, GPC##__VA_ARGS__)
 
-#define INTERNAL_NBP_GPCF_NBP_PRINTER_CALLBACKS(...)                           \
+#define INTERNAL_NBP_GPCF_NBP_REPORTER_CALLBACKS(...)                          \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PC_##__VA_ARGS__))   \
     (PC_, PC_##__VA_ARGS__)
 
-// This macro is generated when NBP_PRINTER macro is used without parameters
+// This macro is generated when NBP_REPORTER macro is used without parameters
 #define INTERNAL_NBP_GPCF_
 
-// This macro is generated when NBP_PRINTER_CALLBACKS macro is used without
+// This macro is generated when NBP_REPORTER_CALLBACKS macro is used without
 // parameters
 #define INTERNAL_NBP_PC_
 
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INIT(func)                        \
-    printerInterface->initCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
-    printerInterface->uninitCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
-    printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
-    printerInterface->errorCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
-    printerInterface->exitCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                  \
-    printerInterface->beforeRunCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_AFTER_RUN(func)                   \
-    printerInterface->afterRunCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
-    printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INIT(func)                       \
+    reporterInterface->initCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_UNINIT(func)                     \
+    reporterInterface->uninitCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)     \
+    reporterInterface->handleVersionCommandCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_ON_ERROR(func)                   \
+    reporterInterface->errorCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_ON_EXIT(func)                    \
+    reporterInterface->exitCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                 \
+    reporterInterface->beforeRunCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_AFTER_RUN(func)                  \
+    reporterInterface->afterRunCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)      \
+    reporterInterface->instantiateTestCaseCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(  \
     func)                                                                      \
-    printerInterface->instantiateTestSuiteStartedCbk =                         \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+    reporterInterface->instantiateTestSuiteStartedCbk =                        \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+    func)                                                                       \
+    reporterInterface->instantiateTestSuiteCompletedCbk =                       \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func) \
+    reporterInterface->instantiateModuleStartedCbk =                           \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(    \
     func)                                                                      \
-    printerInterface->instantiateTestSuiteCompletedCbk =                       \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
-    printerInterface->instantiateModuleStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
+    reporterInterface->instantiateModuleCompletedCbk =                         \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)          \
+    reporterInterface->testCaseStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)        \
+    reporterInterface->testCaseCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func) \
+    reporterInterface->testCaseInstanceStartedCbk =                            \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(    \
     func)                                                                      \
-    printerInterface->instantiateModuleCompletedCbk =                          \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
-    printerInterface->testCaseStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
-    printerInterface->testCaseCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
-    printerInterface->testCaseInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
+    reporterInterface->testCaseInstanceCompletedCbk =                          \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)         \
+    reporterInterface->testSuiteStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)       \
+    reporterInterface->testSuiteCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(     \
     func)                                                                      \
-    printerInterface->testCaseInstanceCompletedCbk =                           \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
-    printerInterface->testSuiteStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
-    printerInterface->testSuiteCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
-    printerInterface->testSuiteInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
+    reporterInterface->testSuiteInstanceStartedCbk =                           \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(   \
     func)                                                                      \
-    printerInterface->testSuiteInstanceCompletedCbk =                          \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
-    printerInterface->moduleStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
-    printerInterface->moduleCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
-    printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
-    printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
+    reporterInterface->testSuiteInstanceCompletedCbk =                         \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_STARTED(func)             \
+    reporterInterface->moduleStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)           \
+    reporterInterface->moduleCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)    \
+    reporterInterface->moduleInstanceStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)  \
+    reporterInterface->moduleInstanceCompletedCbk =                            \
+        nbp_reporter_callback_##func;
 
 #define INTERNAL_NBP_PS_PARAM_
 
@@ -448,4 +454,4 @@ SOFTWARE.
 #define INTERNAL_NBP_PS_PARAM_mis_failed  mis_failed
 #define INTERNAL_NBP_PS_PARAM_mis_skipped mis_skipped
 
-#endif // end if _H_NBP_INTERNAL_API_PRINTER
+#endif // end if _H_NBP_INTERNAL_API_REPORTER

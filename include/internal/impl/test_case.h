@@ -31,7 +31,7 @@ SOFTWARE.
 #include "../api/error.h"
 #include "../api/exit.h"
 #include "../api/memory.h"
-#include "../details/printer_notifier.h"
+#include "../details/reporter_notifier.h"
 #include "../details/runner_notifier.h"
 #include "../details/test_case.h"
 #include "../details/utils.h"
@@ -436,7 +436,7 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     internal_nbp_test_case_instance_update_stats(testCaseInstance);
 
-    internal_nbp_notify_printer_instantiate_test_case(testCaseInstance);
+    internal_nbp_notify_reporter_instantiate_test_case(testCaseInstance);
     internal_nbp_notify_runner_instantiate_test_case(testCaseInstance, context);
 
     return testCaseInstance;

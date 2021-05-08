@@ -345,10 +345,10 @@ SOFTWARE.
 #undef INTERNAL_NBP_RUNNER_DEFINED
 
 /*
- * If no printer is defined then define the default printer
+ * If no reporter is defined then define the default reporter
  */
-#if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
-#define NBP_DEFAULT_PRINTER
-#endif // end if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
+#if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
+#define NBP_DEFAULT_REPORTER
+#endif // end if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
 
 #endif // end if _H_NBP_INTERNAL_BUILD_CONFIGURATION

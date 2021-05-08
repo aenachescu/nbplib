@@ -541,7 +541,7 @@ def get_test_config(testName, buildConfig):
 
     return testConfig
 
-def load_expected_printer_output(filePath):
+def load_expected_reporter_output(filePath):
     file = open(filePath, mode='r')
     output = file.read()
     file.close()
@@ -557,7 +557,7 @@ def check_test_output(testName, testOutput, testConfig):
                 "{}Output should contains:{}".format(COLOR_GREEN, COLOR_RESET)
             )
             print(testConfig["outputContains"])
-            print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
+            print("{}Actual reporter output:{}".format(COLOR_RED, COLOR_RESET))
             print(testOutput)
             runTestsMtLogMutex.release()
             return False
@@ -565,28 +565,28 @@ def check_test_output(testName, testOutput, testConfig):
             print_process_output(testOutput, False, "test")
     else:
         testFolder = os.path.join(testPath, testName)
-        printerOutputPath = os.path.join(
+        reporterOutputPath = os.path.join(
             testFolder,
-            "expected_linux_printer_output.txt"
+            "expected_linux_reporter_output.txt"
         )
 
-        if not os.path.exists(printerOutputPath):
+        if not os.path.exists(reporterOutputPath):
             log.error(
-                "Expected printer output does not exists [%s]",
-                printerOutputPath
+                "Expected reporter output does not exists [%s]",
+                reporterOutputPath
             )
             return False
 
-        expectedOutput = load_expected_printer_output(printerOutputPath)
+        expectedOutput = load_expected_reporter_output(reporterOutputPath)
 
         if testOutput != expectedOutput:
             runTestsMtLogMutex.acquire()
             log.error("Unexpected output for test %s", testName)
             print(
-                "{}Expected printer output:{}".format(COLOR_GREEN, COLOR_RESET)
+                "{}Expected reporter output:{}".format(COLOR_GREEN, COLOR_RESET)
             )
             print(expectedOutput)
-            print("{}Actual printer output:{}".format(COLOR_RED, COLOR_RESET))
+            print("{}Actual reporter output:{}".format(COLOR_RED, COLOR_RESET))
             print(testOutput)
             runTestsMtLogMutex.release()
             return False

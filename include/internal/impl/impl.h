@@ -32,7 +32,7 @@ SOFTWARE.
 
 #include "main.h"
 #include "module.h"
-#include "printer_notifier.h"
+#include "reporter_notifier.h"
 #include "runner.h"
 #include "runner_notifier.h"
 #include "sync.h"

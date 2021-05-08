@@ -33,13 +33,13 @@ SOFTWARE.
 #include "../api/memory.h"
 #include "../build_configuration.h"
 #include "../details/module.h"
-#include "../details/printer.h"
-#include "../details/printer_notifier.h"
+#include "../details/reporter.h"
+#include "../details/reporter_notifier.h"
 #include "../details/runner.h"
 #include "../details/runner_notifier.h"
 #include "../types/error.h"
 #include "../types/module.h"
-#include "../types/printer.h"
+#include "../types/reporter.h"
 #include "../types/runner.h"
 #include "../types/sync.h"
 
@@ -47,13 +47,13 @@ extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
 nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
 
-INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
+INTERNAL_NBP_INCLUDE_REPORTER(nbpDefaultReporter);
 
-nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
-    INTERNAL_NBP_GET_POINTER_TO_PRINTER(nbpDefaultPrinter)};
+nbp_reporter_interface_t* gInternalNbpDefaultReporterInterfaces[] = {
+    INTERNAL_NBP_GET_POINTER_TO_REPORTER(nbpDefaultReporter)};
 
-nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
-unsigned int gInternalNbpPrinterInterfacesSize          = 0;
+nbp_reporter_interface_t** gInternalNbpReporterInterfaces = NBP_NULLPTR;
+unsigned int gInternalNbpReporterInterfacesSize           = 0;
 
 unsigned int gInternalNbpNumberOfTestCases            = 0;
 NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases = NBP_ATOMIC_UINT_INIT(0);
@@ -82,7 +82,7 @@ static int internal_nbp_string_equal(const char* a, const char* b)
 
 static int internal_nbp_command_run_all()
 {
-    internal_nbp_notify_printer_init();
+    internal_nbp_notify_reporter_init();
     internal_nbp_notify_runner_init();
 
     if (gInternalNbpRunnerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
@@ -107,13 +107,13 @@ static int internal_nbp_command_run_all()
         return ec_out_of_memory;
     }
 
-    // TODO: send some stats to printers about instances
+    // TODO: send some stats to reporters about instances
 
-    internal_nbp_notify_printer_before_run();
+    internal_nbp_notify_reporter_before_run();
 
     internal_nbp_notify_runner_run();
 
-    internal_nbp_notify_printer_after_run();
+    internal_nbp_notify_reporter_after_run();
 
     unsigned int numberOfRunTestsCases =
         NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);
@@ -123,10 +123,10 @@ static int internal_nbp_command_run_all()
         return ec_not_all_tests_were_run;
     }
 
-    // TODO: send some stats to printers about asserts, test cases etc
+    // TODO: send some stats to reporters about asserts, test cases etc
 
     internal_nbp_notify_runner_uninit();
-    internal_nbp_notify_printer_uninit();
+    internal_nbp_notify_reporter_uninit();
 
     // TODO: return error if main module state is not passed
 
@@ -137,9 +137,9 @@ static int internal_nbp_command_run_all()
 
 static int internal_nbp_command_version()
 {
-    internal_nbp_notify_printer_init();
-    internal_nbp_notify_printer_handle_version_command();
-    internal_nbp_notify_printer_uninit();
+    internal_nbp_notify_reporter_init();
+    internal_nbp_notify_reporter_handle_version_command();
+    internal_nbp_notify_reporter_uninit();
 
     return (int) ec_success;
 }
@@ -150,8 +150,8 @@ int main(int argc, const char** argv)
         return (int) ec_invalid_command_line;
     }
 
-    gInternalNbpPrinterInterfaces     = gInternalNbpDefaultPrinterInterfaces;
-    gInternalNbpPrinterInterfacesSize = 1;
+    gInternalNbpReporterInterfaces     = gInternalNbpDefaultReporterInterfaces;
+    gInternalNbpReporterInterfacesSize = 1;
 
     if (argc == 1) {
         return internal_nbp_command_run_all();

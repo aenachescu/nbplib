@@ -357,11 +357,11 @@ SOFTWARE.
 #undef INTERNAL_NBP_RUNNER_DEFINED
 
 /*
- * If no printer is defined then define the default printer
+ * If no reporter is defined then define the default reporter
  */
-#if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
-#define NBP_DEFAULT_PRINTER
-#endif // end if ! defined NBP_CUSTOM_PRINTER && ! defined NBP_DEFAULT_PRINTER
+#if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
+#define NBP_DEFAULT_REPORTER
+#endif // end if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
 
 #ifdef NBP_COMPILER_GCC
 
@@ -797,7 +797,7 @@ enum nbp_memory_tag_e
     mt_test_suite          = 0x4E425003,
     mt_module_instance     = 0x4E425004,
     mt_module              = 0x4E425005,
-    mt_default_printer     = 0x4E425006,
+    mt_default_reporter    = 0x4E425006,
     mt_basic_runner        = 0x4E425007,
 };
 typedef enum nbp_memory_tag_e nbp_memory_tag_e;
@@ -1489,9 +1489,9 @@ struct nbp_module_t
 };
 typedef struct nbp_module_t nbp_module_t;
 
-struct nbp_printer_interface_t;
+struct nbp_reporter_interface_t;
 
-struct nbp_printer_statistics_t
+struct nbp_reporter_statistics_t
 {
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -1509,178 +1509,178 @@ struct nbp_printer_statistics_t
     unsigned int numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
     unsigned int numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
 };
-typedef struct nbp_printer_statistics_t nbp_printer_statistics_t;
+typedef struct nbp_reporter_statistics_t nbp_reporter_statistics_t;
 
-typedef void (*nbp_printer_config_pfn_t)(
-    struct nbp_printer_interface_t* /* printerInterface */
+typedef void (*nbp_reporter_config_pfn_t)(
+    struct nbp_reporter_interface_t* /* reporterInterface */
 );
 
-typedef void (*nbp_printer_callback_init_pfn_t)(void);
+typedef void (*nbp_reporter_callback_init_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
+typedef void (*nbp_reporter_callback_uninit_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
+typedef void (*nbp_reporter_callback_handle_version_command_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_on_error_pfn_t)(
+typedef void (*nbp_reporter_callback_on_error_pfn_t)(
     nbp_error_t /* nbpParamError */
 );
 
-typedef void (*nbp_printer_callback_on_exit_pfn_t)(
+typedef void (*nbp_reporter_callback_on_exit_pfn_t)(
     nbp_error_code_e /* nbpParamErrorCode */
 );
 
-typedef void (*nbp_printer_callback_before_run_pfn_t)(
-    nbp_printer_statistics_t* /* nbpParamStatistics */
+typedef void (*nbp_reporter_callback_before_run_pfn_t)(
+    nbp_reporter_statistics_t* /* nbpParamStatistics */
 );
 
-typedef void (*nbp_printer_callback_after_run_pfn_t)(
-    nbp_printer_statistics_t* /* nbpParamStatistics */
+typedef void (*nbp_reporter_callback_after_run_pfn_t)(
+    nbp_reporter_statistics_t* /* nbpParamStatistics */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_case_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_case_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_suite_started_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_suite_completed_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_module_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_module_started_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_module_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_module_completed_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_started_pfn_t)(
     nbp_test_case_t* /* nbpParamTestCase */,
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_completed_pfn_t)(
     nbp_test_case_t* /* nbpParamTestCase */,
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_instance_started_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_instance_completed_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_started_pfn_t)(
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_completed_pfn_t)(
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_instance_started_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_instance_completed_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_module_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_started_pfn_t)(
     nbp_module_t* /* nbpParamModule */,
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_completed_pfn_t)(
     nbp_module_t* /* nbpParamModule */,
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_instance_started_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_instance_completed_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-struct nbp_printer_interface_t
+struct nbp_reporter_interface_t
 {
-    const char* printerName;
-    nbp_printer_config_pfn_t configFunction;
+    const char* reporterName;
+    nbp_reporter_config_pfn_t configFunction;
 
     int isInitialized;
 
-    nbp_printer_callback_init_pfn_t initCbk;
-    nbp_printer_callback_uninit_pfn_t uninitCbk;
+    nbp_reporter_callback_init_pfn_t initCbk;
+    nbp_reporter_callback_uninit_pfn_t uninitCbk;
 
-    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
+    nbp_reporter_callback_handle_version_command_pfn_t handleVersionCommandCbk;
 
-    nbp_printer_callback_on_error_pfn_t errorCbk;
-    nbp_printer_callback_on_exit_pfn_t exitCbk;
+    nbp_reporter_callback_on_error_pfn_t errorCbk;
+    nbp_reporter_callback_on_exit_pfn_t exitCbk;
 
-    nbp_printer_callback_before_run_pfn_t beforeRunCbk;
-    nbp_printer_callback_after_run_pfn_t afterRunCbk;
+    nbp_reporter_callback_before_run_pfn_t beforeRunCbk;
+    nbp_reporter_callback_after_run_pfn_t afterRunCbk;
 
-    nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
+    nbp_reporter_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
 
-    nbp_printer_callback_on_instantiate_test_suite_started_pfn_t
+    nbp_reporter_callback_on_instantiate_test_suite_started_pfn_t
         instantiateTestSuiteStartedCbk;
-    nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t
+    nbp_reporter_callback_on_instantiate_test_suite_completed_pfn_t
         instantiateTestSuiteCompletedCbk;
 
-    nbp_printer_callback_on_instantiate_module_started_pfn_t
+    nbp_reporter_callback_on_instantiate_module_started_pfn_t
         instantiateModuleStartedCbk;
-    nbp_printer_callback_on_instantiate_module_completed_pfn_t
+    nbp_reporter_callback_on_instantiate_module_completed_pfn_t
         instantiateModuleCompletedCbk;
 
-    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
-    nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
-    nbp_printer_callback_on_test_case_instance_started_pfn_t
+    nbp_reporter_callback_on_test_case_started_pfn_t testCaseStartedCbk;
+    nbp_reporter_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
+    nbp_reporter_callback_on_test_case_instance_started_pfn_t
         testCaseInstanceStartedCbk;
-    nbp_printer_callback_on_test_case_instance_completed_pfn_t
+    nbp_reporter_callback_on_test_case_instance_completed_pfn_t
         testCaseInstanceCompletedCbk;
 
-    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
-    nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
-    nbp_printer_callback_on_test_suite_instance_started_pfn_t
+    nbp_reporter_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
+    nbp_reporter_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
+    nbp_reporter_callback_on_test_suite_instance_started_pfn_t
         testSuiteInstanceStartedCbk;
-    nbp_printer_callback_on_test_suite_instance_completed_pfn_t
+    nbp_reporter_callback_on_test_suite_instance_completed_pfn_t
         testSuiteInstanceCompletedCbk;
 
-    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
-    nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
-    nbp_printer_callback_on_module_instance_started_pfn_t
+    nbp_reporter_callback_on_module_started_pfn_t moduleStartedCbk;
+    nbp_reporter_callback_on_module_completed_pfn_t moduleCompletedCbk;
+    nbp_reporter_callback_on_module_instance_started_pfn_t
         moduleInstanceStartedCbk;
-    nbp_printer_callback_on_module_instance_completed_pfn_t
+    nbp_reporter_callback_on_module_instance_completed_pfn_t
         moduleInstanceCompletedCbk;
 };
-typedef struct nbp_printer_interface_t nbp_printer_interface_t;
+typedef struct nbp_reporter_interface_t nbp_reporter_interface_t;
 
 struct nbp_runner_interface_t;
 
@@ -1793,86 +1793,87 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     unsigned int numberOfRuns,
     void* context);
 
-#define INTERNAL_NBP_INCLUDE_PRINTER(name)                                     \
-    extern nbp_printer_interface_t gInternalNbpPrinterInterface##name
+#define INTERNAL_NBP_INCLUDE_REPORTER(name)                                    \
+    extern nbp_reporter_interface_t gInternalNbpReporterInterface##name
 
-#define INTERNAL_NBP_GET_POINTER_TO_PRINTER(name)                              \
-    &gInternalNbpPrinterInterface##name
+#define INTERNAL_NBP_GET_POINTER_TO_REPORTER(name)                             \
+    &gInternalNbpReporterInterface##name
 
-void internal_nbp_notify_printer_init();
+void internal_nbp_notify_reporter_init();
 
-void internal_nbp_notify_printer_uninit();
+void internal_nbp_notify_reporter_uninit();
 
-void internal_nbp_notify_printer_handle_version_command();
+void internal_nbp_notify_reporter_handle_version_command();
 
-void internal_nbp_notify_printer_on_error(
+void internal_nbp_notify_reporter_on_error(
     nbp_error_code_e errorCode,
     int line,
     const char* file);
 
-void internal_nbp_notify_printer_on_error_string_context(
+void internal_nbp_notify_reporter_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     const char* context);
 
-void internal_nbp_notify_printer_on_error_custom_context(
+void internal_nbp_notify_reporter_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     void* context);
 
-void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
+void internal_nbp_notify_reporter_on_exit(nbp_error_code_e errorCode);
 
-void internal_nbp_notify_printer_before_run();
+void internal_nbp_notify_reporter_before_run();
 
-void internal_nbp_notify_printer_after_run();
+void internal_nbp_notify_reporter_after_run();
 
-void internal_nbp_notify_printer_instantiate_test_case(
+void internal_nbp_notify_reporter_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_instantiate_test_suite_started(
+void internal_nbp_notify_reporter_instantiate_test_suite_started(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_instantiate_test_suite_completed(
+void internal_nbp_notify_reporter_instantiate_test_suite_completed(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_instantiate_module_started(
+void internal_nbp_notify_reporter_instantiate_module_started(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_instantiate_module_completed(
+void internal_nbp_notify_reporter_instantiate_module_completed(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase);
+void internal_nbp_notify_reporter_test_case_started(nbp_test_case_t* testCase);
 
-void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase);
+void internal_nbp_notify_reporter_test_case_completed(
+    nbp_test_case_t* testCase);
 
-void internal_nbp_notify_printer_test_case_instance_started(
+void internal_nbp_notify_reporter_test_case_instance_started(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_test_case_instance_completed(
+void internal_nbp_notify_reporter_test_case_instance_completed(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_test_suite_started(
+void internal_nbp_notify_reporter_test_suite_started(
     nbp_test_suite_t* testSuite);
 
-void internal_nbp_notify_printer_test_suite_completed(
+void internal_nbp_notify_reporter_test_suite_completed(
     nbp_test_suite_t* testSuite);
 
-void internal_nbp_notify_printer_test_suite_instance_started(
+void internal_nbp_notify_reporter_test_suite_instance_started(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_test_suite_instance_completed(
+void internal_nbp_notify_reporter_test_suite_instance_completed(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_module_started(nbp_module_t* module);
+void internal_nbp_notify_reporter_module_started(nbp_module_t* module);
 
-void internal_nbp_notify_printer_module_completed(nbp_module_t* module);
+void internal_nbp_notify_reporter_module_completed(nbp_module_t* module);
 
-void internal_nbp_notify_printer_module_instance_started(
+void internal_nbp_notify_reporter_module_instance_started(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_module_instance_completed(
+void internal_nbp_notify_reporter_module_instance_completed(
     nbp_module_instance_t* moduleInstance);
 
 #define INTERNAL_NBP_INCLUDE_RUNNER(name)                                      \
@@ -2011,7 +2012,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR(errCode)                                              \
-    internal_nbp_notify_printer_on_error(                                      \
+    internal_nbp_notify_reporter_on_error(                                     \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE)
@@ -2020,7 +2021,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR_STRING_CONTEXT(errCode, context)                      \
-    internal_nbp_notify_printer_on_error_string_context(                       \
+    internal_nbp_notify_reporter_on_error_string_context(                      \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \
@@ -2030,7 +2031,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORT_ERROR_CUSTOM_CONTEXT(errCode, context)                      \
-    internal_nbp_notify_printer_on_error_custom_context(                       \
+    internal_nbp_notify_reporter_on_error_custom_context(                      \
         errCode,                                                               \
         NBP_SOURCE_LINE,                                                       \
         NBP_SOURCE_FILE,                                                       \
@@ -2074,7 +2075,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_EXIT(errorCode)                                                    \
-    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    internal_nbp_notify_reporter_on_exit(errorCode);                           \
     exit((int) errorCode)
 
 #else // NBP_CUSTOM_EXIT is defined
@@ -2088,7 +2089,7 @@ void internal_nbp_copy_array_of_atomic_uint(
 #endif // end if NBP_EXIT_FUNCTION
 
 #define NBP_EXIT(errorCode)                                                    \
-    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    internal_nbp_notify_reporter_on_exit(errorCode);                           \
     NBP_EXIT_FUNCTION(errorCode)
 
 #endif // end if NBP_CUSTOM_EXIT
@@ -2541,56 +2542,56 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INIT(func)                                        \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_INIT(func)                                       \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_UNINIT(func)                                      \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_UNINIT(func)                                     \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                      \
-    static void nbp_printer_callback_##func()
+#define NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                     \
+    static void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_ON_ERROR(func)                                    \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_ON_ERROR(func)                                   \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_ON_EXIT(func)                                     \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_ON_EXIT(func)                                    \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_code_e nbpParamErrorCode)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                                  \
-    static void nbp_printer_callback_##func(                                   \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+#define NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                                 \
+    static void nbp_reporter_callback_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_AFTER_RUN(func)                                   \
-    static void nbp_printer_callback_##func(                                   \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_statistics_t*                   \
+#define NBP_REPORTER_CALLBACK_AFTER_RUN(func)                                  \
+    static void nbp_reporter_callback_##func(                                  \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                       \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                      \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2599,8 +2600,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)              \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)             \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2608,8 +2609,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)            \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)           \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2617,8 +2618,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                  \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                 \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2626,8 +2627,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)                \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)               \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2635,8 +2636,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)                           \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)                          \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -2646,8 +2647,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)                         \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)                        \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -2657,8 +2658,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                  \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                 \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2667,8 +2668,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)                \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)               \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2677,8 +2678,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)                          \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)                         \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -2687,8 +2688,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)                        \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)                       \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -2697,8 +2698,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                 \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2706,8 +2707,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)               \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)              \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2715,8 +2716,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_STARTED(func)                              \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_STARTED(func)                             \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -2724,8 +2725,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)                            \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)                           \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -2733,37 +2734,38 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                     \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                    \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                   \
-    static void nbp_printer_callback_##func(                                   \
+#define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                  \
+    static void nbp_reporter_callback_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_CALLBACKS(...)
+#define NBP_REPORTER_CALLBACKS(...)
 
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER(name, ...)                                                 \
-    void nbp_printer_interface_config_function_##name(                         \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_printer_interface_t* printerInterface)  \
+#define NBP_REPORTER(name, ...)                                                \
+    void nbp_reporter_interface_config_function_##name(                        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_interface_t*                   \
+            reporterInterface)                                                 \
     {                                                                          \
-        INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(F_##__VA_ARGS__)         \
+        INTERNAL_NBP_GENERATE_REPORTER_CONFIG_FUNCTION(F_##__VA_ARGS__)        \
         return;                                                                \
     }                                                                          \
-    nbp_printer_interface_t gInternalNbpPrinterInterface##name = {             \
-        .printerName    = #name,                                               \
-        .configFunction = INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name),  \
+    nbp_reporter_interface_t gInternalNbpReporterInterface##name = {           \
+        .reporterName   = #name,                                               \
+        .configFunction = INTERNAL_NBP_GENERATE_REPORTER_INTERFACE_NAME(name), \
         .isInitialized  = 0,                                                   \
         .initCbk        = NBP_NULLPTR,                                         \
         .uninitCbk      = NBP_NULLPTR,                                         \
@@ -2799,88 +2801,93 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_PRINTER_GET_STATISTICS(type, ...)                                  \
+#define NBP_REPORTER_GET_STATISTICS(type, ...)                                 \
     NBP_PP_CONCAT(                                                             \
         INTERNAL_NBP_PS_,                                                      \
         NBP_PP_CONCAT(type, NBP_PP_COUNT(P##__VA_ARGS__)))                     \
     (INTERNAL_NBP_PS_PARAM_##__VA_ARGS__)
 
-#define INTERNAL_NBP_GENERATE_PRINTER_INTERFACE_NAME(name)                     \
-    nbp_printer_interface_config_function_##name
+#define INTERNAL_NBP_GENERATE_REPORTER_INTERFACE_NAME(name)                    \
+    nbp_reporter_interface_config_function_##name
 
-#define INTERNAL_NBP_GENERATE_PRINTER_CONFIG_FUNCTION(...)                     \
+#define INTERNAL_NBP_GENERATE_REPORTER_CONFIG_FUNCTION(...)                    \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GPC##__VA_ARGS__))     \
     (GPCF_, GPC##__VA_ARGS__)
 
-#define INTERNAL_NBP_GPCF_NBP_PRINTER_CALLBACKS(...)                           \
+#define INTERNAL_NBP_GPCF_NBP_REPORTER_CALLBACKS(...)                          \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(PC_##__VA_ARGS__))   \
     (PC_, PC_##__VA_ARGS__)
 
-// This macro is generated when NBP_PRINTER macro is used without parameters
+// This macro is generated when NBP_REPORTER macro is used without parameters
 #define INTERNAL_NBP_GPCF_
 
-// This macro is generated when NBP_PRINTER_CALLBACKS macro is used without
+// This macro is generated when NBP_REPORTER_CALLBACKS macro is used without
 // parameters
 #define INTERNAL_NBP_PC_
 
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INIT(func)                        \
-    printerInterface->initCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_UNINIT(func)                      \
-    printerInterface->uninitCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
-    printerInterface->handleVersionCommandCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_ERROR(func)                    \
-    printerInterface->errorCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_ON_EXIT(func)                     \
-    printerInterface->exitCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_BEFORE_RUN(func)                  \
-    printerInterface->beforeRunCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_AFTER_RUN(func)                   \
-    printerInterface->afterRunCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
-    printerInterface->instantiateTestCaseCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INIT(func)                       \
+    reporterInterface->initCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_UNINIT(func)                     \
+    reporterInterface->uninitCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)     \
+    reporterInterface->handleVersionCommandCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_ON_ERROR(func)                   \
+    reporterInterface->errorCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_ON_EXIT(func)                    \
+    reporterInterface->exitCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                 \
+    reporterInterface->beforeRunCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_AFTER_RUN(func)                  \
+    reporterInterface->afterRunCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)      \
+    reporterInterface->instantiateTestCaseCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(  \
     func)                                                                      \
-    printerInterface->instantiateTestSuiteStartedCbk =                         \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+    reporterInterface->instantiateTestSuiteStartedCbk =                        \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
+    func)                                                                       \
+    reporterInterface->instantiateTestSuiteCompletedCbk =                       \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func) \
+    reporterInterface->instantiateModuleStartedCbk =                           \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(    \
     func)                                                                      \
-    printerInterface->instantiateTestSuiteCompletedCbk =                       \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
-    printerInterface->instantiateModuleStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
+    reporterInterface->instantiateModuleCompletedCbk =                         \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)          \
+    reporterInterface->testCaseStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)        \
+    reporterInterface->testCaseCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func) \
+    reporterInterface->testCaseInstanceStartedCbk =                            \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(    \
     func)                                                                      \
-    printerInterface->instantiateModuleCompletedCbk =                          \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_STARTED(func)           \
-    printerInterface->testCaseStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
-    printerInterface->testCaseCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
-    printerInterface->testCaseInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
+    reporterInterface->testCaseInstanceCompletedCbk =                          \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)         \
+    reporterInterface->testSuiteStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)       \
+    reporterInterface->testSuiteCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(     \
     func)                                                                      \
-    printerInterface->testCaseInstanceCompletedCbk =                           \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_STARTED(func)          \
-    printerInterface->testSuiteStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
-    printerInterface->testSuiteCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
-    printerInterface->testSuiteInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
+    reporterInterface->testSuiteInstanceStartedCbk =                           \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(   \
     func)                                                                      \
-    printerInterface->testSuiteInstanceCompletedCbk =                          \
-        nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_STARTED(func)              \
-    printerInterface->moduleStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_COMPLETED(func)            \
-    printerInterface->moduleCompletedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
-    printerInterface->moduleInstanceStartedCbk = nbp_printer_callback_##func;
-#define INTERNAL_NBP_PC_NBP_PRINTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
-    printerInterface->moduleInstanceCompletedCbk = nbp_printer_callback_##func;
+    reporterInterface->testSuiteInstanceCompletedCbk =                         \
+        nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_STARTED(func)             \
+    reporterInterface->moduleStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)           \
+    reporterInterface->moduleCompletedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)    \
+    reporterInterface->moduleInstanceStartedCbk = nbp_reporter_callback_##func;
+#define INTERNAL_NBP_PC_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)  \
+    reporterInterface->moduleInstanceCompletedCbk =                            \
+        nbp_reporter_callback_##func;
 
 #define INTERNAL_NBP_PS_PARAM_
 
@@ -3605,13 +3612,13 @@ extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
 nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
 
-INTERNAL_NBP_INCLUDE_PRINTER(nbpDefaultPrinter);
+INTERNAL_NBP_INCLUDE_REPORTER(nbpDefaultReporter);
 
-nbp_printer_interface_t* gInternalNbpDefaultPrinterInterfaces[] = {
-    INTERNAL_NBP_GET_POINTER_TO_PRINTER(nbpDefaultPrinter)};
+nbp_reporter_interface_t* gInternalNbpDefaultReporterInterfaces[] = {
+    INTERNAL_NBP_GET_POINTER_TO_REPORTER(nbpDefaultReporter)};
 
-nbp_printer_interface_t** gInternalNbpPrinterInterfaces = NBP_NULLPTR;
-unsigned int gInternalNbpPrinterInterfacesSize          = 0;
+nbp_reporter_interface_t** gInternalNbpReporterInterfaces = NBP_NULLPTR;
+unsigned int gInternalNbpReporterInterfacesSize           = 0;
 
 unsigned int gInternalNbpNumberOfTestCases            = 0;
 NBP_ATOMIC_UINT_TYPE gInternalNbpNumberOfRanTestCases = NBP_ATOMIC_UINT_INIT(0);
@@ -3640,7 +3647,7 @@ static int internal_nbp_string_equal(const char* a, const char* b)
 
 static int internal_nbp_command_run_all()
 {
-    internal_nbp_notify_printer_init();
+    internal_nbp_notify_reporter_init();
     internal_nbp_notify_runner_init();
 
     if (gInternalNbpRunnerInterface->instantiateTestCaseCbk == NBP_NULLPTR) {
@@ -3665,13 +3672,13 @@ static int internal_nbp_command_run_all()
         return ec_out_of_memory;
     }
 
-    // TODO: send some stats to printers about instances
+    // TODO: send some stats to reporters about instances
 
-    internal_nbp_notify_printer_before_run();
+    internal_nbp_notify_reporter_before_run();
 
     internal_nbp_notify_runner_run();
 
-    internal_nbp_notify_printer_after_run();
+    internal_nbp_notify_reporter_after_run();
 
     unsigned int numberOfRunTestsCases =
         NBP_ATOMIC_UINT_LOAD(&gInternalNbpNumberOfRanTestCases);
@@ -3681,10 +3688,10 @@ static int internal_nbp_command_run_all()
         return ec_not_all_tests_were_run;
     }
 
-    // TODO: send some stats to printers about asserts, test cases etc
+    // TODO: send some stats to reporters about asserts, test cases etc
 
     internal_nbp_notify_runner_uninit();
-    internal_nbp_notify_printer_uninit();
+    internal_nbp_notify_reporter_uninit();
 
     // TODO: return error if main module state is not passed
 
@@ -3695,9 +3702,9 @@ static int internal_nbp_command_run_all()
 
 static int internal_nbp_command_version()
 {
-    internal_nbp_notify_printer_init();
-    internal_nbp_notify_printer_handle_version_command();
-    internal_nbp_notify_printer_uninit();
+    internal_nbp_notify_reporter_init();
+    internal_nbp_notify_reporter_handle_version_command();
+    internal_nbp_notify_reporter_uninit();
 
     return (int) ec_success;
 }
@@ -3708,8 +3715,8 @@ int main(int argc, const char** argv)
         return (int) ec_invalid_command_line;
     }
 
-    gInternalNbpPrinterInterfaces     = gInternalNbpDefaultPrinterInterfaces;
-    gInternalNbpPrinterInterfacesSize = 1;
+    gInternalNbpReporterInterfaces     = gInternalNbpDefaultReporterInterfaces;
+    gInternalNbpReporterInterfacesSize = 1;
 
     if (argc == 1) {
         return internal_nbp_command_run_all();
@@ -4121,7 +4128,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     internal_nbp_module_instance_update_stats(moduleInstance);
 
-    internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
+    internal_nbp_notify_reporter_instantiate_module_started(moduleInstance);
 
     internal_nbp_notify_runner_instantiate_module_started(
         moduleInstance,
@@ -4146,20 +4153,20 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     internal_nbp_notify_runner_instantiate_module_completed(moduleInstance);
 
-    internal_nbp_notify_printer_instantiate_module_completed(moduleInstance);
+    internal_nbp_notify_reporter_instantiate_module_completed(moduleInstance);
 
     return moduleInstance;
 }
 
 extern nbp_module_instance_t* gInternalNbpMainModuleInstance;
-extern nbp_printer_interface_t** gInternalNbpPrinterInterfaces;
-extern unsigned int gInternalNbpPrinterInterfacesSize;
+extern nbp_reporter_interface_t** gInternalNbpReporterInterfaces;
+extern unsigned int gInternalNbpReporterInterfacesSize;
 
 #define INTERNAL_NBP_CALLBACK_IS_SET(cbk)                                      \
-    gInternalNbpPrinterInterfaces[i]->cbk != NBP_NULLPTR
+    gInternalNbpReporterInterfaces[i]->cbk != NBP_NULLPTR
 
-static void internal_nbp_initialize_printer_statistics(
-    nbp_printer_statistics_t* statistics)
+static void internal_nbp_initialize_reporter_statistics(
+    nbp_reporter_statistics_t* statistics)
 {
     statistics->totalNumberOfTestCases =
         gInternalNbpMainModuleInstance->totalNumberOfTestCases;
@@ -4208,44 +4215,44 @@ static void internal_nbp_initialize_printer_statistics(
     statistics->numberOfModuleInstances[pos] += 1;
 }
 
-void internal_nbp_notify_printer_init()
+void internal_nbp_notify_reporter_init()
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        gInternalNbpPrinterInterfaces[i]->configFunction(
-            gInternalNbpPrinterInterfaces[i]);
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        gInternalNbpReporterInterfaces[i]->configFunction(
+            gInternalNbpReporterInterfaces[i]);
         if (INTERNAL_NBP_CALLBACK_IS_SET(initCbk)) {
-            gInternalNbpPrinterInterfaces[i]->initCbk();
+            gInternalNbpReporterInterfaces[i]->initCbk();
         }
-        gInternalNbpPrinterInterfaces[i]->isInitialized = 1;
+        gInternalNbpReporterInterfaces[i]->isInitialized = 1;
     }
 }
 
-void internal_nbp_notify_printer_uninit()
+void internal_nbp_notify_reporter_uninit()
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(uninitCbk)) {
-            gInternalNbpPrinterInterfaces[i]->uninitCbk();
+            gInternalNbpReporterInterfaces[i]->uninitCbk();
         }
-        gInternalNbpPrinterInterfaces[i]->isInitialized = 0;
+        gInternalNbpReporterInterfaces[i]->isInitialized = 0;
     }
 }
 
-void internal_nbp_notify_printer_handle_version_command()
+void internal_nbp_notify_reporter_handle_version_command()
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(handleVersionCommandCbk)) {
-            gInternalNbpPrinterInterfaces[i]->handleVersionCommandCbk();
+            gInternalNbpReporterInterfaces[i]->handleVersionCommandCbk();
         }
     }
 }
 
-void internal_nbp_notify_printer_on_error(
+void internal_nbp_notify_reporter_on_error(
     nbp_error_code_e errorCode,
     int line,
     const char* file)
@@ -4257,17 +4264,17 @@ void internal_nbp_notify_printer_on_error(
     error.file        = file;
     error.contextType = ect_empty;
 
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
-            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+            gInternalNbpReporterInterfaces[i]->errorCbk(error);
         }
     }
 }
 
-void internal_nbp_notify_printer_on_error_string_context(
+void internal_nbp_notify_reporter_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -4281,17 +4288,17 @@ void internal_nbp_notify_printer_on_error_string_context(
     error.contextType   = ect_string;
     error.stringContext = context;
 
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
-            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+            gInternalNbpReporterInterfaces[i]->errorCbk(error);
         }
     }
 }
 
-void internal_nbp_notify_printer_on_error_custom_context(
+void internal_nbp_notify_reporter_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
@@ -4305,69 +4312,69 @@ void internal_nbp_notify_printer_on_error_custom_context(
     error.contextType   = ect_custom;
     error.customContext = context;
 
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(errorCbk)) {
-            gInternalNbpPrinterInterfaces[i]->errorCbk(error);
+            gInternalNbpReporterInterfaces[i]->errorCbk(error);
         }
     }
 }
 
-void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode)
+void internal_nbp_notify_reporter_on_exit(nbp_error_code_e errorCode)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(exitCbk)) {
-            gInternalNbpPrinterInterfaces[i]->exitCbk(errorCode);
+            gInternalNbpReporterInterfaces[i]->exitCbk(errorCode);
         }
     }
 }
 
-void internal_nbp_notify_printer_before_run()
+void internal_nbp_notify_reporter_before_run()
 {
-    nbp_printer_statistics_t statistics;
+    nbp_reporter_statistics_t statistics;
 
-    internal_nbp_initialize_printer_statistics(&statistics);
+    internal_nbp_initialize_reporter_statistics(&statistics);
 
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(beforeRunCbk)) {
-            gInternalNbpPrinterInterfaces[i]->beforeRunCbk(&statistics);
+            gInternalNbpReporterInterfaces[i]->beforeRunCbk(&statistics);
         }
     }
 }
 
-void internal_nbp_notify_printer_after_run()
+void internal_nbp_notify_reporter_after_run()
 {
-    nbp_printer_statistics_t statistics;
+    nbp_reporter_statistics_t statistics;
 
-    internal_nbp_initialize_printer_statistics(&statistics);
+    internal_nbp_initialize_reporter_statistics(&statistics);
 
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(afterRunCbk)) {
-            gInternalNbpPrinterInterfaces[i]->afterRunCbk(&statistics);
+            gInternalNbpReporterInterfaces[i]->afterRunCbk(&statistics);
         }
     }
 }
 
-void internal_nbp_notify_printer_instantiate_test_case(
+void internal_nbp_notify_reporter_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestCaseCbk)) {
-            gInternalNbpPrinterInterfaces[i]->instantiateTestCaseCbk(
+            gInternalNbpReporterInterfaces[i]->instantiateTestCaseCbk(
                 testCaseInstance,
                 testCaseInstance->testSuite,
                 testCaseInstance->module);
@@ -4375,74 +4382,74 @@ void internal_nbp_notify_printer_instantiate_test_case(
     }
 }
 
-void internal_nbp_notify_printer_instantiate_test_suite_started(
+void internal_nbp_notify_reporter_instantiate_test_suite_started(
     nbp_test_suite_instance_t* testSuiteInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->instantiateTestSuiteStartedCbk(
+            gInternalNbpReporterInterfaces[i]->instantiateTestSuiteStartedCbk(
                 testSuiteInstance,
                 testSuiteInstance->module);
         }
     }
 }
 
-void internal_nbp_notify_printer_instantiate_test_suite_completed(
+void internal_nbp_notify_reporter_instantiate_test_suite_completed(
     nbp_test_suite_instance_t* testSuiteInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateTestSuiteCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->instantiateTestSuiteCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->instantiateTestSuiteCompletedCbk(
                 testSuiteInstance,
                 testSuiteInstance->module);
         }
     }
 }
 
-void internal_nbp_notify_printer_instantiate_module_started(
+void internal_nbp_notify_reporter_instantiate_module_started(
     nbp_module_instance_t* moduleInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->instantiateModuleStartedCbk(
+            gInternalNbpReporterInterfaces[i]->instantiateModuleStartedCbk(
                 moduleInstance,
                 moduleInstance->parent);
         }
     }
 }
 
-void internal_nbp_notify_printer_instantiate_module_completed(
+void internal_nbp_notify_reporter_instantiate_module_completed(
     nbp_module_instance_t* moduleInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(instantiateModuleCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->instantiateModuleCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->instantiateModuleCompletedCbk(
                 moduleInstance,
                 moduleInstance->parent);
         }
     }
 }
 
-void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase)
+void internal_nbp_notify_reporter_test_case_started(nbp_test_case_t* testCase)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testCaseStartedCbk(
+            gInternalNbpReporterInterfaces[i]->testCaseStartedCbk(
                 testCase,
                 testCase->testCaseInstance,
                 testCase->testCaseInstance->testSuite,
@@ -4451,14 +4458,14 @@ void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase)
     }
 }
 
-void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase)
+void internal_nbp_notify_reporter_test_case_completed(nbp_test_case_t* testCase)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testCaseCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->testCaseCompletedCbk(
                 testCase,
                 testCase->testCaseInstance,
                 testCase->testCaseInstance->testSuite,
@@ -4467,15 +4474,15 @@ void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase)
     }
 }
 
-void internal_nbp_notify_printer_test_case_instance_started(
+void internal_nbp_notify_reporter_test_case_instance_started(
     nbp_test_case_instance_t* testCaseInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseInstanceStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testCaseInstanceStartedCbk(
+            gInternalNbpReporterInterfaces[i]->testCaseInstanceStartedCbk(
                 testCaseInstance,
                 testCaseInstance->testSuite,
                 testCaseInstance->module);
@@ -4483,15 +4490,15 @@ void internal_nbp_notify_printer_test_case_instance_started(
     }
 }
 
-void internal_nbp_notify_printer_test_case_instance_completed(
+void internal_nbp_notify_reporter_test_case_instance_completed(
     nbp_test_case_instance_t* testCaseInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testCaseInstanceCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testCaseInstanceCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->testCaseInstanceCompletedCbk(
                 testCaseInstance,
                 testCaseInstance->testSuite,
                 testCaseInstance->module);
@@ -4499,14 +4506,15 @@ void internal_nbp_notify_printer_test_case_instance_completed(
     }
 }
 
-void internal_nbp_notify_printer_test_suite_started(nbp_test_suite_t* testSuite)
+void internal_nbp_notify_reporter_test_suite_started(
+    nbp_test_suite_t* testSuite)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testSuiteStartedCbk(
+            gInternalNbpReporterInterfaces[i]->testSuiteStartedCbk(
                 testSuite,
                 testSuite->testSuiteInstance,
                 testSuite->testSuiteInstance->module);
@@ -4514,15 +4522,15 @@ void internal_nbp_notify_printer_test_suite_started(nbp_test_suite_t* testSuite)
     }
 }
 
-void internal_nbp_notify_printer_test_suite_completed(
+void internal_nbp_notify_reporter_test_suite_completed(
     nbp_test_suite_t* testSuite)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testSuiteCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->testSuiteCompletedCbk(
                 testSuite,
                 testSuite->testSuiteInstance,
                 testSuite->testSuiteInstance->module);
@@ -4530,87 +4538,87 @@ void internal_nbp_notify_printer_test_suite_completed(
     }
 }
 
-void internal_nbp_notify_printer_test_suite_instance_started(
+void internal_nbp_notify_reporter_test_suite_instance_started(
     nbp_test_suite_instance_t* testSuiteInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteInstanceStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testSuiteInstanceStartedCbk(
+            gInternalNbpReporterInterfaces[i]->testSuiteInstanceStartedCbk(
                 testSuiteInstance,
                 testSuiteInstance->module);
         }
     }
 }
 
-void internal_nbp_notify_printer_test_suite_instance_completed(
+void internal_nbp_notify_reporter_test_suite_instance_completed(
     nbp_test_suite_instance_t* testSuiteInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(testSuiteInstanceCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->testSuiteInstanceCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->testSuiteInstanceCompletedCbk(
                 testSuiteInstance,
                 testSuiteInstance->module);
         }
     }
 }
 
-void internal_nbp_notify_printer_module_started(nbp_module_t* module)
+void internal_nbp_notify_reporter_module_started(nbp_module_t* module)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(moduleStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->moduleStartedCbk(
+            gInternalNbpReporterInterfaces[i]->moduleStartedCbk(
                 module,
                 module->moduleInstance);
         }
     }
 }
 
-void internal_nbp_notify_printer_module_completed(nbp_module_t* module)
+void internal_nbp_notify_reporter_module_completed(nbp_module_t* module)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(moduleCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->moduleCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->moduleCompletedCbk(
                 module,
                 module->moduleInstance);
         }
     }
 }
 
-void internal_nbp_notify_printer_module_instance_started(
+void internal_nbp_notify_reporter_module_instance_started(
     nbp_module_instance_t* moduleInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(moduleInstanceStartedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->moduleInstanceStartedCbk(
+            gInternalNbpReporterInterfaces[i]->moduleInstanceStartedCbk(
                 moduleInstance);
         }
     }
 }
 
-void internal_nbp_notify_printer_module_instance_completed(
+void internal_nbp_notify_reporter_module_instance_completed(
     nbp_module_instance_t* moduleInstance)
 {
-    for (unsigned int i = 0; i < gInternalNbpPrinterInterfacesSize; i++) {
-        if (gInternalNbpPrinterInterfaces[i]->isInitialized == 0) {
+    for (unsigned int i = 0; i < gInternalNbpReporterInterfacesSize; i++) {
+        if (gInternalNbpReporterInterfaces[i]->isInitialized == 0) {
             continue;
         }
         if (INTERNAL_NBP_CALLBACK_IS_SET(moduleInstanceCompletedCbk)) {
-            gInternalNbpPrinterInterfaces[i]->moduleInstanceCompletedCbk(
+            gInternalNbpReporterInterfaces[i]->moduleInstanceCompletedCbk(
                 moduleInstance);
         }
     }
@@ -4673,13 +4681,13 @@ static int internal_nbp_runner_run_module(nbp_module_t* module)
                 mis_ready,
                 mis_running);
 
-            internal_nbp_notify_printer_module_instance_started(
+            internal_nbp_notify_reporter_module_instance_started(
                 module->moduleInstance);
         }
 
         internal_nbp_module_update_state_stats(module, ms_ready, ms_running);
 
-        internal_nbp_notify_printer_module_started(module);
+        internal_nbp_notify_reporter_module_started(module);
 
         nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(module->runEvent);
         if (err != ec_success) {
@@ -4750,7 +4758,7 @@ static int internal_nbp_runner_run_test_suite(nbp_test_suite_t* testSuite)
                 tsis_ready,
                 tsis_running);
 
-            internal_nbp_notify_printer_test_suite_instance_started(
+            internal_nbp_notify_reporter_test_suite_instance_started(
                 testSuite->testSuiteInstance);
         }
 
@@ -4759,7 +4767,7 @@ static int internal_nbp_runner_run_test_suite(nbp_test_suite_t* testSuite)
             tss_ready,
             tss_running);
 
-        internal_nbp_notify_printer_test_suite_started(testSuite);
+        internal_nbp_notify_reporter_test_suite_started(testSuite);
 
         nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(testSuite->runEvent);
         if (err != ec_success) {
@@ -4946,7 +4954,7 @@ static int internal_nbp_runner_complete_module_instance(
         mis_running,
         (nbp_module_instance_state_e) newState);
 
-    internal_nbp_notify_printer_module_instance_completed(moduleInstance);
+    internal_nbp_notify_reporter_module_instance_completed(moduleInstance);
 
     return 1;
 }
@@ -5047,7 +5055,7 @@ static void internal_nbp_runner_teardown_module(nbp_module_t* module)
             ms_running,
             (nbp_module_state_e) newState);
 
-        internal_nbp_notify_printer_module_completed(module);
+        internal_nbp_notify_reporter_module_completed(module);
 
         int isCompletedInstance = internal_nbp_runner_complete_module_instance(
             module->moduleInstance);
@@ -5217,7 +5225,7 @@ static int internal_nbp_runner_complete_test_suite_instance(
         tsis_running,
         (nbp_test_suite_instance_state_e) newState);
 
-    internal_nbp_notify_printer_test_suite_instance_completed(
+    internal_nbp_notify_reporter_test_suite_instance_completed(
         testSuiteInstance);
 
     return 1;
@@ -5282,7 +5290,7 @@ static void internal_nbp_runner_teardown_test_suite(nbp_test_suite_t* testSuite)
         tss_running,
         (nbp_test_suite_state_e) newState);
 
-    internal_nbp_notify_printer_test_suite_completed(testSuite);
+    internal_nbp_notify_reporter_test_suite_completed(testSuite);
 
     int isCompletedInstance = internal_nbp_runner_complete_test_suite_instance(
         testSuite->testSuiteInstance);
@@ -5346,7 +5354,7 @@ static int internal_nbp_runner_complete_test_case_instance(
         tcis_running,
         (nbp_test_case_instance_state_e) newState);
 
-    internal_nbp_notify_printer_test_case_instance_completed(testCaseInstance);
+    internal_nbp_notify_reporter_test_case_instance_completed(testCaseInstance);
 
     return 1;
 }
@@ -5359,7 +5367,7 @@ static void internal_nbp_runner_run_skipped_test_case(nbp_test_case_t* testCase)
 static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
 {
     internal_nbp_test_case_update_state_stats(testCase, tcs_ready, tcs_running);
-    internal_nbp_notify_printer_test_case_started(testCase);
+    internal_nbp_notify_reporter_test_case_started(testCase);
 
     if (testCase->testCaseInstance->setupDetails != NBP_NULLPTR) {
         testCase->testCaseInstance->setupDetails->function(testCase);
@@ -5392,7 +5400,7 @@ static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
         testCase,
         tcs_running,
         (nbp_test_case_state_e) newState);
-    internal_nbp_notify_printer_test_case_completed(testCase);
+    internal_nbp_notify_reporter_test_case_completed(testCase);
 }
 
 void internal_nbp_runner_run_test_case(nbp_test_case_t* testCase)
@@ -5464,7 +5472,7 @@ void internal_nbp_runner_run_test_case(nbp_test_case_t* testCase)
             tcis_ready,
             tcis_running);
 
-        internal_nbp_notify_printer_test_case_instance_started(
+        internal_nbp_notify_reporter_test_case_instance_started(
             testCase->testCaseInstance);
     }
 
@@ -6085,7 +6093,7 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
 
     internal_nbp_test_case_instance_update_stats(testCaseInstance);
 
-    internal_nbp_notify_printer_instantiate_test_case(testCaseInstance);
+    internal_nbp_notify_reporter_instantiate_test_case(testCaseInstance);
     internal_nbp_notify_runner_instantiate_test_case(testCaseInstance, context);
 
     return testCaseInstance;
@@ -6431,7 +6439,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
 
     internal_nbp_test_suite_instance_update_stats(testSuiteInstance);
 
-    internal_nbp_notify_printer_instantiate_test_suite_started(
+    internal_nbp_notify_reporter_instantiate_test_suite_started(
         testSuiteInstance);
 
     internal_nbp_notify_runner_instantiate_test_suite_started(
@@ -6453,7 +6461,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         }
     }
 
-    internal_nbp_notify_printer_instantiate_test_suite_completed(
+    internal_nbp_notify_reporter_instantiate_test_suite_completed(
         testSuiteInstance);
 
     internal_nbp_notify_runner_instantiate_test_suite_completed(
@@ -6484,33 +6492,33 @@ void internal_nbp_copy_array_of_atomic_uint(
 
 #endif // end if NBP_LIBRARY_MAIN
 
-#ifdef NBP_DEFAULT_PRINTER
+#ifdef NBP_DEFAULT_REPORTER
 
 #ifdef NBP_LIBRARY_MAIN
 
 /*
- * Default nbp printer for Linux
+ * Default nbp reporter for Linux
  */
 #ifdef NBP_OS_LINUX
 
 #include <stdio.h>
 
-#define NBP_DP_TEST_CASE_EMOJI  "\xF0\x9F\x93\x9D"
-#define NBP_DP_TEST_SUITE_EMOJI "\xF0\x9F\x93\x9C"
-#define NBP_DP_MODULE_EMOJI     "\xF0\x9F\x93\x81"
+#define NBP_DR_TEST_CASE_EMOJI  "\xF0\x9F\x93\x9D"
+#define NBP_DR_TEST_SUITE_EMOJI "\xF0\x9F\x93\x9C"
+#define NBP_DR_MODULE_EMOJI     "\xF0\x9F\x93\x81"
 
-#define NBP_DP_COLOR_NORMAL "\x1B[0m"
-#define NBP_DP_COLOR_RED    "\x1B[31m"
-#define NBP_DP_COLOR_GREEN  "\x1B[32m"
-#define NBP_DP_COLOR_YELLOW "\x1B[33m"
+#define NBP_DR_COLOR_NORMAL "\x1B[0m"
+#define NBP_DR_COLOR_RED    "\x1B[31m"
+#define NBP_DR_COLOR_GREEN  "\x1B[32m"
+#define NBP_DR_COLOR_YELLOW "\x1B[33m"
 
-#define NBP_DP_CLEAR_LINE "\x1B[2K\r"
+#define NBP_DR_CLEAR_LINE "\x1B[2K\r"
 
 #ifdef NBP_MT_SUPPORT
 
 #include <pthread.h>
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_init(
+static inline nbp_error_code_e internal_nbp_dr_mutex_init(
     pthread_mutex_t* mutex)
 {
     if (pthread_mutex_init(mutex, NULL) == 0) {
@@ -6519,7 +6527,7 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_init(
     return ec_sync_error;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_uninit(
+static inline nbp_error_code_e internal_nbp_dr_mutex_uninit(
     pthread_mutex_t* mutex)
 {
     if (pthread_mutex_destroy(mutex) == 0) {
@@ -6528,7 +6536,7 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_uninit(
     return ec_sync_error;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_lock(
+static inline nbp_error_code_e internal_nbp_dr_mutex_lock(
     pthread_mutex_t* mutex)
 {
     if (pthread_mutex_lock(mutex) == 0) {
@@ -6537,7 +6545,7 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_lock(
     return ec_sync_error;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_unlock(
+static inline nbp_error_code_e internal_nbp_dr_mutex_unlock(
     pthread_mutex_t* mutex)
 {
     if (pthread_mutex_unlock(mutex) == 0) {
@@ -6546,52 +6554,52 @@ static inline nbp_error_code_e internal_nbp_dp_mutex_unlock(
     return ec_sync_error;
 }
 
-#define INTERNAL_NBP_DP_DECLARE_MUTEX(name)                                    \
+#define INTERNAL_NBP_DR_DECLARE_MUTEX(name)                                    \
     pthread_mutex_t name = PTHREAD_MUTEX_INITIALIZER;
 
-#define INTERNAL_NBP_DP_MUTEX_INIT(name) internal_nbp_dp_mutex_init(&name)
+#define INTERNAL_NBP_DR_MUTEX_INIT(name) internal_nbp_dr_mutex_init(&name)
 
-#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) internal_nbp_dp_mutex_uninit(&name)
+#define INTERNAL_NBP_DR_MUTEX_UNINIT(name) internal_nbp_dr_mutex_uninit(&name)
 
-#define INTERNAL_NBP_DP_MUTEX_LOCK(name) internal_nbp_dp_mutex_lock(&name)
+#define INTERNAL_NBP_DR_MUTEX_LOCK(name) internal_nbp_dr_mutex_lock(&name)
 
-#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) internal_nbp_dp_mutex_unlock(&name)
+#define INTERNAL_NBP_DR_MUTEX_UNLOCK(name) internal_nbp_dr_mutex_unlock(&name)
 
 #else
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_init_dummy()
+static inline nbp_error_code_e internal_nbp_dr_mutex_init_dummy()
 {
     return ec_success;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_uninit_dummy()
+static inline nbp_error_code_e internal_nbp_dr_mutex_uninit_dummy()
 {
     return ec_success;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_lock_dummy()
+static inline nbp_error_code_e internal_nbp_dr_mutex_lock_dummy()
 {
     return ec_success;
 }
 
-static inline nbp_error_code_e internal_nbp_dp_mutex_unlock_dummy()
+static inline nbp_error_code_e internal_nbp_dr_mutex_unlock_dummy()
 {
     return ec_success;
 }
 
-#define INTERNAL_NBP_DP_DECLARE_MUTEX(name)
+#define INTERNAL_NBP_DR_DECLARE_MUTEX(name)
 
-#define INTERNAL_NBP_DP_MUTEX_INIT(name) internal_nbp_dp_mutex_init_dummy()
+#define INTERNAL_NBP_DR_MUTEX_INIT(name) internal_nbp_dr_mutex_init_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNINIT(name) internal_nbp_dp_mutex_uninit_dummy()
+#define INTERNAL_NBP_DR_MUTEX_UNINIT(name) internal_nbp_dr_mutex_uninit_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_LOCK(name) internal_nbp_dp_mutex_lock_dummy()
+#define INTERNAL_NBP_DR_MUTEX_LOCK(name) internal_nbp_dr_mutex_lock_dummy()
 
-#define INTERNAL_NBP_DP_MUTEX_UNLOCK(name) internal_nbp_dp_mutex_unlock_dummy()
+#define INTERNAL_NBP_DR_MUTEX_UNLOCK(name) internal_nbp_dr_mutex_unlock_dummy()
 
 #endif // end if NBP_MT_SUPPORT
 
-enum nbp_dp_task_type_e
+enum nbp_dr_task_type_e
 {
     tt_unknown             = 0x60000000,
     tt_test_case_instance  = 0x60000001,
@@ -6599,104 +6607,104 @@ enum nbp_dp_task_type_e
     tt_module_instance     = 0x60000003,
     tt_module              = 0x60000004,
 };
-typedef enum nbp_dp_task_type_e nbp_dp_task_type_e;
+typedef enum nbp_dr_task_type_e nbp_dr_task_type_e;
 
-struct nbp_dp_test_case_instance_task_t;
-struct nbp_dp_test_suite_instance_task_t;
+struct nbp_dr_test_case_instance_task_t;
+struct nbp_dr_test_suite_instance_task_t;
 
-struct nbp_dp_message_list_t
+struct nbp_dr_message_list_t
 {
     char* message;
-    struct nbp_dp_message_list_t* next;
+    struct nbp_dr_message_list_t* next;
 };
-typedef struct nbp_dp_message_list_t nbp_dp_message_list_t;
+typedef struct nbp_dr_message_list_t nbp_dr_message_list_t;
 
-struct nbp_dp_test_case_task_t
+struct nbp_dr_test_case_task_t
 {
     nbp_test_case_t* testCase;
     unsigned int runId;
 
-    struct nbp_dp_test_case_instance_task_t* testCaseInstanceTask;
+    struct nbp_dr_test_case_instance_task_t* testCaseInstanceTask;
 
-    nbp_dp_message_list_t* messageList;
-    nbp_dp_message_list_t* messageListLast;
+    nbp_dr_message_list_t* messageList;
+    nbp_dr_message_list_t* messageListLast;
 };
-typedef struct nbp_dp_test_case_task_t nbp_dp_test_case_task_t;
+typedef struct nbp_dr_test_case_task_t nbp_dr_test_case_task_t;
 
-struct nbp_dp_test_case_instance_task_t
+struct nbp_dr_test_case_instance_task_t
 {
     nbp_test_case_instance_t* testCaseInstance;
-    nbp_dp_test_case_task_t* testCaseTasks;
+    nbp_dr_test_case_task_t* testCaseTasks;
     unsigned int depth;
 
-    struct nbp_dp_test_case_instance_task_t* next;
+    struct nbp_dr_test_case_instance_task_t* next;
 };
-typedef struct nbp_dp_test_case_instance_task_t
-    nbp_dp_test_case_instance_task_t;
+typedef struct nbp_dr_test_case_instance_task_t
+    nbp_dr_test_case_instance_task_t;
 
-struct nbp_dp_test_suite_task_t
+struct nbp_dr_test_suite_task_t
 {
     nbp_test_suite_t* testSuite;
     unsigned int runId;
 
-    struct nbp_dp_test_suite_instance_task_t* testSuiteInstanceTask;
+    struct nbp_dr_test_suite_instance_task_t* testSuiteInstanceTask;
 
-    nbp_dp_test_case_instance_task_t* firstTestCaseInstance;
-    nbp_dp_test_case_instance_task_t* lastTestCaseInstance;
+    nbp_dr_test_case_instance_task_t* firstTestCaseInstance;
+    nbp_dr_test_case_instance_task_t* lastTestCaseInstance;
 };
-typedef struct nbp_dp_test_suite_task_t nbp_dp_test_suite_task_t;
+typedef struct nbp_dr_test_suite_task_t nbp_dr_test_suite_task_t;
 
-struct nbp_dp_test_suite_instance_task_t
+struct nbp_dr_test_suite_instance_task_t
 {
     nbp_test_suite_instance_t* testSuiteInstance;
-    nbp_dp_test_suite_task_t* testSuiteTasks;
+    nbp_dr_test_suite_task_t* testSuiteTasks;
     unsigned int depth;
 };
-typedef struct nbp_dp_test_suite_instance_task_t
-    nbp_dp_test_suite_instance_task_t;
+typedef struct nbp_dr_test_suite_instance_task_t
+    nbp_dr_test_suite_instance_task_t;
 
-struct nbp_dp_module_task_t
+struct nbp_dr_module_task_t
 {
     nbp_module_t* module;
     unsigned int depth;
     unsigned int runId;
 };
-typedef struct nbp_dp_module_task_t nbp_dp_module_task_t;
+typedef struct nbp_dr_module_task_t nbp_dr_module_task_t;
 
-struct nbp_dp_module_instance_task_t
+struct nbp_dr_module_instance_task_t
 {
     nbp_module_instance_t* moduleInstance;
     unsigned int depth;
 };
-typedef struct nbp_dp_module_instance_task_t nbp_dp_module_instance_task_t;
+typedef struct nbp_dr_module_instance_task_t nbp_dr_module_instance_task_t;
 
-struct nbp_dp_task_tree_t
+struct nbp_dr_task_tree_t
 {
-    nbp_dp_task_type_e taskType;
+    nbp_dr_task_type_e taskType;
     union
     {
-        nbp_dp_test_case_instance_task_t testCaseInstance;
-        nbp_dp_test_suite_instance_task_t testSuiteInstance;
-        nbp_dp_module_task_t module;
-        nbp_dp_module_instance_task_t moduleInstance;
+        nbp_dr_test_case_instance_task_t testCaseInstance;
+        nbp_dr_test_suite_instance_task_t testSuiteInstance;
+        nbp_dr_module_task_t module;
+        nbp_dr_module_instance_task_t moduleInstance;
     };
 
-    struct nbp_dp_task_tree_t* next;
+    struct nbp_dr_task_tree_t* next;
 
-    struct nbp_dp_task_tree_t* firstChild;
-    struct nbp_dp_task_tree_t* lastChild;
+    struct nbp_dr_task_tree_t* firstChild;
+    struct nbp_dr_task_tree_t* lastChild;
 };
-typedef struct nbp_dp_task_tree_t nbp_dp_task_tree_t;
+typedef struct nbp_dr_task_tree_t nbp_dr_task_tree_t;
 
-static nbp_dp_task_tree_t* gInternalNbpDpTaskTreeRoot        = NBP_NULLPTR;
-static unsigned int gInternalNbpDpNumberOfTestCases          = 0;
-static unsigned int gInternalNbpDpNumberOfCompletedTestCases = 0;
-static int gInternalNbpDpProgressMessagePrinted              = 0;
+static nbp_dr_task_tree_t* gInternalNbpDrTaskTreeRoot        = NBP_NULLPTR;
+static unsigned int gInternalNbpDrNumberOfTestCases          = 0;
+static unsigned int gInternalNbpDrNumberOfCompletedTestCases = 0;
+static int gInternalNbpDrProgressMessagePrinted              = 0;
 
-INTERNAL_NBP_DP_DECLARE_MUTEX(gInternalNbpDpMutex);
+INTERNAL_NBP_DR_DECLARE_MUTEX(gInternalNbpDrMutex);
 
-static nbp_dp_task_tree_t* internal_nbp_dp_find_module_task(
-    nbp_dp_task_tree_t* root,
+static nbp_dr_task_tree_t* internal_nbp_dr_find_module_task(
+    nbp_dr_task_tree_t* root,
     nbp_module_t* module)
 {
     if (root == NBP_NULLPTR) {
@@ -6715,11 +6723,11 @@ static nbp_dp_task_tree_t* internal_nbp_dp_find_module_task(
         return root;
     }
 
-    nbp_dp_task_tree_t* child = root->firstChild;
-    nbp_dp_task_tree_t* task  = NBP_NULLPTR;
+    nbp_dr_task_tree_t* child = root->firstChild;
+    nbp_dr_task_tree_t* task  = NBP_NULLPTR;
 
     while (child != NBP_NULLPTR) {
-        task = internal_nbp_dp_find_module_task(child, module);
+        task = internal_nbp_dr_find_module_task(child, module);
         if (task != NBP_NULLPTR) {
             return task;
         }
@@ -6730,8 +6738,8 @@ static nbp_dp_task_tree_t* internal_nbp_dp_find_module_task(
     return NBP_NULLPTR;
 }
 
-static nbp_dp_task_tree_t* internal_nbp_dp_find_test_suite_instance_task(
-    nbp_dp_task_tree_t* root,
+static nbp_dr_task_tree_t* internal_nbp_dr_find_test_suite_instance_task(
+    nbp_dr_task_tree_t* root,
     nbp_test_suite_instance_t* testSuiteInstance)
 {
     if (root == NBP_NULLPTR) {
@@ -6747,11 +6755,11 @@ static nbp_dp_task_tree_t* internal_nbp_dp_find_test_suite_instance_task(
         return root;
     }
 
-    nbp_dp_task_tree_t* child = root->firstChild;
-    nbp_dp_task_tree_t* task  = NBP_NULLPTR;
+    nbp_dr_task_tree_t* child = root->firstChild;
+    nbp_dr_task_tree_t* task  = NBP_NULLPTR;
 
     while (child != NBP_NULLPTR) {
-        task = internal_nbp_dp_find_test_suite_instance_task(
+        task = internal_nbp_dr_find_test_suite_instance_task(
             child,
             testSuiteInstance);
         if (task != NBP_NULLPTR) {
@@ -6764,18 +6772,18 @@ static nbp_dp_task_tree_t* internal_nbp_dp_find_test_suite_instance_task(
     return NBP_NULLPTR;
 }
 
-static nbp_dp_test_suite_task_t* internal_nbp_dp_find_test_suite_task(
+static nbp_dr_test_suite_task_t* internal_nbp_dr_find_test_suite_task(
     nbp_test_suite_t* testSuite)
 {
-    nbp_dp_task_tree_t* testSuiteInstanceTask =
-        internal_nbp_dp_find_test_suite_instance_task(
-            gInternalNbpDpTaskTreeRoot,
+    nbp_dr_task_tree_t* testSuiteInstanceTask =
+        internal_nbp_dr_find_test_suite_instance_task(
+            gInternalNbpDrTaskTreeRoot,
             NBP_TEST_SUITE_GET_INSTANCE(testSuite));
     if (testSuiteInstanceTask == NBP_NULLPTR) {
         return NBP_NULLPTR;
     }
 
-    nbp_dp_test_suite_task_t* tasks =
+    nbp_dr_test_suite_task_t* tasks =
         testSuiteInstanceTask->testSuiteInstance.testSuiteTasks;
     unsigned int numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_TEST_SUITE_GET_INSTANCE(testSuite));
@@ -6789,7 +6797,7 @@ static nbp_dp_test_suite_task_t* internal_nbp_dp_find_test_suite_task(
     return NBP_NULLPTR;
 }
 
-static void internal_nbp_dp_print_depth(
+static void internal_nbp_dr_print_depth(
     unsigned int depth,
     unsigned int instantiationDepth)
 {
@@ -6804,49 +6812,49 @@ static void internal_nbp_dp_print_depth(
     }
 }
 
-static void internal_nbp_dp_print_test_case_task(
-    nbp_dp_test_case_task_t* testCaseTask)
+static void internal_nbp_dr_print_test_case_task(
+    nbp_dr_test_case_task_t* testCaseTask)
 {
     unsigned int numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_TEST_CASE_GET_INSTANCE(testCaseTask->testCase));
     nbp_test_case_state_e state =
         NBP_TEST_CASE_GET_STATE(testCaseTask->testCase);
-    const char* color = NBP_DP_COLOR_NORMAL;
+    const char* color = NBP_DR_COLOR_NORMAL;
 
     if (state == tcs_passed) {
-        color = NBP_DP_COLOR_GREEN;
+        color = NBP_DR_COLOR_GREEN;
     } else if (state == tcs_failed) {
-        color = NBP_DP_COLOR_RED;
+        color = NBP_DR_COLOR_RED;
     } else if (state == tcs_skipped) {
-        color = NBP_DP_COLOR_YELLOW;
+        color = NBP_DR_COLOR_YELLOW;
     }
 
     if (numberOfRuns > 1) {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_CASE_GET_DEPTH(testCaseTask->testCase),
             testCaseTask->testCaseInstanceTask->depth + 1);
         printf(
             "%s %s%s%s#%u\n",
-            NBP_DP_TEST_CASE_EMOJI,
+            NBP_DR_TEST_CASE_EMOJI,
             color,
             NBP_TEST_CASE_GET_NAME(testCaseTask->testCase),
-            NBP_DP_COLOR_NORMAL,
+            NBP_DR_COLOR_NORMAL,
             testCaseTask->runId);
     } else {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_CASE_GET_DEPTH(testCaseTask->testCase),
             testCaseTask->testCaseInstanceTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_TEST_CASE_EMOJI,
+            NBP_DR_TEST_CASE_EMOJI,
             color,
             NBP_TEST_CASE_GET_NAME(testCaseTask->testCase),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 }
 
-static void internal_nbp_dp_print_test_case_instance_task(
-    nbp_dp_test_case_instance_task_t* testCaseInstanceTask)
+static void internal_nbp_dr_print_test_case_instance_task(
+    nbp_dr_test_case_instance_task_t* testCaseInstanceTask)
 {
     unsigned int numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(
         testCaseInstanceTask->testCaseInstance);
@@ -6854,86 +6862,86 @@ static void internal_nbp_dp_print_test_case_instance_task(
     if (numberOfRuns > 1) {
         nbp_test_case_instance_state_e state = NBP_TEST_CASE_INSTANCE_GET_STATE(
             testCaseInstanceTask->testCaseInstance);
-        const char* color = NBP_DP_COLOR_NORMAL;
+        const char* color = NBP_DR_COLOR_NORMAL;
 
         if (state == tcis_passed) {
-            color = NBP_DP_COLOR_GREEN;
+            color = NBP_DR_COLOR_GREEN;
         } else if (state == tcis_failed) {
-            color = NBP_DP_COLOR_RED;
+            color = NBP_DR_COLOR_RED;
         } else if (state == tcis_skipped) {
-            color = NBP_DP_COLOR_YELLOW;
+            color = NBP_DR_COLOR_YELLOW;
         }
 
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_CASE_INSTANCE_GET_DEPTH(
                 testCaseInstanceTask->testCaseInstance),
             testCaseInstanceTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_TEST_CASE_EMOJI,
+            NBP_DR_TEST_CASE_EMOJI,
             color,
             NBP_TEST_CASE_INSTANCE_GET_NAME(
                 testCaseInstanceTask->testCaseInstance),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        internal_nbp_dp_print_test_case_task(
+        internal_nbp_dr_print_test_case_task(
             &testCaseInstanceTask->testCaseTasks[i]);
     }
 }
 
-static void internal_nbp_dp_print_test_suite_task(
-    nbp_dp_test_suite_task_t* testSuiteTask)
+static void internal_nbp_dr_print_test_suite_task(
+    nbp_dr_test_suite_task_t* testSuiteTask)
 {
     unsigned int numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_TEST_SUITE_GET_INSTANCE(testSuiteTask->testSuite));
     nbp_test_suite_state_e state =
         NBP_TEST_SUITE_GET_STATE(testSuiteTask->testSuite);
-    const char* color = NBP_DP_COLOR_NORMAL;
+    const char* color = NBP_DR_COLOR_NORMAL;
 
     if (state == tss_passed) {
-        color = NBP_DP_COLOR_GREEN;
+        color = NBP_DR_COLOR_GREEN;
     } else if (state == tss_failed) {
-        color = NBP_DP_COLOR_RED;
+        color = NBP_DR_COLOR_RED;
     } else if (state == tss_skipped) {
-        color = NBP_DP_COLOR_YELLOW;
+        color = NBP_DR_COLOR_YELLOW;
     }
 
     if (numberOfRuns > 1) {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_SUITE_GET_DEPTH(testSuiteTask->testSuite),
             testSuiteTask->testSuiteInstanceTask->depth + 1);
         printf(
             "%s %s%s%s#%u\n",
-            NBP_DP_TEST_SUITE_EMOJI,
+            NBP_DR_TEST_SUITE_EMOJI,
             color,
             NBP_TEST_SUITE_GET_NAME(testSuiteTask->testSuite),
-            NBP_DP_COLOR_NORMAL,
+            NBP_DR_COLOR_NORMAL,
             testSuiteTask->runId);
     } else {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_SUITE_GET_DEPTH(testSuiteTask->testSuite),
             testSuiteTask->testSuiteInstanceTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_TEST_SUITE_EMOJI,
+            NBP_DR_TEST_SUITE_EMOJI,
             color,
             NBP_TEST_SUITE_GET_NAME(testSuiteTask->testSuite),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 
-    nbp_dp_test_case_instance_task_t* child =
+    nbp_dr_test_case_instance_task_t* child =
         testSuiteTask->firstTestCaseInstance;
 
     while (child != NBP_NULLPTR) {
-        internal_nbp_dp_print_test_case_instance_task(child);
+        internal_nbp_dr_print_test_case_instance_task(child);
         child = child->next;
     }
 }
 
-static void internal_nbp_dp_print_test_suite_instance_task(
-    nbp_dp_test_suite_instance_task_t* testSuiteInstanceTask)
+static void internal_nbp_dr_print_test_suite_instance_task(
+    nbp_dr_test_suite_instance_task_t* testSuiteInstanceTask)
 {
     unsigned int numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         testSuiteInstanceTask->testSuiteInstance);
@@ -6942,76 +6950,76 @@ static void internal_nbp_dp_print_test_suite_instance_task(
         nbp_test_suite_instance_state_e state =
             NBP_TEST_SUITE_INSTANCE_GET_STATE(
                 testSuiteInstanceTask->testSuiteInstance);
-        const char* color = NBP_DP_COLOR_NORMAL;
+        const char* color = NBP_DR_COLOR_NORMAL;
 
         if (state == tsis_passed) {
-            color = NBP_DP_COLOR_GREEN;
+            color = NBP_DR_COLOR_GREEN;
         } else if (state == tsis_failed) {
-            color = NBP_DP_COLOR_RED;
+            color = NBP_DR_COLOR_RED;
         } else if (state == tsis_skipped) {
-            color = NBP_DP_COLOR_YELLOW;
+            color = NBP_DR_COLOR_YELLOW;
         }
 
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_TEST_SUITE_INSTANCE_GET_DEPTH(
                 testSuiteInstanceTask->testSuiteInstance),
             testSuiteInstanceTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_TEST_SUITE_EMOJI,
+            NBP_DR_TEST_SUITE_EMOJI,
             color,
             NBP_TEST_SUITE_INSTANCE_GET_NAME(
                 testSuiteInstanceTask->testSuiteInstance),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        internal_nbp_dp_print_test_suite_task(
+        internal_nbp_dr_print_test_suite_task(
             &testSuiteInstanceTask->testSuiteTasks[i]);
     }
 }
 
-static void internal_nbp_dp_print_module_task(nbp_dp_module_task_t* moduleTask)
+static void internal_nbp_dr_print_module_task(nbp_dr_module_task_t* moduleTask)
 {
     unsigned int numberOfRuns = NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_MODULE_GET_INSTANCE(moduleTask->module));
     nbp_module_state_e state = NBP_MODULE_GET_STATE(moduleTask->module);
-    const char* color        = NBP_DP_COLOR_NORMAL;
+    const char* color        = NBP_DR_COLOR_NORMAL;
 
     if (state == ms_passed) {
-        color = NBP_DP_COLOR_GREEN;
+        color = NBP_DR_COLOR_GREEN;
     } else if (state == ms_failed) {
-        color = NBP_DP_COLOR_RED;
+        color = NBP_DR_COLOR_RED;
     } else if (state == ms_skipped) {
-        color = NBP_DP_COLOR_YELLOW;
+        color = NBP_DR_COLOR_YELLOW;
     }
 
     if (numberOfRuns > 1) {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_MODULE_GET_DEPTH(moduleTask->module),
             moduleTask->depth);
         printf(
             "%s %s%s%s#%u\n",
-            NBP_DP_MODULE_EMOJI,
+            NBP_DR_MODULE_EMOJI,
             color,
             NBP_MODULE_GET_NAME(moduleTask->module),
-            NBP_DP_COLOR_NORMAL,
+            NBP_DR_COLOR_NORMAL,
             moduleTask->runId);
     } else {
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_MODULE_GET_DEPTH(moduleTask->module),
             moduleTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_MODULE_EMOJI,
+            NBP_DR_MODULE_EMOJI,
             color,
             NBP_MODULE_GET_NAME(moduleTask->module),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 }
 
-static void internal_nbp_dp_print_module_instace_task(
-    nbp_dp_module_instance_task_t* moduleInstanceTask)
+static void internal_nbp_dr_print_module_instace_task(
+    nbp_dr_module_instance_task_t* moduleInstanceTask)
 {
     unsigned int numberOfRuns = NBP_MODULE_INSTANCE_GET_NUMBER_OF_RUNS(
         moduleInstanceTask->moduleInstance);
@@ -7019,29 +7027,29 @@ static void internal_nbp_dp_print_module_instace_task(
     if (numberOfRuns > 1) {
         nbp_module_instance_state_e state =
             NBP_MODULE_INSTANCE_GET_STATE(moduleInstanceTask->moduleInstance);
-        const char* color = NBP_DP_COLOR_NORMAL;
+        const char* color = NBP_DR_COLOR_NORMAL;
 
         if (state == mis_passed) {
-            color = NBP_DP_COLOR_GREEN;
+            color = NBP_DR_COLOR_GREEN;
         } else if (state == mis_failed) {
-            color = NBP_DP_COLOR_RED;
+            color = NBP_DR_COLOR_RED;
         } else if (state == mis_skipped) {
-            color = NBP_DP_COLOR_YELLOW;
+            color = NBP_DR_COLOR_YELLOW;
         }
 
-        internal_nbp_dp_print_depth(
+        internal_nbp_dr_print_depth(
             NBP_MODULE_INSTANCE_GET_DEPTH(moduleInstanceTask->moduleInstance),
             moduleInstanceTask->depth);
         printf(
             "%s %s%s%s\n",
-            NBP_DP_MODULE_EMOJI,
+            NBP_DR_MODULE_EMOJI,
             color,
             NBP_MODULE_INSTANCE_GET_NAME(moduleInstanceTask->moduleInstance),
-            NBP_DP_COLOR_NORMAL);
+            NBP_DR_COLOR_NORMAL);
     }
 }
 
-static void internal_nbp_dp_print_task_tree(nbp_dp_task_tree_t* root)
+static void internal_nbp_dr_print_task_tree(nbp_dr_task_tree_t* root)
 {
     if (root == NBP_NULLPTR) {
         return;
@@ -7049,51 +7057,51 @@ static void internal_nbp_dp_print_task_tree(nbp_dp_task_tree_t* root)
 
     switch (root->taskType) {
     case tt_test_case_instance:
-        internal_nbp_dp_print_test_case_instance_task(&root->testCaseInstance);
+        internal_nbp_dr_print_test_case_instance_task(&root->testCaseInstance);
         break;
     case tt_test_suite_instance:
-        internal_nbp_dp_print_test_suite_instance_task(
+        internal_nbp_dr_print_test_suite_instance_task(
             &root->testSuiteInstance);
         break;
     case tt_module:
-        internal_nbp_dp_print_module_task(&root->module);
+        internal_nbp_dr_print_module_task(&root->module);
         break;
     case tt_module_instance:
-        internal_nbp_dp_print_module_instace_task(&root->moduleInstance);
+        internal_nbp_dr_print_module_instace_task(&root->moduleInstance);
         break;
     default:
         break;
     }
 
-    nbp_dp_task_tree_t* child = root->firstChild;
+    nbp_dr_task_tree_t* child = root->firstChild;
     while (child != NBP_NULLPTR) {
-        internal_nbp_dp_print_task_tree(child);
+        internal_nbp_dr_print_task_tree(child);
         child = child->next;
     }
 }
 
-static void internal_nbp_dp_add_test_case_instance_to_module(
+static void internal_nbp_dr_add_test_case_instance_to_module(
     nbp_test_case_instance_t* testCaseInstance,
     nbp_module_t* module)
 {
-    nbp_dp_task_tree_t* task               = NBP_NULLPTR;
-    nbp_dp_task_tree_t* parent             = NBP_NULLPTR;
-    nbp_dp_test_case_task_t* testCaseTasks = NBP_NULLPTR;
+    nbp_dr_task_tree_t* task               = NBP_NULLPTR;
+    nbp_dr_task_tree_t* parent             = NBP_NULLPTR;
+    nbp_dr_test_case_task_t* testCaseTasks = NBP_NULLPTR;
     unsigned int numberOfRuns              = 0;
 
     numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(testCaseInstance);
 
     parent =
-        internal_nbp_dp_find_module_task(gInternalNbpDpTaskTreeRoot, module);
+        internal_nbp_dr_find_module_task(gInternalNbpDrTaskTreeRoot, module);
     if (parent == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(ec_invalid_parent, "parent not found");
         NBP_EXIT(ec_invalid_parent);
         return;
     }
 
-    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_dp_task_tree_t),
-        mt_default_printer);
+    task = (nbp_dr_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dr_task_tree_t),
+        mt_default_reporter);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7102,9 +7110,9 @@ static void internal_nbp_dp_add_test_case_instance_to_module(
         return;
     }
 
-    testCaseTasks = (nbp_dp_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
-        numberOfRuns * sizeof(nbp_dp_test_case_task_t),
-        mt_default_printer);
+    testCaseTasks = (nbp_dr_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
+        numberOfRuns * sizeof(nbp_dr_test_case_task_t),
+        mt_default_reporter);
     if (testCaseTasks == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7141,27 +7149,27 @@ static void internal_nbp_dp_add_test_case_instance_to_module(
     }
 }
 
-static void internal_nbp_dp_add_test_case_instance_to_test_suite(
+static void internal_nbp_dr_add_test_case_instance_to_test_suite(
     nbp_test_case_instance_t* testCaseInstance,
     nbp_test_suite_t* testSuite)
 {
-    nbp_dp_test_case_instance_task_t* task = NBP_NULLPTR;
-    nbp_dp_test_suite_task_t* parent       = NBP_NULLPTR;
-    nbp_dp_test_case_task_t* testCaseTasks = NBP_NULLPTR;
+    nbp_dr_test_case_instance_task_t* task = NBP_NULLPTR;
+    nbp_dr_test_suite_task_t* parent       = NBP_NULLPTR;
+    nbp_dr_test_case_task_t* testCaseTasks = NBP_NULLPTR;
     unsigned int numberOfRuns              = 0;
 
     numberOfRuns = NBP_TEST_CASE_INSTANCE_GET_NUMBER_OF_RUNS(testCaseInstance);
 
-    parent = internal_nbp_dp_find_test_suite_task(testSuite);
+    parent = internal_nbp_dr_find_test_suite_task(testSuite);
     if (parent == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(ec_invalid_parent, "parent not found");
         NBP_EXIT(ec_invalid_parent);
         return;
     }
 
-    task = (nbp_dp_test_case_instance_task_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_dp_test_case_instance_task_t),
-        mt_default_printer);
+    task = (nbp_dr_test_case_instance_task_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dr_test_case_instance_task_t),
+        mt_default_reporter);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7170,9 +7178,9 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
         return;
     }
 
-    testCaseTasks = (nbp_dp_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
-        numberOfRuns * sizeof(nbp_dp_test_case_task_t),
-        mt_default_printer);
+    testCaseTasks = (nbp_dr_test_case_task_t*) NBP_MEMORY_ALLOC_TAG(
+        numberOfRuns * sizeof(nbp_dr_test_case_task_t),
+        mt_default_reporter);
     if (testCaseTasks == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7204,38 +7212,38 @@ static void internal_nbp_dp_add_test_case_instance_to_test_suite(
     }
 }
 
-NBP_PRINTER_CALLBACK_INIT(nbp_dp_init)
+NBP_REPORTER_CALLBACK_INIT(nbp_dr_init)
 {
-    INTERNAL_NBP_DP_MUTEX_INIT(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_INIT(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit)
+NBP_REPORTER_CALLBACK_UNINIT(nbp_dr_uninit)
 {
-    gInternalNbpDpTaskTreeRoot = NBP_NULLPTR;
-    INTERNAL_NBP_DP_MUTEX_UNINIT(gInternalNbpDpMutex);
+    gInternalNbpDrTaskTreeRoot = NBP_NULLPTR;
+    INTERNAL_NBP_DR_MUTEX_UNINIT(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dp_handle_version_command)
+NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(nbp_dr_handle_version_command)
 {
-    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_LOCK(gInternalNbpDrMutex);
     printf("nbp version: %s\n", NBP_VERSION_STR);
-    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_UNLOCK(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
+NBP_REPORTER_CALLBACK_ON_ERROR(nbp_dr_on_error)
 {
-    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_LOCK(gInternalNbpDrMutex);
 
-    if (gInternalNbpDpProgressMessagePrinted == 1) {
-        printf(NBP_DP_CLEAR_LINE);
+    if (gInternalNbpDrProgressMessagePrinted == 1) {
+        printf(NBP_DR_CLEAR_LINE);
     }
 
     switch (NBP_GET_ERROR_CONTEXT_TYPE(NBP_THIS_ERROR)) {
     case ect_string:
         printf(
             "[%serror%s] code = %d, line = %d, file = %s, message = %s\n",
-            NBP_DP_COLOR_RED,
-            NBP_DP_COLOR_NORMAL,
+            NBP_DR_COLOR_RED,
+            NBP_DR_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR),
@@ -7244,36 +7252,36 @@ NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error)
     default:
         printf(
             "[%serror%s] code = %d, line = %d, file = %s\n",
-            NBP_DP_COLOR_RED,
-            NBP_DP_COLOR_NORMAL,
+            NBP_DR_COLOR_RED,
+            NBP_DR_COLOR_NORMAL,
             NBP_GET_ERROR_CODE(NBP_THIS_ERROR),
             NBP_GET_ERROR_LINE(NBP_THIS_ERROR),
             NBP_GET_ERROR_FILE(NBP_THIS_ERROR));
         break;
     }
 
-    if (gInternalNbpDpProgressMessagePrinted) {
+    if (gInternalNbpDrProgressMessagePrinted) {
         printf(
-            NBP_DP_CLEAR_LINE "Running... %u/%u",
-            gInternalNbpDpNumberOfCompletedTestCases,
-            gInternalNbpDpNumberOfTestCases);
+            NBP_DR_CLEAR_LINE "Running... %u/%u",
+            gInternalNbpDrNumberOfCompletedTestCases,
+            gInternalNbpDrNumberOfTestCases);
         fflush(stdout);
     }
 
-    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_UNLOCK(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_dp_instantiate_test_case)
+NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_dr_instantiate_test_case)
 {
     if (NBP_THIS_MODULE != NBP_NULLPTR) {
-        internal_nbp_dp_add_test_case_instance_to_module(
+        internal_nbp_dr_add_test_case_instance_to_module(
             NBP_THIS_TEST_CASE_INSTANCE,
             NBP_THIS_MODULE);
         return;
     }
 
     if (NBP_THIS_TEST_SUITE != NBP_NULLPTR) {
-        internal_nbp_dp_add_test_case_instance_to_test_suite(
+        internal_nbp_dr_add_test_case_instance_to_test_suite(
             NBP_THIS_TEST_CASE_INSTANCE,
             NBP_THIS_TEST_SUITE);
         return;
@@ -7285,19 +7293,19 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(nbp_dp_instantiate_test_case)
     NBP_EXIT(ec_invalid_parent);
 }
 
-NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
-    nbp_dp_instantiate_test_suite_started)
+NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
+    nbp_dr_instantiate_test_suite_started)
 {
-    nbp_dp_task_tree_t* task                 = NBP_NULLPTR;
-    nbp_dp_task_tree_t* parent               = NBP_NULLPTR;
-    nbp_dp_test_suite_task_t* testSuiteTasks = NBP_NULLPTR;
+    nbp_dr_task_tree_t* task                 = NBP_NULLPTR;
+    nbp_dr_task_tree_t* parent               = NBP_NULLPTR;
+    nbp_dr_test_suite_task_t* testSuiteTasks = NBP_NULLPTR;
     unsigned int numberOfRuns                = 0;
 
     numberOfRuns = NBP_TEST_SUITE_INSTANCE_GET_NUMBER_OF_RUNS(
         NBP_THIS_TEST_SUITE_INSTANCE);
 
-    parent = internal_nbp_dp_find_module_task(
-        gInternalNbpDpTaskTreeRoot,
+    parent = internal_nbp_dr_find_module_task(
+        gInternalNbpDrTaskTreeRoot,
         NBP_THIS_MODULE);
     if (parent == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(ec_invalid_parent, "parent not found");
@@ -7305,9 +7313,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
         return;
     }
 
-    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_dp_task_tree_t),
-        mt_default_printer);
+    task = (nbp_dr_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dr_task_tree_t),
+        mt_default_reporter);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7316,9 +7324,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
         return;
     }
 
-    testSuiteTasks = (nbp_dp_test_suite_task_t*) NBP_MEMORY_ALLOC_TAG(
-        numberOfRuns * sizeof(nbp_dp_test_suite_task_t),
-        mt_default_printer);
+    testSuiteTasks = (nbp_dr_test_suite_task_t*) NBP_MEMORY_ALLOC_TAG(
+        numberOfRuns * sizeof(nbp_dr_test_suite_task_t),
+        mt_default_reporter);
     if (testSuiteTasks == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7355,18 +7363,18 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
     }
 }
 
-NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
-    nbp_dp_instantiate_module_started)
+NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
+    nbp_dr_instantiate_module_started)
 {
-    nbp_dp_task_tree_t* task   = NBP_NULLPTR;
-    nbp_dp_task_tree_t* child  = NBP_NULLPTR;
-    nbp_dp_task_tree_t* parent = NBP_NULLPTR;
+    nbp_dr_task_tree_t* task   = NBP_NULLPTR;
+    nbp_dr_task_tree_t* child  = NBP_NULLPTR;
+    nbp_dr_task_tree_t* parent = NBP_NULLPTR;
     unsigned int depth         = 0;
     unsigned int numberOfRuns  = 0;
 
-    if (gInternalNbpDpTaskTreeRoot != NBP_NULLPTR) {
-        parent = internal_nbp_dp_find_module_task(
-            gInternalNbpDpTaskTreeRoot,
+    if (gInternalNbpDrTaskTreeRoot != NBP_NULLPTR) {
+        parent = internal_nbp_dr_find_module_task(
+            gInternalNbpDrTaskTreeRoot,
             NBP_THIS_MODULE);
         if (parent == NBP_NULLPTR) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -7379,9 +7387,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
         depth = parent->module.depth;
     }
 
-    task = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
-        sizeof(nbp_dp_task_tree_t),
-        mt_default_printer);
+    task = (nbp_dr_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+        sizeof(nbp_dr_task_tree_t),
+        mt_default_reporter);
     if (task == NBP_NULLPTR) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_out_of_memory,
@@ -7406,9 +7414,9 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
     }
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        child = (nbp_dp_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
-            sizeof(nbp_dp_task_tree_t),
-            mt_default_printer);
+        child = (nbp_dr_task_tree_t*) NBP_MEMORY_ALLOC_TAG(
+            sizeof(nbp_dr_task_tree_t),
+            mt_default_reporter);
         if (child == NBP_NULLPTR) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
                 ec_out_of_memory,
@@ -7436,8 +7444,8 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
         }
     }
 
-    if (gInternalNbpDpTaskTreeRoot == NBP_NULLPTR) {
-        gInternalNbpDpTaskTreeRoot = task;
+    if (gInternalNbpDrTaskTreeRoot == NBP_NULLPTR) {
+        gInternalNbpDrTaskTreeRoot = task;
         return;
     }
 
@@ -7450,93 +7458,93 @@ NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
     }
 }
 
-NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed)
+NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dr_test_case_completed)
 {
-    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_LOCK(gInternalNbpDrMutex);
 
-    gInternalNbpDpNumberOfCompletedTestCases++;
+    gInternalNbpDrNumberOfCompletedTestCases++;
 
     printf(
-        NBP_DP_CLEAR_LINE "Running... %u/%u",
-        gInternalNbpDpNumberOfCompletedTestCases,
-        gInternalNbpDpNumberOfTestCases);
+        NBP_DR_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDrNumberOfCompletedTestCases,
+        gInternalNbpDrNumberOfTestCases);
     fflush(stdout);
 
-    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_UNLOCK(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run)
+NBP_REPORTER_CALLBACK_BEFORE_RUN(nbp_dr_before_run)
 {
-    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_LOCK(gInternalNbpDrMutex);
 
-    gInternalNbpDpNumberOfTestCases =
-        NBP_PRINTER_GET_STATISTICS(st_total_number_of_test_cases);
+    gInternalNbpDrNumberOfTestCases =
+        NBP_REPORTER_GET_STATISTICS(st_total_number_of_test_cases);
 
     printf(
-        NBP_DP_CLEAR_LINE "Running... %u/%u",
-        gInternalNbpDpNumberOfCompletedTestCases,
-        gInternalNbpDpNumberOfTestCases);
+        NBP_DR_CLEAR_LINE "Running... %u/%u",
+        gInternalNbpDrNumberOfCompletedTestCases,
+        gInternalNbpDrNumberOfTestCases);
     fflush(stdout);
 
-    gInternalNbpDpProgressMessagePrinted = 1;
+    gInternalNbpDrProgressMessagePrinted = 1;
 
-    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_UNLOCK(gInternalNbpDrMutex);
 }
 
-NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
+NBP_REPORTER_CALLBACK_AFTER_RUN(nbp_dr_after_run)
 {
-#define INTERNAL_NBP_DP_PRINT_STATS(                                           \
+#define INTERNAL_NBP_DR_PRINT_STATS(                                           \
     name,                                                                      \
     totalType,                                                                 \
     type,                                                                      \
     passed,                                                                    \
     failed,                                                                    \
     skipped)                                                                   \
-    numPassed  = NBP_PRINTER_GET_STATISTICS(type, passed);                     \
-    numFailed  = NBP_PRINTER_GET_STATISTICS(type, failed);                     \
-    numSkipped = NBP_PRINTER_GET_STATISTICS(type, skipped);                    \
+    numPassed  = NBP_REPORTER_GET_STATISTICS(type, passed);                    \
+    numFailed  = NBP_REPORTER_GET_STATISTICS(type, failed);                    \
+    numSkipped = NBP_REPORTER_GET_STATISTICS(type, skipped);                   \
     printf(                                                                    \
         "| %-22s | %5u | %s%5u%s %s | %s%5u%s %s | %s%5u%s %s |\n",            \
         name,                                                                  \
-        NBP_PRINTER_GET_STATISTICS(totalType),                                 \
-        NBP_DP_COLOR_GREEN,                                                    \
+        NBP_REPORTER_GET_STATISTICS(totalType),                                \
+        NBP_DR_COLOR_GREEN,                                                    \
         numPassed,                                                             \
-        NBP_DP_COLOR_NORMAL,                                                   \
+        NBP_DR_COLOR_NORMAL,                                                   \
         "passed",                                                              \
-        numFailed > 0 ? NBP_DP_COLOR_RED : NBP_DP_COLOR_GREEN,                 \
+        numFailed > 0 ? NBP_DR_COLOR_RED : NBP_DR_COLOR_GREEN,                 \
         numFailed,                                                             \
-        NBP_DP_COLOR_NORMAL,                                                   \
+        NBP_DR_COLOR_NORMAL,                                                   \
         "failed",                                                              \
-        numSkipped > 0 ? NBP_DP_COLOR_YELLOW : NBP_DP_COLOR_GREEN,             \
+        numSkipped > 0 ? NBP_DR_COLOR_YELLOW : NBP_DR_COLOR_GREEN,             \
         numSkipped,                                                            \
-        NBP_DP_COLOR_NORMAL,                                                   \
+        NBP_DR_COLOR_NORMAL,                                                   \
         "skipped");
 
     unsigned int numPassed  = 0;
     unsigned int numFailed  = 0;
     unsigned int numSkipped = 0;
 
-    INTERNAL_NBP_DP_MUTEX_LOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_LOCK(gInternalNbpDrMutex);
 
-    if (gInternalNbpDpProgressMessagePrinted == 1) {
-        gInternalNbpDpProgressMessagePrinted = 0;
-        printf(NBP_DP_CLEAR_LINE);
+    if (gInternalNbpDrProgressMessagePrinted == 1) {
+        gInternalNbpDrProgressMessagePrinted = 0;
+        printf(NBP_DR_CLEAR_LINE);
     }
 
-    internal_nbp_dp_print_task_tree(gInternalNbpDpTaskTreeRoot);
+    internal_nbp_dr_print_task_tree(gInternalNbpDrTaskTreeRoot);
 
     printf(
         "----------------------------------------------------------------------"
         "----------\n");
 
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Test cases",
         st_total_number_of_test_cases,
         st_number_of_test_cases,
         tcs_passed,
         tcs_failed,
         tcs_skipped);
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Test case instances",
         st_total_number_of_test_case_instances,
         st_number_of_test_case_instances,
@@ -7544,14 +7552,14 @@ NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
         tcis_failed,
         tcis_skipped);
 
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Test suites",
         st_total_number_of_test_suites,
         st_number_of_test_suites,
         tss_passed,
         tss_failed,
         tss_skipped);
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Test suite instances",
         st_total_number_of_test_suite_instances,
         st_number_of_test_suite_instances,
@@ -7559,14 +7567,14 @@ NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
         tsis_failed,
         tsis_skipped);
 
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Modules",
         st_total_number_of_modules,
         st_number_of_modules,
         ms_passed,
         ms_failed,
         ms_skipped);
-    INTERNAL_NBP_DP_PRINT_STATS(
+    INTERNAL_NBP_DR_PRINT_STATS(
         "Module instances",
         st_total_number_of_module_instances,
         st_number_of_module_instances,
@@ -7578,66 +7586,66 @@ NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)
         "----------------------------------------------------------------------"
         "----------\n");
 
-    INTERNAL_NBP_DP_MUTEX_UNLOCK(gInternalNbpDpMutex);
+    INTERNAL_NBP_DR_MUTEX_UNLOCK(gInternalNbpDrMutex);
 
-#undef INTERNAL_NBP_DP_PRINT_STATS
+#undef INTERNAL_NBP_DR_PRINT_STATS
 }
 
-NBP_PRINTER(
-    nbpDefaultPrinter,
-    NBP_PRINTER_CALLBACKS(
-        NBP_PRINTER_CALLBACK_INIT(nbp_dp_init),
-        NBP_PRINTER_CALLBACK_UNINIT(nbp_dp_uninit),
-        NBP_PRINTER_CALLBACK_HANDLE_VERSION_COMMAND(
-            nbp_dp_handle_version_command),
-        NBP_PRINTER_CALLBACK_ON_ERROR(nbp_dp_on_error),
-        NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_CASE(
-            nbp_dp_instantiate_test_case),
-        NBP_PRINTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
-            nbp_dp_instantiate_test_suite_started),
-        NBP_PRINTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
-            nbp_dp_instantiate_module_started),
-        NBP_PRINTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dp_test_case_completed),
-        NBP_PRINTER_CALLBACK_BEFORE_RUN(nbp_dp_before_run),
-        NBP_PRINTER_CALLBACK_AFTER_RUN(nbp_dp_after_run)));
+NBP_REPORTER(
+    nbpDefaultReporter,
+    NBP_REPORTER_CALLBACKS(
+        NBP_REPORTER_CALLBACK_INIT(nbp_dr_init),
+        NBP_REPORTER_CALLBACK_UNINIT(nbp_dr_uninit),
+        NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(
+            nbp_dr_handle_version_command),
+        NBP_REPORTER_CALLBACK_ON_ERROR(nbp_dr_on_error),
+        NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(
+            nbp_dr_instantiate_test_case),
+        NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(
+            nbp_dr_instantiate_test_suite_started),
+        NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(
+            nbp_dr_instantiate_module_started),
+        NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(nbp_dr_test_case_completed),
+        NBP_REPORTER_CALLBACK_BEFORE_RUN(nbp_dr_before_run),
+        NBP_REPORTER_CALLBACK_AFTER_RUN(nbp_dr_after_run)));
 
-#undef NBP_DP_TEST_CASE_EMOJI
-#undef NBP_DP_TEST_SUITE_EMOJI
-#undef NBP_DP_MODULE_EMOJI
+#undef NBP_DR_TEST_CASE_EMOJI
+#undef NBP_DR_TEST_SUITE_EMOJI
+#undef NBP_DR_MODULE_EMOJI
 
-#undef NBP_DP_COLOR_NORMAL
-#undef NBP_DP_COLOR_RED
-#undef NBP_DP_COLOR_GREEN
-#undef NBP_DP_COLOR_YELLOW
+#undef NBP_DR_COLOR_NORMAL
+#undef NBP_DR_COLOR_RED
+#undef NBP_DR_COLOR_GREEN
+#undef NBP_DR_COLOR_YELLOW
 
-#undef NBP_DP_CLEAR_LINE
+#undef NBP_DR_CLEAR_LINE
 
 #endif // end if NBP_OS_LINUX
 
 /*
- * Default nbp printer for Windows
+ * Default nbp reporter for Windows
  */
 #ifdef NBP_OS_WINDOWS
 #error "Not supported yet"
 #endif // end if NBP_OS_WINDOWS
 
 /*
- * Default nbp printer for Mac
+ * Default nbp reporter for Mac
  */
 #ifdef NBP_OS_MAC
 #error "Not supported yet"
 #endif // end if NBP_OS_MAC
 
 /*
- * We don't have default printer for custom OS
+ * We don't have default reporter for custom OS
  */
 #ifdef NBP_OS_CUSTOM
-#error "Default printer is not supported on custom OS"
+#error "Default reporter is not supported on custom OS"
 #endif // end if NBP_OS_CUSTOM
 
 #endif // end if NBP_LIBRARY_MAIN
 
-#endif // end if NBP_DEFAULT_PRINTER
+#endif // end if NBP_DEFAULT_REPORTER
 
 /*
  * if custom runner is not used then use a default runner

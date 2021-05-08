@@ -50,7 +50,7 @@ SOFTWARE.
 #include "internal/impl/impl.h"
 
 // keep this order
-#include "internal/printers/printers.h"
+#include "internal/reporters/reporters.h"
 
 // keep this order
 #include "internal/runners/runners.h"

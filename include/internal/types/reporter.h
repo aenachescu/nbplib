@@ -25,17 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_TYPES_PRINTER
-#define _H_NBP_INTERNAL_TYPES_PRINTER
+#ifndef _H_NBP_INTERNAL_TYPES_REPORTER
+#define _H_NBP_INTERNAL_TYPES_REPORTER
 
 #include "error.h"
 #include "module.h"
 #include "test_case.h"
 #include "test_suite.h"
 
-struct nbp_printer_interface_t;
+struct nbp_reporter_interface_t;
 
-struct nbp_printer_statistics_t
+struct nbp_reporter_statistics_t
 {
     unsigned int totalNumberOfTestCases;
     unsigned int totalNumberOfTestCaseInstances;
@@ -53,177 +53,177 @@ struct nbp_printer_statistics_t
     unsigned int numberOfModules[NBP_NUMBER_OF_MODULE_STATES];
     unsigned int numberOfModuleInstances[NBP_NUMBER_OF_MODULE_INSTANCE_STATES];
 };
-typedef struct nbp_printer_statistics_t nbp_printer_statistics_t;
+typedef struct nbp_reporter_statistics_t nbp_reporter_statistics_t;
 
-typedef void (*nbp_printer_config_pfn_t)(
-    struct nbp_printer_interface_t* /* printerInterface */
+typedef void (*nbp_reporter_config_pfn_t)(
+    struct nbp_reporter_interface_t* /* reporterInterface */
 );
 
-typedef void (*nbp_printer_callback_init_pfn_t)(void);
+typedef void (*nbp_reporter_callback_init_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_uninit_pfn_t)(void);
+typedef void (*nbp_reporter_callback_uninit_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_handle_version_command_pfn_t)(void);
+typedef void (*nbp_reporter_callback_handle_version_command_pfn_t)(void);
 
-typedef void (*nbp_printer_callback_on_error_pfn_t)(
+typedef void (*nbp_reporter_callback_on_error_pfn_t)(
     nbp_error_t /* nbpParamError */
 );
 
-typedef void (*nbp_printer_callback_on_exit_pfn_t)(
+typedef void (*nbp_reporter_callback_on_exit_pfn_t)(
     nbp_error_code_e /* nbpParamErrorCode */
 );
 
-typedef void (*nbp_printer_callback_before_run_pfn_t)(
-    nbp_printer_statistics_t* /* nbpParamStatistics */
+typedef void (*nbp_reporter_callback_before_run_pfn_t)(
+    nbp_reporter_statistics_t* /* nbpParamStatistics */
 );
 
-typedef void (*nbp_printer_callback_after_run_pfn_t)(
-    nbp_printer_statistics_t* /* nbpParamStatistics */
+typedef void (*nbp_reporter_callback_after_run_pfn_t)(
+    nbp_reporter_statistics_t* /* nbpParamStatistics */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_case_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_case_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_suite_started_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_test_suite_completed_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_module_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_module_started_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_instantiate_module_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_instantiate_module_completed_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_started_pfn_t)(
     nbp_test_case_t* /* nbpParamTestCase */,
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_completed_pfn_t)(
     nbp_test_case_t* /* nbpParamTestCase */,
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_instance_started_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_case_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_case_instance_completed_pfn_t)(
     nbp_test_case_instance_t* /* nbpParamTestCaseInstance */,
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_started_pfn_t)(
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_completed_pfn_t)(
     nbp_test_suite_t* /* nbpParamTestSuite */,
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_instance_started_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_test_suite_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_test_suite_instance_completed_pfn_t)(
     nbp_test_suite_instance_t* /* nbpParamTestSuiteInstance */,
     nbp_module_t* /* nbpParamModule */
 );
 
-typedef void (*nbp_printer_callback_on_module_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_started_pfn_t)(
     nbp_module_t* /* nbpParamModule */,
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_completed_pfn_t)(
     nbp_module_t* /* nbpParamModule */,
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_instance_started_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_instance_started_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-typedef void (*nbp_printer_callback_on_module_instance_completed_pfn_t)(
+typedef void (*nbp_reporter_callback_on_module_instance_completed_pfn_t)(
     nbp_module_instance_t* /* nbpParamModuleInstance */
 );
 
-struct nbp_printer_interface_t
+struct nbp_reporter_interface_t
 {
-    const char* printerName;
-    nbp_printer_config_pfn_t configFunction;
+    const char* reporterName;
+    nbp_reporter_config_pfn_t configFunction;
 
     int isInitialized;
 
-    nbp_printer_callback_init_pfn_t initCbk;
-    nbp_printer_callback_uninit_pfn_t uninitCbk;
+    nbp_reporter_callback_init_pfn_t initCbk;
+    nbp_reporter_callback_uninit_pfn_t uninitCbk;
 
-    nbp_printer_callback_handle_version_command_pfn_t handleVersionCommandCbk;
+    nbp_reporter_callback_handle_version_command_pfn_t handleVersionCommandCbk;
 
-    nbp_printer_callback_on_error_pfn_t errorCbk;
-    nbp_printer_callback_on_exit_pfn_t exitCbk;
+    nbp_reporter_callback_on_error_pfn_t errorCbk;
+    nbp_reporter_callback_on_exit_pfn_t exitCbk;
 
-    nbp_printer_callback_before_run_pfn_t beforeRunCbk;
-    nbp_printer_callback_after_run_pfn_t afterRunCbk;
+    nbp_reporter_callback_before_run_pfn_t beforeRunCbk;
+    nbp_reporter_callback_after_run_pfn_t afterRunCbk;
 
-    nbp_printer_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
+    nbp_reporter_callback_on_instantiate_test_case_pfn_t instantiateTestCaseCbk;
 
-    nbp_printer_callback_on_instantiate_test_suite_started_pfn_t
+    nbp_reporter_callback_on_instantiate_test_suite_started_pfn_t
         instantiateTestSuiteStartedCbk;
-    nbp_printer_callback_on_instantiate_test_suite_completed_pfn_t
+    nbp_reporter_callback_on_instantiate_test_suite_completed_pfn_t
         instantiateTestSuiteCompletedCbk;
 
-    nbp_printer_callback_on_instantiate_module_started_pfn_t
+    nbp_reporter_callback_on_instantiate_module_started_pfn_t
         instantiateModuleStartedCbk;
-    nbp_printer_callback_on_instantiate_module_completed_pfn_t
+    nbp_reporter_callback_on_instantiate_module_completed_pfn_t
         instantiateModuleCompletedCbk;
 
-    nbp_printer_callback_on_test_case_started_pfn_t testCaseStartedCbk;
-    nbp_printer_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
-    nbp_printer_callback_on_test_case_instance_started_pfn_t
+    nbp_reporter_callback_on_test_case_started_pfn_t testCaseStartedCbk;
+    nbp_reporter_callback_on_test_case_completed_pfn_t testCaseCompletedCbk;
+    nbp_reporter_callback_on_test_case_instance_started_pfn_t
         testCaseInstanceStartedCbk;
-    nbp_printer_callback_on_test_case_instance_completed_pfn_t
+    nbp_reporter_callback_on_test_case_instance_completed_pfn_t
         testCaseInstanceCompletedCbk;
 
-    nbp_printer_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
-    nbp_printer_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
-    nbp_printer_callback_on_test_suite_instance_started_pfn_t
+    nbp_reporter_callback_on_test_suite_started_pfn_t testSuiteStartedCbk;
+    nbp_reporter_callback_on_test_suite_completed_pfn_t testSuiteCompletedCbk;
+    nbp_reporter_callback_on_test_suite_instance_started_pfn_t
         testSuiteInstanceStartedCbk;
-    nbp_printer_callback_on_test_suite_instance_completed_pfn_t
+    nbp_reporter_callback_on_test_suite_instance_completed_pfn_t
         testSuiteInstanceCompletedCbk;
 
-    nbp_printer_callback_on_module_started_pfn_t moduleStartedCbk;
-    nbp_printer_callback_on_module_completed_pfn_t moduleCompletedCbk;
-    nbp_printer_callback_on_module_instance_started_pfn_t
+    nbp_reporter_callback_on_module_started_pfn_t moduleStartedCbk;
+    nbp_reporter_callback_on_module_completed_pfn_t moduleCompletedCbk;
+    nbp_reporter_callback_on_module_instance_started_pfn_t
         moduleInstanceStartedCbk;
-    nbp_printer_callback_on_module_instance_completed_pfn_t
+    nbp_reporter_callback_on_module_instance_completed_pfn_t
         moduleInstanceCompletedCbk;
 };
-typedef struct nbp_printer_interface_t nbp_printer_interface_t;
+typedef struct nbp_reporter_interface_t nbp_reporter_interface_t;
 
-#endif // end if _H_NBP_INTERNAL_TYPES_PRINTER
+#endif // end if _H_NBP_INTERNAL_TYPES_REPORTER

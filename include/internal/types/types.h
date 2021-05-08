@@ -32,7 +32,7 @@ SOFTWARE.
 #include "flags.h"
 #include "memory.h"
 #include "module.h"
-#include "printer.h"
+#include "reporter.h"
 #include "runner.h"
 #include "statistics.h"
 #include "sync.h"

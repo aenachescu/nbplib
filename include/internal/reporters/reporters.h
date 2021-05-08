@@ -25,43 +25,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_PRINTERS_PRINTERS
-#define _H_NBP_INTERNAL_PRINTERS_PRINTERS
+#ifndef _H_NBP_INTERNAL_REPORTERS_REPORTERS
+#define _H_NBP_INTERNAL_REPORTERS_REPORTERS
 
-#ifdef NBP_DEFAULT_PRINTER
+#ifdef NBP_DEFAULT_REPORTER
 
 #ifdef NBP_LIBRARY_MAIN
 
 /*
- * Default nbp printer for Linux
+ * Default nbp reporter for Linux
  */
 #ifdef NBP_OS_LINUX
-#include "linux_default_printer.h"
+#include "linux_default_reporter.h"
 #endif // end if NBP_OS_LINUX
 
 /*
- * Default nbp printer for Windows
+ * Default nbp reporter for Windows
  */
 #ifdef NBP_OS_WINDOWS
 #error "Not supported yet"
 #endif // end if NBP_OS_WINDOWS
 
 /*
- * Default nbp printer for Mac
+ * Default nbp reporter for Mac
  */
 #ifdef NBP_OS_MAC
 #error "Not supported yet"
 #endif // end if NBP_OS_MAC
 
 /*
- * We don't have default printer for custom OS
+ * We don't have default reporter for custom OS
  */
 #ifdef NBP_OS_CUSTOM
-#error "Default printer is not supported on custom OS"
+#error "Default reporter is not supported on custom OS"
 #endif // end if NBP_OS_CUSTOM
 
 #endif // end if NBP_LIBRARY_MAIN
 
-#endif // end if NBP_DEFAULT_PRINTER
+#endif // end if NBP_DEFAULT_REPORTER
 
-#endif // end if _H_NBP_INTERNAL_PRINTERS_PRINTERS
+#endif // end if _H_NBP_INTERNAL_REPORTERS_REPORTERS

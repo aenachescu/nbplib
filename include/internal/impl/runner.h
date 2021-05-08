@@ -30,7 +30,7 @@ SOFTWARE.
 
 #include "../api/error.h"
 #include "../api/exit.h"
-#include "../details/printer_notifier.h"
+#include "../details/reporter_notifier.h"
 #include "../details/runner.h"
 #include "../types/sync.h"
 
@@ -89,13 +89,13 @@ static int internal_nbp_runner_run_module(nbp_module_t* module)
                 mis_ready,
                 mis_running);
 
-            internal_nbp_notify_printer_module_instance_started(
+            internal_nbp_notify_reporter_module_instance_started(
                 module->moduleInstance);
         }
 
         internal_nbp_module_update_state_stats(module, ms_ready, ms_running);
 
-        internal_nbp_notify_printer_module_started(module);
+        internal_nbp_notify_reporter_module_started(module);
 
         nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(module->runEvent);
         if (err != ec_success) {
@@ -166,7 +166,7 @@ static int internal_nbp_runner_run_test_suite(nbp_test_suite_t* testSuite)
                 tsis_ready,
                 tsis_running);
 
-            internal_nbp_notify_printer_test_suite_instance_started(
+            internal_nbp_notify_reporter_test_suite_instance_started(
                 testSuite->testSuiteInstance);
         }
 
@@ -175,7 +175,7 @@ static int internal_nbp_runner_run_test_suite(nbp_test_suite_t* testSuite)
             tss_ready,
             tss_running);
 
-        internal_nbp_notify_printer_test_suite_started(testSuite);
+        internal_nbp_notify_reporter_test_suite_started(testSuite);
 
         nbp_error_code_e err = NBP_SYNC_EVENT_NOTIFY(testSuite->runEvent);
         if (err != ec_success) {
@@ -362,7 +362,7 @@ static int internal_nbp_runner_complete_module_instance(
         mis_running,
         (nbp_module_instance_state_e) newState);
 
-    internal_nbp_notify_printer_module_instance_completed(moduleInstance);
+    internal_nbp_notify_reporter_module_instance_completed(moduleInstance);
 
     return 1;
 }
@@ -463,7 +463,7 @@ static void internal_nbp_runner_teardown_module(nbp_module_t* module)
             ms_running,
             (nbp_module_state_e) newState);
 
-        internal_nbp_notify_printer_module_completed(module);
+        internal_nbp_notify_reporter_module_completed(module);
 
         int isCompletedInstance = internal_nbp_runner_complete_module_instance(
             module->moduleInstance);
@@ -633,7 +633,7 @@ static int internal_nbp_runner_complete_test_suite_instance(
         tsis_running,
         (nbp_test_suite_instance_state_e) newState);
 
-    internal_nbp_notify_printer_test_suite_instance_completed(
+    internal_nbp_notify_reporter_test_suite_instance_completed(
         testSuiteInstance);
 
     return 1;
@@ -698,7 +698,7 @@ static void internal_nbp_runner_teardown_test_suite(nbp_test_suite_t* testSuite)
         tss_running,
         (nbp_test_suite_state_e) newState);
 
-    internal_nbp_notify_printer_test_suite_completed(testSuite);
+    internal_nbp_notify_reporter_test_suite_completed(testSuite);
 
     int isCompletedInstance = internal_nbp_runner_complete_test_suite_instance(
         testSuite->testSuiteInstance);
@@ -762,7 +762,7 @@ static int internal_nbp_runner_complete_test_case_instance(
         tcis_running,
         (nbp_test_case_instance_state_e) newState);
 
-    internal_nbp_notify_printer_test_case_instance_completed(testCaseInstance);
+    internal_nbp_notify_reporter_test_case_instance_completed(testCaseInstance);
 
     return 1;
 }
@@ -775,7 +775,7 @@ static void internal_nbp_runner_run_skipped_test_case(nbp_test_case_t* testCase)
 static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
 {
     internal_nbp_test_case_update_state_stats(testCase, tcs_ready, tcs_running);
-    internal_nbp_notify_printer_test_case_started(testCase);
+    internal_nbp_notify_reporter_test_case_started(testCase);
 
     if (testCase->testCaseInstance->setupDetails != NBP_NULLPTR) {
         testCase->testCaseInstance->setupDetails->function(testCase);
@@ -808,7 +808,7 @@ static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
         testCase,
         tcs_running,
         (nbp_test_case_state_e) newState);
-    internal_nbp_notify_printer_test_case_completed(testCase);
+    internal_nbp_notify_reporter_test_case_completed(testCase);
 }
 
 void internal_nbp_runner_run_test_case(nbp_test_case_t* testCase)
@@ -880,7 +880,7 @@ void internal_nbp_runner_run_test_case(nbp_test_case_t* testCase)
             tcis_ready,
             tcis_running);
 
-        internal_nbp_notify_printer_test_case_instance_started(
+        internal_nbp_notify_reporter_test_case_instance_started(
             testCase->testCaseInstance);
     }
 

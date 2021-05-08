@@ -28,7 +28,7 @@ SOFTWARE.
 #ifndef _H_NBP_INTERNAL_API_EXIT
 #define _H_NBP_INTERNAL_API_EXIT
 
-#include "../details/printer_notifier.h"
+#include "../details/reporter_notifier.h"
 
 #ifndef NBP_CUSTOM_EXIT
 
@@ -38,7 +38,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_EXIT(errorCode)                                                    \
-    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    internal_nbp_notify_reporter_on_exit(errorCode);                           \
     exit((int) errorCode)
 
 #else // NBP_CUSTOM_EXIT is defined
@@ -52,7 +52,7 @@ SOFTWARE.
 #endif // end if NBP_EXIT_FUNCTION
 
 #define NBP_EXIT(errorCode)                                                    \
-    internal_nbp_notify_printer_on_exit(errorCode);                            \
+    internal_nbp_notify_reporter_on_exit(errorCode);                           \
     NBP_EXIT_FUNCTION(errorCode)
 
 #endif // end if NBP_CUSTOM_EXIT

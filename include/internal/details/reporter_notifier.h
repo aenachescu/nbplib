@@ -25,85 +25,86 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#ifndef _H_NBP_INTERNAL_DETAILS_PRINTER_NOTIFIER
-#define _H_NBP_INTERNAL_DETAILS_PRINTER_NOTIFIER
+#ifndef _H_NBP_INTERNAL_DETAILS_REPORTER_NOTIFIER
+#define _H_NBP_INTERNAL_DETAILS_REPORTER_NOTIFIER
 
-#include "../types/printer.h"
+#include "../types/reporter.h"
 
-void internal_nbp_notify_printer_init();
+void internal_nbp_notify_reporter_init();
 
-void internal_nbp_notify_printer_uninit();
+void internal_nbp_notify_reporter_uninit();
 
-void internal_nbp_notify_printer_handle_version_command();
+void internal_nbp_notify_reporter_handle_version_command();
 
-void internal_nbp_notify_printer_on_error(
+void internal_nbp_notify_reporter_on_error(
     nbp_error_code_e errorCode,
     int line,
     const char* file);
 
-void internal_nbp_notify_printer_on_error_string_context(
+void internal_nbp_notify_reporter_on_error_string_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     const char* context);
 
-void internal_nbp_notify_printer_on_error_custom_context(
+void internal_nbp_notify_reporter_on_error_custom_context(
     nbp_error_code_e errorCode,
     int line,
     const char* file,
     void* context);
 
-void internal_nbp_notify_printer_on_exit(nbp_error_code_e errorCode);
+void internal_nbp_notify_reporter_on_exit(nbp_error_code_e errorCode);
 
-void internal_nbp_notify_printer_before_run();
+void internal_nbp_notify_reporter_before_run();
 
-void internal_nbp_notify_printer_after_run();
+void internal_nbp_notify_reporter_after_run();
 
-void internal_nbp_notify_printer_instantiate_test_case(
+void internal_nbp_notify_reporter_instantiate_test_case(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_instantiate_test_suite_started(
+void internal_nbp_notify_reporter_instantiate_test_suite_started(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_instantiate_test_suite_completed(
+void internal_nbp_notify_reporter_instantiate_test_suite_completed(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_instantiate_module_started(
+void internal_nbp_notify_reporter_instantiate_module_started(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_instantiate_module_completed(
+void internal_nbp_notify_reporter_instantiate_module_completed(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_test_case_started(nbp_test_case_t* testCase);
+void internal_nbp_notify_reporter_test_case_started(nbp_test_case_t* testCase);
 
-void internal_nbp_notify_printer_test_case_completed(nbp_test_case_t* testCase);
+void internal_nbp_notify_reporter_test_case_completed(
+    nbp_test_case_t* testCase);
 
-void internal_nbp_notify_printer_test_case_instance_started(
+void internal_nbp_notify_reporter_test_case_instance_started(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_test_case_instance_completed(
+void internal_nbp_notify_reporter_test_case_instance_completed(
     nbp_test_case_instance_t* testCaseInstance);
 
-void internal_nbp_notify_printer_test_suite_started(
+void internal_nbp_notify_reporter_test_suite_started(
     nbp_test_suite_t* testSuite);
 
-void internal_nbp_notify_printer_test_suite_completed(
+void internal_nbp_notify_reporter_test_suite_completed(
     nbp_test_suite_t* testSuite);
 
-void internal_nbp_notify_printer_test_suite_instance_started(
+void internal_nbp_notify_reporter_test_suite_instance_started(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_test_suite_instance_completed(
+void internal_nbp_notify_reporter_test_suite_instance_completed(
     nbp_test_suite_instance_t* testSuiteInstance);
 
-void internal_nbp_notify_printer_module_started(nbp_module_t* module);
+void internal_nbp_notify_reporter_module_started(nbp_module_t* module);
 
-void internal_nbp_notify_printer_module_completed(nbp_module_t* module);
+void internal_nbp_notify_reporter_module_completed(nbp_module_t* module);
 
-void internal_nbp_notify_printer_module_instance_started(
+void internal_nbp_notify_reporter_module_instance_started(
     nbp_module_instance_t* moduleInstance);
 
-void internal_nbp_notify_printer_module_instance_completed(
+void internal_nbp_notify_reporter_module_instance_completed(
     nbp_module_instance_t* moduleInstance);
 
-#endif // end if _H_NBP_INTERNAL_DETAILS_PRINTER_NOTIFIER
+#endif // end if _H_NBP_INTERNAL_DETAILS_REPORTER_NOTIFIER

@@ -32,7 +32,7 @@ SOFTWARE.
 #include "../api/exit.h"
 #include "../api/memory.h"
 #include "../details/module.h"
-#include "../details/printer_notifier.h"
+#include "../details/reporter_notifier.h"
 #include "../details/runner_notifier.h"
 #include "../details/utils.h"
 #include "../types/flags.h"
@@ -436,7 +436,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     internal_nbp_module_instance_update_stats(moduleInstance);
 
-    internal_nbp_notify_printer_instantiate_module_started(moduleInstance);
+    internal_nbp_notify_reporter_instantiate_module_started(moduleInstance);
 
     internal_nbp_notify_runner_instantiate_module_started(
         moduleInstance,
@@ -461,7 +461,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
     internal_nbp_notify_runner_instantiate_module_completed(moduleInstance);
 
-    internal_nbp_notify_printer_instantiate_module_completed(moduleInstance);
+    internal_nbp_notify_reporter_instantiate_module_completed(moduleInstance);
 
     return moduleInstance;
 }

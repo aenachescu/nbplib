@@ -29,8 +29,8 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_DETAILS_DETAILS
 
 #include "module.h"
-#include "printer.h"
-#include "printer_notifier.h"
+#include "reporter.h"
+#include "reporter_notifier.h"
 #include "runner.h"
 #include "runner_notifier.h"
 #include "sync.h"
