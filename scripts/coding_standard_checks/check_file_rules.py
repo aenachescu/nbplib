@@ -251,7 +251,7 @@ def check_line_length(log, filePath, fileLines):
     for l in fileLines:
         lineId += 1
 
-        if len(l) > 80 and l[-1] != '\\':
+        if len(l) > 80:
             if filePathRelative in fileLengthExceptions:
                 log.info(
                     "Found line longer than 80 character but file is in "

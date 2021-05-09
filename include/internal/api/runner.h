@@ -133,39 +133,40 @@ SOFTWARE.
     internal_nbp_runner_run_test_case_instance(testCaseInstance)
 
 #define INTERNAL_NBP_GENERATE_RUNNER_CONFIG_FUNCTION(...)                      \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GSC##__VA_ARGS__))     \
-    (GSCF_, GSC##__VA_ARGS__)
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(GRNC##__VA_ARGS__))    \
+    (GRNCF_, GRNC##__VA_ARGS__)
 
-#define INTERNAL_NBP_GSCF_NBP_RUNNER_CALLBACKS(...)                            \
-    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(SC_##__VA_ARGS__))   \
-    (SC_, SC_##__VA_ARGS__)
+#define INTERNAL_NBP_GRNCF_NBP_RUNNER_CALLBACKS(...)                           \
+    NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_2_, NBP_PP_COUNT(RNC_##__VA_ARGS__))  \
+    (RNC_, RNC_##__VA_ARGS__)
 
 // This macro is generated when NBP_RUNNER macro is used without parameters
-#define INTERNAL_NBP_GSCF_
+#define INTERNAL_NBP_GRNCF_
 
 // This macro is generated when NBP_RUNNER_CALLBACKS macro is used without
 // parameters
-#define INTERNAL_NBP_SC_
+#define INTERNAL_NBP_RNC_
 
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INIT(func)                         \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INIT(func)                        \
     runnerInterface->initCbk = nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_UNINIT(func)                       \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_UNINIT(func)                      \
     runnerInterface->uninitCbk = nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_RUN(func)                          \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_RUN(func)                         \
     runnerInterface->runCbk = nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)        \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
     runnerInterface->instantiateTestCaseCbk = nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(    \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
     runnerInterface->instantiateTestSuiteStartedCbk =                          \
         nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(  \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
     runnerInterface->instantiateTestSuiteCompletedCbk =                        \
         nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)   \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
     runnerInterface->instantiateModuleStartedCbk = nbp_runner_callback_##func;
-#define INTERNAL_NBP_SC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func) \
+#define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
+    func)                                                                      \
     runnerInterface->instantiateModuleCompletedCbk = nbp_runner_callback_##func;
 
 #endif // end if _H_NBP_INTERNAL_API_RUNNER

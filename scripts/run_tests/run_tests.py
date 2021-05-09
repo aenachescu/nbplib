@@ -472,9 +472,9 @@ def parse_test_config(testData, buildConfig):
         testConfig["returnCode"] = testData["returnCode"]
     if "cmdline" in testData:
         testConfig["cmdline"] = testData["cmdline"]
-    if "outputContains" in testData:
-        testConfig["outputContains"] = parse_build_config_variables(
-            testData["outputContains"],
+    if "consoleOutputContains" in testData:
+        testConfig["consoleOutputContains"] = parse_build_config_variables(
+            testData["consoleOutputContains"],
             buildConfig
         )
 
@@ -515,9 +515,9 @@ def parse_test_config(testData, buildConfig):
             testConfig["returnCode"] = testBuildConfig["returnCode"]
         if "cmdline" in testBuildConfig:
             testConfig["cmdline"] = testBuildConfig["cmdline"]
-        if "outputContains" in testBuildConfig:
-            testConfig["outputContains"] = parse_build_config_variables(
-                testBuildConfig["outputContains"],
+        if "consoleOutputContains" in testBuildConfig:
+            testConfig["consoleOutputContains"] = parse_build_config_variables(
+                testBuildConfig["consoleOutputContains"],
                 buildConfig
             )
 
@@ -549,14 +549,14 @@ def load_expected_reporter_output(filePath):
     return output
 
 def check_test_output(testName, testOutput, testConfig):
-    if "outputContains" in testConfig:
-        if testOutput.find(testConfig["outputContains"]) == -1:
+    if "consoleOutputContains" in testConfig:
+        if testOutput.find(testConfig["consoleOutputContains"]) == -1:
             runTestsMtLogMutex.acquire()
             log.error("Unexpected output for test %s", testName)
             print(
                 "{}Output should contains:{}".format(COLOR_GREEN, COLOR_RESET)
             )
-            print(testConfig["outputContains"])
+            print(testConfig["consoleOutputContains"])
             print("{}Actual reporter output:{}".format(COLOR_RED, COLOR_RESET))
             print(testOutput)
             runTestsMtLogMutex.release()

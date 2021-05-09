@@ -69,10 +69,10 @@ fieldValueExceptions = [
 macroNameExceptions = [
     "^_DEFAULT_SOURCE$",
 
-    "^INTERNAL_NBP_GSCF_$",
-    "^INTERNAL_NBP_SC_$",
-    "^INTERNAL_NBP_GPCF_$",
-    "^INTERNAL_NBP_PC_$",
+    "^INTERNAL_NBP_GRNCF_$",
+    "^INTERNAL_NBP_RNC_$",
+    "^INTERNAL_NBP_GRCF_$",
+    "^INTERNAL_NBP_R_$",
     "^INTERNAL_NBP_GMCF_$",
     "^INTERNAL_NBP_GMMCF_$",
     "^INTERNAL_NBP_GTSCF_$",
@@ -81,7 +81,7 @@ macroNameExceptions = [
     "^INTERNAL_NBP_TSPIO_$",
     "^INTERNAL_NBP_MPIO_$",
 
-    "^INTERNAL_NBP_PS_PARAM_$",
+    "^INTERNAL_NBP_RS_PARAM_$",
     "^INTERNAL_NBP_TCGS_PARAM_$",
     "^INTERNAL_NBP_TCIGS_PARAM_$",
     "^INTERNAL_NBP_TSGS_PARAM_$",
@@ -89,21 +89,21 @@ macroNameExceptions = [
     "^INTERNAL_NBP_MGS_PARAM_$",
     "^INTERNAL_NBP_MIGS_PARAM_$",
 
-    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_PARAM_"
+    "^INTERNAL_NBP_(RS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_PARAM_"
     "(tcs|tcis|tss|tsis|ms|mis)_"
     "(ready|running|passed|failed|skipped)$",
 
-    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_total_number_of_"
+    "^INTERNAL_NBP_(RS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_total_number_of_"
     "(test_cases|test_case_instances|test_suites|test_suite_instances|"
     "modules|module_instances)1$",
 
-    "^INTERNAL_NBP_(PS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_number_of_"
+    "^INTERNAL_NBP_(RS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_number_of_"
     "(test_cases|test_case_instances|test_suites|test_suite_instances|"
     "modules|module_instances)1$",
 ]
 
 functionNameExceptions = [
-    "nbp_reporter_interface_config_function_nbpDefaultReporter",
+    "nbp_reporter_interface_config_function_nbpConsoleReporter",
     "nbp_runner_interface_config_function_nbpBasicRunner",
 ]
 
@@ -114,8 +114,8 @@ globalVariableNameConfig = [
         [ ]
     )),
     tuple((
-        "include/internal/reporters/linux_default_reporter.h",
-        [ "gInternalNbpDr" ],
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "gInternalNbpCr" ],
         [ ]
     )),
 ]
@@ -126,8 +126,8 @@ structNameConfig = [
         [ "nbp_br_" ]
     )),
     tuple((
-        "include/internal/reporters/linux_default_reporter.h",
-        [ "nbp_dr_" ]
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "nbp_cr_" ]
     )),
 ]
 
@@ -137,8 +137,8 @@ enumNameConfig = [
         [ "nbp_br_" ]
     )),
     tuple((
-        "include/internal/reporters/linux_default_reporter.h",
-        [ "nbp_dr_" ]
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "nbp_cr_" ]
     )),
 ]
 
@@ -148,8 +148,8 @@ functionNameConfig = [
         [ "internal_nbp_br_", "nbp_runner_callback_nbp_br_" ]
     )),
     tuple((
-        "include/internal/reporters/linux_default_reporter.h",
-        [ "internal_nbp_dr_", "nbp_reporter_callback_nbp_dr_" ]
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "internal_nbp_cr_", "nbp_reporter_callback_nbp_cr_" ]
     )),
 ]
 
@@ -159,8 +159,8 @@ macroNameConfig = [
         [ "INTERNAL_NBP_BR_", "NBP_BR_" ]
     )),
     tuple((
-        "include/internal/reporters/linux_default_reporter.h",
-        [ "INTERNAL_NBP_DR_", "NBP_DR_" ]
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "INTERNAL_NBP_CR_", "NBP_CR_" ]
     )),
 ]
 
@@ -342,7 +342,7 @@ def get_enum_field_prefix_by_enum_name(enumName, filePath):
     if not filePath.endswith("single_header/nbp.h"):
         return ""
 
-    if enumName == "nbp_dr_task_type_e":
+    if enumName == "nbp_cr_task_type_e":
         return "tt"
 
     return ""

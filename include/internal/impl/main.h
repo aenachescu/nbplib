@@ -47,10 +47,10 @@ extern nbp_module_details_t* gInternalNbpMainModuleDetails;
 
 nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
 
-INTERNAL_NBP_INCLUDE_REPORTER(nbpDefaultReporter);
+INTERNAL_NBP_INCLUDE_REPORTER(nbpConsoleReporter);
 
 nbp_reporter_interface_t* gInternalNbpDefaultReporterInterfaces[] = {
-    INTERNAL_NBP_GET_POINTER_TO_REPORTER(nbpDefaultReporter)};
+    INTERNAL_NBP_GET_POINTER_TO_REPORTER(nbpConsoleReporter)};
 
 nbp_reporter_interface_t** gInternalNbpReporterInterfaces = NBP_NULLPTR;
 unsigned int gInternalNbpReporterInterfacesSize           = 0;

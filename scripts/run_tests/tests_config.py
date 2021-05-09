@@ -29,130 +29,136 @@ testsConfig = [
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<any>",
-                "outputContains": "linux ${compiler} ${standard} ${platform} "
-                    "${sanitizer}"
+                "consoleOutputContains": "linux ${compiler} ${standard} "
+                    "${platform} ${sanitizer}"
             }
         ]
     },
     {
         "name": "check_leak_sanitizer",
-        "outputContains": "check_leak_sanitizer completed successfully",
+        "consoleOutputContains": "check_leak_sanitizer completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<-m64>:<leak>",
                 "returnCode": 23,
-                "outputContains": "detected memory leaks"
+                "consoleOutputContains": "detected memory leaks"
             }
         ]
     },
     {
         "name": "check_thread_sanitizer",
-        "outputContains": "check_thread_sanitizer completed successfully",
+        "consoleOutputContains":
+            "check_thread_sanitizer completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<thread>",
                 "returnCode": 66,
-                "outputContains": "ThreadSanitizer: data race"
+                "consoleOutputContains": "ThreadSanitizer: data race"
             }
         ]
     },
     {
         "name": "check_ub_sanitizer",
-        "outputContains": "check_ub_sanitizer completed successfully",
+        "consoleOutputContains": "check_ub_sanitizer completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<ub>",
                 "returnCode": 1,
-                "outputContains": "signed integer overflow"
+                "consoleOutputContains": "signed integer overflow"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_heap_use_after_free",
-        "outputContains": "check_address_sanitizer(heap use after free) "
+        "consoleOutputContains": "check_address_sanitizer(heap use after free) "
             "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: heap-use-after-free on "
-                    "address"
+                "consoleOutputContains":
+                    "AddressSanitizer: heap-use-after-free on address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_heap_buffer_overflow",
-        "outputContains": "check_address_sanitizer(heap buffer overflow) "
-            "completed successfully",
+        "consoleOutputContains": "check_address_sanitizer(heap buffer "
+            "overflow) completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: heap-buffer-overflow on "
-                    "address"
+                "consoleOutputContains":
+                    "AddressSanitizer: heap-buffer-overflow on address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_stack_buffer_overflow",
-        "outputContains": "check_address_sanitizer_stack_buffer_overflow "
+        "consoleOutputContains":
+            "check_address_sanitizer_stack_buffer_overflow "
             "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: stack-buffer-overflow on "
-                    "address"
+                "consoleOutputContains":
+                    "AddressSanitizer: stack-buffer-overflow on address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_global_buffer_overflow",
-        "outputContains": "check_address_sanitizer_global_buffer_overflow "
+        "consoleOutputContains":
+            "check_address_sanitizer_global_buffer_overflow "
             "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: global-buffer-overflow on "
-                    "address"
+                "consoleOutputContains":
+                    "AddressSanitizer: global-buffer-overflow on address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_stack_use_after_return",
-        "outputContains": "check_address_sanitizer_stack_use_after_return "
+        "consoleOutputContains":
+            "check_address_sanitizer_stack_use_after_return "
             "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: stack-use-after-return on "
-                    "address"
+                "consoleOutputContains":
+                    "AddressSanitizer: stack-use-after-return on address"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_pointer_comparison",
-        "outputContains": "check_address_sanitizer_pointer_comparison completed"
-            " successfully",
+        "consoleOutputContains":
+            "check_address_sanitizer_pointer_comparison completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: invalid-pointer-pair:"
+                "consoleOutputContains":
+                    "AddressSanitizer: invalid-pointer-pair:"
             }
         ]
     },
     {
         "name": "check_address_sanitizer_pointer_subtraction",
-        "outputContains": "check_address_sanitizer_pointer_subtraction "
+        "consoleOutputContains":"check_address_sanitizer_pointer_subtraction "
             "completed successfully",
         "buildConfig": [
             {
                 "config": "<any>:<any>:<any>:<address>",
                 "returnCode": 1,
-                "outputContains": "AddressSanitizer: invalid-pointer-pair:"
+                "consoleOutputContains":
+                    "AddressSanitizer: invalid-pointer-pair:"
             }
         ]
     }

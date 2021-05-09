@@ -347,8 +347,8 @@ SOFTWARE.
 /*
  * If no reporter is defined then define the default reporter
  */
-#if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
-#define NBP_DEFAULT_REPORTER
-#endif // end if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_DEFAULT_REPORTER
+#if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_CONSOLE_REPORTER
+#define NBP_CONSOLE_REPORTER
+#endif // end if ! defined NBP_CUSTOM_REPORTER && ! defined NBP_CONSOLE_REPORTER
 
 #endif // end if _H_NBP_INTERNAL_BUILD_CONFIGURATION

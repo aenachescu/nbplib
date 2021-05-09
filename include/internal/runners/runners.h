@@ -29,7 +29,7 @@ SOFTWARE.
 #define _H_NBP_INTERNAL_RUNNERS_RUNNERS
 
 /*
- * if custom runner is not used then use a default runner
+ * if custom runner is not used then use one of nbplib runners
  */
 #ifndef NBP_CUSTOM_RUNNER
 
