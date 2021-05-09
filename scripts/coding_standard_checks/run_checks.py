@@ -46,6 +46,8 @@ excludedDirsAbsPath = []
 stopOnError = False
 success = True
 
+totalNumberOfWarnings = 0
+
 def check_file_formatting_for_directory(directory):
     formattingSuccess = True
 
@@ -163,6 +165,7 @@ def processing_check_file_rules(files):
     return status
 
 def check_naming_for_directory(directory):
+    global totalNumberOfWarnings
     status = True
 
     for current, subdirs, files in os.walk(directory):
@@ -178,7 +181,11 @@ def check_naming_for_directory(directory):
 
         for f in files:
             filePath = os.path.join(current, f)
-            if not check_naming(log, filePath):
+
+            st, n = check_naming(log, filePath)
+            totalNumberOfWarnings += n
+
+            if not st:
                 status = False
                 if stopOnError:
                     break
@@ -189,6 +196,7 @@ def check_naming_for_directory(directory):
     return status
 
 def processing_check_naming(files):
+    global totalNumberOfWarnings
     status = True
 
     for file in files:
@@ -213,7 +221,10 @@ def processing_check_naming(files):
         if isExcludedDir:
             continue
 
-        if not check_naming(log, filePath):
+        st, n = check_naming(log, filePath)
+        totalNumberOfWarnings += n
+
+        if not st:
             status = False
             if stopOnError:
                 break
@@ -221,6 +232,7 @@ def processing_check_naming(files):
     return status
 
 def check_all_for_directory(directory):
+    global totalNumberOfWarnings
     status = True
 
     for current, subdirs, files in os.walk(directory):
@@ -246,7 +258,10 @@ def check_all_for_directory(directory):
                 if stopOnError:
                     break
 
-            if not check_naming(log, filePath):
+            st, n = check_naming(log, filePath)
+            totalNumberOfWarnings += n
+
+            if not st:
                 status = False
                 if stopOnError:
                     break
@@ -257,6 +272,7 @@ def check_all_for_directory(directory):
     return status
 
 def processing_check_all(files):
+    global totalNumberOfWarnings
     status = True
 
     for file in files:
@@ -299,7 +315,10 @@ def processing_check_all(files):
             if stopOnError:
                 break
 
-        if not check_naming(log, filePath):
+        st, n = check_naming(log, filePath)
+        totalNumberOfWarnings += n
+
+        if not st:
             status = False
             if stopOnError:
                 break
@@ -427,10 +446,12 @@ if __name__ == '__main__':
             if not processing_check_all(args.check_all):
                 success = False
                 if stopOnError:
-                    log.fatal("Exiting because stop on error is set")
+                    log.fatal("Exiting because stop on error is set 1")
                     break
 
         break
+
+    log.info("Number of warnings = %d", totalNumberOfWarnings)
 
     if not success:
         sys.exit(1)

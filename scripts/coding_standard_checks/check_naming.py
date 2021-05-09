@@ -167,6 +167,8 @@ macroNameConfig = [
 scriptPath = os.path.dirname(os.path.realpath(__file__))
 rootPath = os.path.abspath(os.path.join(scriptPath, '../../'))
 
+namingWarnings = 0
+
 class TypedefType(Enum):
     UNKNOWN         = 0
     POINTER_TO_FUNC = 1
@@ -1478,6 +1480,7 @@ def check_function_name(log, filePath, func):
     return True
 
 def check_function_params(log, filePath, func):
+    global namingWarnings
     status = True
 
     paramNamePrefix = ""
@@ -1497,7 +1500,7 @@ def check_function_params(log, filePath, func):
                 filePath,
                 param.location.line
             )
-            status = False
+            namingWarnings += 1
 
         if param.spelling == "":
             log.error(
@@ -1819,6 +1822,9 @@ def check_braces(log, root, filePath):
     return status
 
 def check_naming(log, filePath):
+    global namingWarnings
+    namingWarnings = 0
+
     log.info("Checking naming... [%s]", filePath)
 
     hasSupportedExtension = False
@@ -1830,7 +1836,7 @@ def check_naming(log, filePath):
 
     if not hasSupportedExtension:
         log.info("Unsupported extension for file [%s]", filePath)
-        return True
+        return True, namingWarnings
 
     status = True
 
@@ -1873,4 +1879,4 @@ def check_naming(log, filePath):
     if status:
         log.info("Naming ok: [%s]", filePath)
 
-    return status
+    return status, namingWarnings
