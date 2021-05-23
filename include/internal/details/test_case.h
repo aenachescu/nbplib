@@ -63,7 +63,7 @@ nbp_test_case_t* internal_nbp_get_test_case_from_instance(
     unsigned int runId);
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
-    nbp_test_case_details_t* testCaseDetails,
+    nbp_test_case_function_t* testCaseFunction,
     nbp_module_t* parentModule,
     nbp_test_suite_t* parentTestSuite,
     int instantiationLine,

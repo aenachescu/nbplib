@@ -249,8 +249,8 @@ static int internal_nbp_runner_setup_module(nbp_module_t* module)
             internal_nbp_runner_setup_module(module->moduleInstance->parent);
 
         if (parentValue == (int) sf_is_processed) {
-            if (module->moduleInstance->setupDetails != NBP_NULLPTR) {
-                module->moduleInstance->setupDetails->function(module);
+            if (module->moduleInstance->setupFunction != NBP_NULLPTR) {
+                module->moduleInstance->setupFunction->function(module);
             }
 
             err = NBP_SYNC_EVENT_NOTIFY(module->setupEvent);
@@ -438,8 +438,8 @@ static void internal_nbp_runner_teardown_module(nbp_module_t* module)
 
         int isSkipped = NBP_ATOMIC_INT_LOAD(&module->isSkipped);
         if (isSkipped == (int) sf_is_processed) {
-            if (module->moduleInstance->teardownDetails != NBP_NULLPTR) {
-                module->moduleInstance->teardownDetails->function(module);
+            if (module->moduleInstance->teardownFunction != NBP_NULLPTR) {
+                module->moduleInstance->teardownFunction->function(module);
             }
         }
 
@@ -524,8 +524,9 @@ static int internal_nbp_runner_setup_test_suite(nbp_test_suite_t* testSuite)
             testSuite->testSuiteInstance->module);
 
         if (parentValue == (int) sf_is_processed) {
-            if (testSuite->testSuiteInstance->setupDetails != NBP_NULLPTR) {
-                testSuite->testSuiteInstance->setupDetails->function(testSuite);
+            if (testSuite->testSuiteInstance->setupFunction != NBP_NULLPTR) {
+                testSuite->testSuiteInstance->setupFunction->function(
+                    testSuite);
             }
 
             err = NBP_SYNC_EVENT_NOTIFY(testSuite->setupEvent);
@@ -649,8 +650,8 @@ static void internal_nbp_runner_teardown_test_suite(nbp_test_suite_t* testSuite)
 
     int isSkipped = NBP_ATOMIC_INT_LOAD(&testSuite->isSkipped);
     if (isSkipped == (int) sf_is_processed) {
-        if (testSuite->testSuiteInstance->teardownDetails != NBP_NULLPTR) {
-            testSuite->testSuiteInstance->teardownDetails->function(testSuite);
+        if (testSuite->testSuiteInstance->teardownFunction != NBP_NULLPTR) {
+            testSuite->testSuiteInstance->teardownFunction->function(testSuite);
         }
     }
 
@@ -777,14 +778,14 @@ static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
     internal_nbp_test_case_update_state_stats(testCase, tcs_ready, tcs_running);
     internal_nbp_notify_reporter_test_case_started(testCase);
 
-    if (testCase->testCaseInstance->setupDetails != NBP_NULLPTR) {
-        testCase->testCaseInstance->setupDetails->function(testCase);
+    if (testCase->testCaseInstance->setupFunction != NBP_NULLPTR) {
+        testCase->testCaseInstance->setupFunction->function(testCase);
     }
 
-    testCase->testCaseInstance->testCaseDetails->function(testCase);
+    testCase->testCaseInstance->testCaseFunction->function(testCase);
 
-    if (testCase->testCaseInstance->teardownDetails != NBP_NULLPTR) {
-        testCase->testCaseInstance->teardownDetails->function(testCase);
+    if (testCase->testCaseInstance->teardownFunction != NBP_NULLPTR) {
+        testCase->testCaseInstance->teardownFunction->function(testCase);
     }
 
     int newState = (int) tcs_passed;

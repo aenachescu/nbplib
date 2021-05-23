@@ -34,7 +34,7 @@ SOFTWARE.
 #define NBP_NUMBER_OF_MODULE_INSTANCE_STATES ((unsigned int) 5)
 #define NBP_NUMBER_OF_MODULE_STATES          ((unsigned int) 5)
 
-struct nbp_module_details_t;
+struct nbp_module_function_t;
 struct nbp_module_instance_t;
 struct nbp_module_t;
 
@@ -46,7 +46,7 @@ typedef void (*nbp_module_teardown_pfn_t)(
 );
 
 typedef void (*nbp_module_config_pfn_t)(
-    struct nbp_module_details_t* /* moduleDetails */
+    struct nbp_module_function_t* /* moduleFunction */
 );
 
 typedef void (*nbp_module_pfn_t)(
@@ -78,7 +78,7 @@ enum nbp_module_state_e
 };
 typedef enum nbp_module_state_e nbp_module_state_e;
 
-struct nbp_module_setup_details_t
+struct nbp_module_setup_function_t
 {
     const char* functionName;
 
@@ -87,9 +87,9 @@ struct nbp_module_setup_details_t
 
     nbp_module_setup_pfn_t function;
 };
-typedef struct nbp_module_setup_details_t nbp_module_setup_details_t;
+typedef struct nbp_module_setup_function_t nbp_module_setup_function_t;
 
-struct nbp_module_teardown_details_t
+struct nbp_module_teardown_function_t
 {
     const char* functionName;
 
@@ -98,9 +98,9 @@ struct nbp_module_teardown_details_t
 
     nbp_module_teardown_pfn_t function;
 };
-typedef struct nbp_module_teardown_details_t nbp_module_teardown_details_t;
+typedef struct nbp_module_teardown_function_t nbp_module_teardown_function_t;
 
-struct nbp_module_details_t
+struct nbp_module_function_t
 {
     const char* name;
     const char* functionName;
@@ -113,14 +113,14 @@ struct nbp_module_details_t
     nbp_module_config_pfn_t configFunction;
     nbp_module_pfn_t function;
 
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
+    nbp_module_setup_function_t* setupFunction;
+    nbp_module_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_module_details_t nbp_module_details_t;
+typedef struct nbp_module_function_t nbp_module_function_t;
 
 struct nbp_module_instance_t
 {
-    nbp_module_details_t* moduleDetails;
+    nbp_module_function_t* moduleFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -131,8 +131,8 @@ struct nbp_module_instance_t
 
     int instantiationLine;
 
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
+    nbp_module_setup_function_t* setupFunction;
+    nbp_module_teardown_function_t* teardownFunction;
 
     struct nbp_module_t* runs;
     unsigned int numberOfRuns;

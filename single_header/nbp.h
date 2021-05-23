@@ -1054,7 +1054,7 @@ struct nbp_module_t;
 
 struct nbp_test_suite_t;
 
-struct nbp_test_case_details_t;
+struct nbp_test_case_function_t;
 struct nbp_test_case_instance_t;
 struct nbp_test_case_t;
 
@@ -1067,7 +1067,7 @@ typedef void (*nbp_test_case_teardown_pfn_t)(
 );
 
 typedef void (*nbp_test_case_config_pfn_t)(
-    struct nbp_test_case_details_t* /* testCaseDetails */
+    struct nbp_test_case_function_t* /* testCaseFunction */
 );
 
 typedef void (*nbp_test_case_pfn_t)(
@@ -1094,7 +1094,7 @@ enum nbp_test_case_state_e
 };
 typedef enum nbp_test_case_state_e nbp_test_case_state_e;
 
-struct nbp_test_case_setup_details_t
+struct nbp_test_case_setup_function_t
 {
     const char* functionName;
 
@@ -1103,9 +1103,9 @@ struct nbp_test_case_setup_details_t
 
     nbp_test_case_setup_pfn_t function;
 };
-typedef struct nbp_test_case_setup_details_t nbp_test_case_setup_details_t;
+typedef struct nbp_test_case_setup_function_t nbp_test_case_setup_function_t;
 
-struct nbp_test_case_teardown_details_t
+struct nbp_test_case_teardown_function_t
 {
     const char* functionName;
 
@@ -1114,10 +1114,10 @@ struct nbp_test_case_teardown_details_t
 
     nbp_test_case_teardown_pfn_t function;
 };
-typedef struct nbp_test_case_teardown_details_t
-    nbp_test_case_teardown_details_t;
+typedef struct nbp_test_case_teardown_function_t
+    nbp_test_case_teardown_function_t;
 
-struct nbp_test_case_details_t
+struct nbp_test_case_function_t
 {
     const char* name;
     const char* functionName;
@@ -1130,14 +1130,14 @@ struct nbp_test_case_details_t
     nbp_test_case_config_pfn_t configFunction;
     nbp_test_case_pfn_t function;
 
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
+    nbp_test_case_setup_function_t* setupFunction;
+    nbp_test_case_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_test_case_details_t nbp_test_case_details_t;
+typedef struct nbp_test_case_function_t nbp_test_case_function_t;
 
 struct nbp_test_case_instance_t
 {
-    nbp_test_case_details_t* testCaseDetails;
+    nbp_test_case_function_t* testCaseFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -1149,8 +1149,8 @@ struct nbp_test_case_instance_t
 
     int instantiationLine;
 
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
+    nbp_test_case_setup_function_t* setupFunction;
+    nbp_test_case_teardown_function_t* teardownFunction;
 
     struct nbp_test_case_t* runs;
     unsigned int numberOfRuns;
@@ -1178,7 +1178,7 @@ typedef struct nbp_test_case_t nbp_test_case_t;
 
 struct nbp_module_t;
 
-struct nbp_test_suite_details_t;
+struct nbp_test_suite_function_t;
 struct nbp_test_suite_instance_t;
 struct nbp_test_suite_t;
 
@@ -1191,7 +1191,7 @@ typedef void (*nbp_test_suite_teardown_pfn_t)(
 );
 
 typedef void (*nbp_test_suite_config_pfn_t)(
-    struct nbp_test_suite_details_t* /* testSuiteDetails */
+    struct nbp_test_suite_function_t* /* testSuiteFunction */
 );
 
 typedef void (*nbp_test_suite_pfn_t)(
@@ -1221,7 +1221,7 @@ enum nbp_test_suite_state_e
 };
 typedef enum nbp_test_suite_state_e nbp_test_suite_state_e;
 
-struct nbp_test_suite_setup_details_t
+struct nbp_test_suite_setup_function_t
 {
     const char* functionName;
 
@@ -1230,9 +1230,9 @@ struct nbp_test_suite_setup_details_t
 
     nbp_test_suite_setup_pfn_t function;
 };
-typedef struct nbp_test_suite_setup_details_t nbp_test_suite_setup_details_t;
+typedef struct nbp_test_suite_setup_function_t nbp_test_suite_setup_function_t;
 
-struct nbp_test_suite_teardown_details_t
+struct nbp_test_suite_teardown_function_t
 {
     const char* functionName;
 
@@ -1241,10 +1241,10 @@ struct nbp_test_suite_teardown_details_t
 
     nbp_test_suite_teardown_pfn_t function;
 };
-typedef struct nbp_test_suite_teardown_details_t
-    nbp_test_suite_teardown_details_t;
+typedef struct nbp_test_suite_teardown_function_t
+    nbp_test_suite_teardown_function_t;
 
-struct nbp_test_suite_details_t
+struct nbp_test_suite_function_t
 {
     const char* name;
     const char* functionName;
@@ -1257,14 +1257,14 @@ struct nbp_test_suite_details_t
     nbp_test_suite_config_pfn_t configFunction;
     nbp_test_suite_pfn_t function;
 
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
+    nbp_test_suite_setup_function_t* setupFunction;
+    nbp_test_suite_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
+typedef struct nbp_test_suite_function_t nbp_test_suite_function_t;
 
 struct nbp_test_suite_instance_t
 {
-    nbp_test_suite_details_t* testSuiteDetails;
+    nbp_test_suite_function_t* testSuiteFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -1275,8 +1275,8 @@ struct nbp_test_suite_instance_t
 
     int instantiationLine;
 
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
+    nbp_test_suite_setup_function_t* setupFunction;
+    nbp_test_suite_teardown_function_t* teardownFunction;
 
     struct nbp_test_suite_t* runs;
     unsigned int numberOfRuns;
@@ -1321,7 +1321,7 @@ typedef struct nbp_test_suite_t nbp_test_suite_t;
 #define NBP_NUMBER_OF_MODULE_INSTANCE_STATES ((unsigned int) 5)
 #define NBP_NUMBER_OF_MODULE_STATES          ((unsigned int) 5)
 
-struct nbp_module_details_t;
+struct nbp_module_function_t;
 struct nbp_module_instance_t;
 struct nbp_module_t;
 
@@ -1333,7 +1333,7 @@ typedef void (*nbp_module_teardown_pfn_t)(
 );
 
 typedef void (*nbp_module_config_pfn_t)(
-    struct nbp_module_details_t* /* moduleDetails */
+    struct nbp_module_function_t* /* moduleFunction */
 );
 
 typedef void (*nbp_module_pfn_t)(
@@ -1365,7 +1365,7 @@ enum nbp_module_state_e
 };
 typedef enum nbp_module_state_e nbp_module_state_e;
 
-struct nbp_module_setup_details_t
+struct nbp_module_setup_function_t
 {
     const char* functionName;
 
@@ -1374,9 +1374,9 @@ struct nbp_module_setup_details_t
 
     nbp_module_setup_pfn_t function;
 };
-typedef struct nbp_module_setup_details_t nbp_module_setup_details_t;
+typedef struct nbp_module_setup_function_t nbp_module_setup_function_t;
 
-struct nbp_module_teardown_details_t
+struct nbp_module_teardown_function_t
 {
     const char* functionName;
 
@@ -1385,9 +1385,9 @@ struct nbp_module_teardown_details_t
 
     nbp_module_teardown_pfn_t function;
 };
-typedef struct nbp_module_teardown_details_t nbp_module_teardown_details_t;
+typedef struct nbp_module_teardown_function_t nbp_module_teardown_function_t;
 
-struct nbp_module_details_t
+struct nbp_module_function_t
 {
     const char* name;
     const char* functionName;
@@ -1400,14 +1400,14 @@ struct nbp_module_details_t
     nbp_module_config_pfn_t configFunction;
     nbp_module_pfn_t function;
 
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
+    nbp_module_setup_function_t* setupFunction;
+    nbp_module_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_module_details_t nbp_module_details_t;
+typedef struct nbp_module_function_t nbp_module_function_t;
 
 struct nbp_module_instance_t
 {
-    nbp_module_details_t* moduleDetails;
+    nbp_module_function_t* moduleFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -1418,8 +1418,8 @@ struct nbp_module_instance_t
 
     int instantiationLine;
 
-    nbp_module_setup_details_t* setupDetails;
-    nbp_module_teardown_details_t* teardownDetails;
+    nbp_module_setup_function_t* setupFunction;
+    nbp_module_teardown_function_t* teardownFunction;
 
     struct nbp_module_t* runs;
     unsigned int numberOfRuns;
@@ -1787,7 +1787,7 @@ nbp_module_t* internal_nbp_get_module_from_instance(
     unsigned int runId);
 
 nbp_module_instance_t* internal_nbp_instantiate_module(
-    nbp_module_details_t* moduleDetails,
+    nbp_module_function_t* moduleFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
@@ -1956,7 +1956,7 @@ nbp_test_case_t* internal_nbp_get_test_case_from_instance(
     unsigned int runId);
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
-    nbp_test_case_details_t* testCaseDetails,
+    nbp_test_case_function_t* testCaseFunction,
     nbp_module_t* parentModule,
     nbp_test_suite_t* parentTestSuite,
     int instantiationLine,
@@ -1992,7 +1992,7 @@ nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
     unsigned int runId);
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
-    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_test_suite_function_t* testSuiteFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
@@ -2162,7 +2162,7 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_MODULE_SETUP(func)                                                 \
     void nbp_module_setup_function_##func(                                     \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
-    nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func = {        \
+    nbp_module_setup_function_t gInternalNbpModuleSetupFunction##func = {      \
         .functionName = #func,                                                 \
         .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
@@ -2177,11 +2177,12 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_MODULE_TEARDOWN(func)                                              \
     void nbp_module_teardown_function_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule);              \
-    nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func = {  \
-        .functionName = #func,                                                 \
-        .file         = NBP_SOURCE_FILE,                                       \
-        .line         = NBP_SOURCE_LINE,                                       \
-        .function     = nbp_module_teardown_function_##func,                   \
+    nbp_module_teardown_function_t gInternalNbpModuleTeardownFunction##func =  \
+        {                                                                      \
+            .functionName = #func,                                             \
+            .file         = NBP_SOURCE_FILE,                                   \
+            .line         = NBP_SOURCE_LINE,                                   \
+            .function     = nbp_module_teardown_function_##func,               \
     };                                                                         \
     void nbp_module_teardown_function_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2191,12 +2192,12 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_MODULE(func, ...)                                                  \
     void nbp_module_config_function_##func(                                    \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_details_t* moduleDetails)        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_function_t* moduleFunction)      \
     {                                                                          \
-        if (moduleDetails->isConfigured == 1) {                                \
+        if (moduleFunction->isConfigured == 1) {                               \
             return;                                                            \
         } else {                                                               \
-            moduleDetails->isConfigured = 1;                                   \
+            moduleFunction->isConfigured = 1;                                  \
         }                                                                      \
         INTERNAL_NBP_GENERATE_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)          \
     }                                                                          \
@@ -2207,16 +2208,16 @@ void internal_nbp_copy_array_of_atomic_uint(
         nbp_module_t* nbpParamTsiParentModule,                                 \
         nbp_module_t* nbpParamMiParentModule,                                  \
         unsigned int nbpParamNumberOfRuns);                                    \
-    nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_module_config_function_##func,                  \
-        .function        = nbp_module_function_##func,                         \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_module_function_t gInternalNbpModuleFunction##func = {                 \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_module_config_function_##func,                 \
+        .function         = nbp_module_function_##func,                        \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
     void nbp_module_function_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
@@ -2240,37 +2241,39 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_MODULE_SETUP(func)                                         \
-    extern nbp_module_setup_details_t gInternalNbpModuleSetupDetails##func
+#define NBP_INCLUDE_MODULE_SETUP_FUNCTION(func)                                \
+    extern nbp_module_setup_function_t gInternalNbpModuleSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_MODULE_SETUP(func)                                  \
-    &gInternalNbpModuleSetupDetails##func
+#define NBP_GET_POINTER_TO_MODULE_SETUP_FUNCTION(func)                         \
+    &gInternalNbpModuleSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_MODULE_TEARDOWN(func)                                      \
-    extern nbp_module_teardown_details_t gInternalNbpModuleTeardownDetails##func
+#define NBP_INCLUDE_MODULE_TEARDOWN_FUNCTION(func)                             \
+    extern nbp_module_teardown_function_t                                      \
+        gInternalNbpModuleTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_MODULE_TEARDOWN(func)                               \
-    &gInternalNbpModuleTeardownDetails##func
+#define NBP_GET_POINTER_TO_MODULE_TEARDOWN_FUNCTION(func)                      \
+    &gInternalNbpModuleTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_MODULE(func)                                               \
-    extern nbp_module_details_t gInternalNbpModuleDetails##func
+#define NBP_INCLUDE_MODULE_FUNCTION(func)                                      \
+    extern nbp_module_function_t gInternalNbpModuleFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_MODULE_DETAILS(func) &gInternalNbpModuleDetails##func
+#define NBP_GET_POINTER_TO_MODULE_FUNCTION(func)                               \
+    &gInternalNbpModuleFunction##func
 
 /**
  * TODO: add docs
@@ -2318,7 +2321,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_MODULE_INSTANCE_GET_NAME(moduleInstance)                           \
-    moduleInstance->moduleDetails->name
+    moduleInstance->moduleFunction->name
 
 /**
  * TODO: add docs
@@ -2356,11 +2359,11 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_INSTANTIATE_MODULE(func, ...)                                      \
-    NBP_INCLUDE_MODULE(func);                                                  \
+    NBP_INCLUDE_MODULE_FUNCTION(func);                                         \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(MPIO_##__VA_ARGS__))   \
     (MPIO_, MPIO_##__VA_ARGS__);                                               \
     internal_nbp_instantiate_module(                                           \
-        NBP_GET_POINTER_TO_MODULE_DETAILS(func),                               \
+        NBP_GET_POINTER_TO_MODULE_FUNCTION(func),                              \
         nbpParamMiParentModule,                                                \
         NBP_SOURCE_LINE,                                                       \
         nbpParamNumberOfRuns,                                                  \
@@ -2375,15 +2378,17 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_GMCF_
 
 #define INTERNAL_NBP_GMCF_NBP_MODULE_NAME(newName)                             \
-    moduleDetails->name = newName;
+    moduleFunction->name = newName;
 
 #define INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(func)                               \
-    NBP_INCLUDE_MODULE_SETUP(func);                                            \
-    moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
+    NBP_INCLUDE_MODULE_SETUP_FUNCTION(func);                                   \
+    moduleFunction->setupFunction =                                            \
+        NBP_GET_POINTER_TO_MODULE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GMCF_NBP_MODULE_TEARDOWN(func)                            \
-    NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
-    moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
+    NBP_INCLUDE_MODULE_TEARDOWN_FUNCTION(func);                                \
+    moduleFunction->teardownFunction =                                         \
+        NBP_GET_POINTER_TO_MODULE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)         \
     INTERNAL_NBP_GMCF_NBP_MODULE_SETUP(setupFunc)                              \
@@ -2965,11 +2970,12 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_TEST_SUITE_SETUP(func)                                             \
     void nbp_test_suite_setup_function_##func(                                 \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
-    nbp_test_suite_setup_details_t gInternalNbpTestSuiteSetupDetails##func = { \
-        .functionName = #func,                                                 \
-        .file         = NBP_SOURCE_FILE,                                       \
-        .line         = NBP_SOURCE_LINE,                                       \
-        .function     = nbp_test_suite_setup_function_##func,                  \
+    nbp_test_suite_setup_function_t gInternalNbpTestSuiteSetupFunction##func = \
+        {                                                                      \
+            .functionName = #func,                                             \
+            .file         = NBP_SOURCE_FILE,                                   \
+            .line         = NBP_SOURCE_LINE,                                   \
+            .function     = nbp_test_suite_setup_function_##func,              \
     };                                                                         \
     void nbp_test_suite_setup_function_##func(                                 \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
@@ -2980,8 +2986,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_TEST_SUITE_TEARDOWN(func)                                          \
     void nbp_test_suite_teardown_function_##func(                              \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
-    nbp_test_suite_teardown_details_t                                          \
-        gInternalNbpTestSuiteTeardownDetails##func = {                         \
+    nbp_test_suite_teardown_function_t                                         \
+        gInternalNbpTestSuiteTeardownFunction##func = {                        \
             .functionName = #func,                                             \
             .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
@@ -2995,12 +3001,13 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_TEST_SUITE(func, ...)                                              \
     void nbp_test_suite_config_function_##func(                                \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_details_t* testSuiteDetails) \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_function_t*                  \
+            testSuiteFunction)                                                 \
     {                                                                          \
-        if (testSuiteDetails->isConfigured == 1) {                             \
+        if (testSuiteFunction->isConfigured == 1) {                            \
             return;                                                            \
         } else {                                                               \
-            testSuiteDetails->isConfigured = 1;                                \
+            testSuiteFunction->isConfigured = 1;                               \
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
@@ -3009,16 +3016,16 @@ void internal_nbp_copy_array_of_atomic_uint(
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         unsigned int nbpParamNumberOfRuns);                                    \
-    nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_test_suite_config_function_##func,              \
-        .function        = nbp_test_suite_function_##func,                     \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_test_suite_function_t gInternalNbpTestSuiteFunction##func = {          \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_test_suite_config_function_##func,             \
+        .function         = nbp_test_suite_function_##func,                    \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
     void nbp_test_suite_function_##func(                                       \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -3040,40 +3047,40 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE_SETUP(func)                                     \
-    extern nbp_test_suite_setup_details_t                                      \
-        gInternalNbpTestSuiteSetupDetails##func
+#define NBP_INCLUDE_TEST_SUITE_SETUP_FUNCTION(func)                            \
+    extern nbp_test_suite_setup_function_t                                     \
+        gInternalNbpTestSuiteSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func)                              \
-    &gInternalNbpTestSuiteSetupDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_SETUP_FUNCTION(func)                     \
+    &gInternalNbpTestSuiteSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE_TEARDOWN(func)                                  \
-    extern nbp_test_suite_teardown_details_t                                   \
-        gInternalNbpTestSuiteTeardownDetails##func
+#define NBP_INCLUDE_TEST_SUITE_TEARDOWN_FUNCTION(func)                         \
+    extern nbp_test_suite_teardown_function_t                                  \
+        gInternalNbpTestSuiteTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func)                           \
-    &gInternalNbpTestSuiteTeardownDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN_FUNCTION(func)                  \
+    &gInternalNbpTestSuiteTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE(func)                                           \
-    extern nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func
+#define NBP_INCLUDE_TEST_SUITE_FUNCTION(func)                                  \
+    extern nbp_test_suite_function_t gInternalNbpTestSuiteFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func)                            \
-    &gInternalNbpTestSuiteDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_FUNCTION(func)                           \
+    &gInternalNbpTestSuiteFunction##func
 
 /**
  * TODO: add docs
@@ -3127,7 +3134,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
-    testSuiteInstance->testSuiteDetails->name
+    testSuiteInstance->testSuiteFunction->name
 
 /**
  * TODO: add docs
@@ -3173,11 +3180,11 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
-    NBP_INCLUDE_TEST_SUITE(func);                                              \
+    NBP_INCLUDE_TEST_SUITE_FUNCTION(func);                                     \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TSPIO_##__VA_ARGS__))  \
     (TSPIO_, TSPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_suite(                                       \
-        NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
+        NBP_GET_POINTER_TO_TEST_SUITE_FUNCTION(func),                          \
         nbpParamTsiParentModule,                                               \
         NBP_SOURCE_LINE,                                                       \
         nbpParamNumberOfRuns,                                                  \
@@ -3192,16 +3199,17 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_GTSCF_
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_NAME(newName)                        \
-    testSuiteDetails->name = newName;
+    testSuiteFunction->name = newName;
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(func)                          \
-    NBP_INCLUDE_TEST_SUITE_SETUP(func);                                        \
-    testSuiteDetails->setupDetails = NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func);
+    NBP_INCLUDE_TEST_SUITE_SETUP_FUNCTION(func);                               \
+    testSuiteFunction->setupFunction =                                         \
+        NBP_GET_POINTER_TO_TEST_SUITE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(func)                       \
-    NBP_INCLUDE_TEST_SUITE_TEARDOWN(func);                                     \
-    testSuiteDetails->teardownDetails =                                        \
-        NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func);
+    NBP_INCLUDE_TEST_SUITE_TEARDOWN_FUNCTION(func);                            \
+    testSuiteFunction->teardownFunction =                                      \
+        NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \
@@ -3287,7 +3295,7 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_TEST_CASE_SETUP(func)                                              \
     void nbp_test_case_setup_function_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func = {   \
+    nbp_test_case_setup_function_t gInternalNbpTestCaseSetupFunction##func = { \
         .functionName = #func,                                                 \
         .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
@@ -3302,8 +3310,8 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define NBP_TEST_CASE_TEARDOWN(func)                                           \
     void nbp_test_case_teardown_function_##func(                               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_teardown_details_t                                           \
-        gInternalNbpTestCaseTeardownDetails##func = {                          \
+    nbp_test_case_teardown_function_t                                          \
+        gInternalNbpTestCaseTeardownFunction##func = {                         \
             .functionName = #func,                                             \
             .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
@@ -3317,26 +3325,26 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_TEST_CASE(func, ...)                                               \
     void nbp_test_case_config_function_##func(                                 \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_details_t* testCaseDetails)   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_function_t* testCaseFunction) \
     {                                                                          \
-        if (testCaseDetails->isConfigured == 1) {                              \
+        if (testCaseFunction->isConfigured == 1) {                             \
             return;                                                            \
         } else {                                                               \
-            testCaseDetails->isConfigured = 1;                                 \
+            testCaseFunction->isConfigured = 1;                                \
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
     }                                                                          \
     void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
-    nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_test_case_config_function_##func,               \
-        .function        = nbp_test_case_function_##func,                      \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_test_case_function_t gInternalNbpTestCaseFunction##func = {            \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_test_case_config_function_##func,              \
+        .function         = nbp_test_case_function_##func,                     \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
     void nbp_test_case_function_##func(                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
@@ -3354,39 +3362,40 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE_SETUP(func)                                      \
-    extern nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func
+#define NBP_INCLUDE_TEST_CASE_SETUP_FUNCTION(func)                             \
+    extern nbp_test_case_setup_function_t                                      \
+        gInternalNbpTestCaseSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_SETUP(func)                               \
-    &gInternalNbpTestCaseSetupDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_SETUP_FUNCTION(func)                      \
+    &gInternalNbpTestCaseSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE_TEARDOWN(func)                                   \
-    extern nbp_test_case_teardown_details_t                                    \
-        gInternalNbpTestCaseTeardownDetails##func
+#define NBP_INCLUDE_TEST_CASE_TEARDOWN_FUNCTION(func)                          \
+    extern nbp_test_case_teardown_function_t                                   \
+        gInternalNbpTestCaseTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func)                            \
-    &gInternalNbpTestCaseTeardownDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN_FUNCTION(func)                   \
+    &gInternalNbpTestCaseTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE(func)                                            \
-    extern nbp_test_case_details_t gInternalNbpTestCaseDetails##func
+#define NBP_INCLUDE_TEST_CASE_FUNCTION(func)                                   \
+    extern nbp_test_case_function_t gInternalNbpTestCaseFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
-    &gInternalNbpTestCaseDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_FUNCTION(func)                            \
+    &gInternalNbpTestCaseFunction##func
 
 /**
  * TODO: add docs
@@ -3434,7 +3443,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
-    testCaseInstance->testCaseDetails->name
+    testCaseInstance->testCaseFunction->name
 
 /**
  * TODO: add docs
@@ -3474,11 +3483,11 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
-    NBP_INCLUDE_TEST_CASE(func);                                               \
+    NBP_INCLUDE_TEST_CASE_FUNCTION(func);                                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TCPIO_##__VA_ARGS__))  \
     (TCPIO_, TCPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_case(                                        \
-        NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
+        NBP_GET_POINTER_TO_TEST_CASE_FUNCTION(func),                           \
         nbpParamTciParentModule,                                               \
         nbpParamTciParentTestSuite,                                            \
         NBP_SOURCE_LINE,                                                       \
@@ -3495,16 +3504,17 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_GTCCF_
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
-    testCaseDetails->name = newName;
+    testCaseFunction->name = newName;
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
-    NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
-    testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
+    NBP_INCLUDE_TEST_CASE_SETUP_FUNCTION(func);                                \
+    testCaseFunction->setupFunction =                                          \
+        NBP_GET_POINTER_TO_TEST_CASE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
-    NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
-    testCaseDetails->teardownDetails =                                         \
-        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
+    NBP_INCLUDE_TEST_CASE_TEARDOWN_FUNCTION(func);                             \
+    testCaseFunction->teardownFunction =                                       \
+        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \
@@ -3543,12 +3553,12 @@ void internal_nbp_copy_array_of_atomic_uint(
  */
 #define NBP_MAIN_MODULE(func, ...)                                             \
     void nbp_module_config_function_##func(                                    \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_details_t* moduleDetails)        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_function_t* moduleFunction)      \
     {                                                                          \
-        if (moduleDetails->isConfigured == 1) {                                \
+        if (moduleFunction->isConfigured == 1) {                               \
             return;                                                            \
         } else {                                                               \
-            moduleDetails->isConfigured = 1;                                   \
+            moduleFunction->isConfigured = 1;                                  \
         }                                                                      \
         INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)     \
     }                                                                          \
@@ -3559,19 +3569,19 @@ void internal_nbp_copy_array_of_atomic_uint(
         nbp_module_t* nbpParamTsiParentModule,                                 \
         nbp_module_t* nbpParamMiParentModule,                                  \
         unsigned int nbpParamNumberOfRuns);                                    \
-    nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_module_config_function_##func,                  \
-        .function        = nbp_module_function_##func,                         \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_module_function_t gInternalNbpModuleFunction##func = {                 \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_module_config_function_##func,                 \
+        .function         = nbp_module_function_##func,                        \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
-    nbp_module_details_t* gInternalNbpMainModuleDetails =                      \
-        &gInternalNbpModuleDetails##func;                                      \
+    nbp_module_function_t* gInternalNbpMainModuleFunction =                    \
+        &gInternalNbpModuleFunction##func;                                     \
     void nbp_module_function_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
@@ -3589,15 +3599,17 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_GMMCF_
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_NAME(newName)                            \
-    moduleDetails->name = newName;
+    moduleFunction->name = newName;
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_SETUP(func)                              \
-    NBP_INCLUDE_MODULE_SETUP(func);                                            \
-    moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
+    NBP_INCLUDE_MODULE_SETUP_FUNCTION(func);                                   \
+    moduleFunction->setupFunction =                                            \
+        NBP_GET_POINTER_TO_MODULE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_TEARDOWN(func)                           \
-    NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
-    moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
+    NBP_INCLUDE_MODULE_TEARDOWN_FUNCTION(func);                                \
+    moduleFunction->teardownFunction =                                         \
+        NBP_GET_POINTER_TO_MODULE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)        \
     INTERNAL_NBP_GMMCF_NBP_MODULE_SETUP(setupFunc)                             \
@@ -3607,7 +3619,7 @@ void internal_nbp_copy_array_of_atomic_uint(
 
 #ifdef NBP_LIBRARY_MAIN
 
-extern nbp_module_details_t* gInternalNbpMainModuleDetails;
+extern nbp_module_function_t* gInternalNbpMainModuleFunction;
 
 nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
 
@@ -3661,7 +3673,7 @@ static int internal_nbp_command_run_all()
     }
 
     gInternalNbpMainModuleInstance = internal_nbp_instantiate_module(
-        gInternalNbpMainModuleDetails,
+        gInternalNbpMainModuleFunction,
         NBP_NULLPTR,
         0,
         1,
@@ -3728,7 +3740,7 @@ int main(int argc, const char** argv)
     return (int) ec_invalid_command_line;
 }
 
-extern nbp_module_details_t* gInternalNbpMainModuleDetails;
+extern nbp_module_function_t* gInternalNbpMainModuleFunction;
 
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
@@ -3929,13 +3941,13 @@ nbp_module_t* internal_nbp_get_module_from_instance(
 }
 
 nbp_module_instance_t* internal_nbp_instantiate_module(
-    nbp_module_details_t* moduleDetails,
+    nbp_module_function_t* moduleFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    moduleDetails->configFunction(moduleDetails);
+    moduleFunction->configFunction(moduleFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -3946,7 +3958,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     if (parentModule == NBP_NULLPTR
-        && moduleDetails != gInternalNbpMainModuleDetails) {
+        && moduleFunction != gInternalNbpMainModuleFunction) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_parent,
             "module instance has no parent");
@@ -3955,7 +3967,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     if (parentModule != NBP_NULLPTR) {
-        if (parentModule->moduleInstance->moduleDetails == moduleDetails) {
+        if (parentModule->moduleInstance->moduleFunction == moduleFunction) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
                 ec_invalid_parent,
                 "a module cannot self instantiate");
@@ -3965,7 +3977,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
         nbp_module_t* p = parentModule->moduleInstance->parent;
         while (p != NBP_NULLPTR) {
-            if (p->moduleInstance->moduleDetails == moduleDetails) {
+            if (p->moduleInstance->moduleFunction == moduleFunction) {
                 NBP_REPORT_ERROR_STRING_CONTEXT(
                     ec_invalid_parent,
                     "a module cannot instantiate a parent module");
@@ -4063,12 +4075,12 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             0U);
     }
 
-    moduleInstance->moduleDetails     = moduleDetails;
+    moduleInstance->moduleFunction    = moduleFunction;
     moduleInstance->parent            = parentModule;
     moduleInstance->depth             = 0;
     moduleInstance->instantiationLine = instantiationLine;
-    moduleInstance->setupDetails      = moduleDetails->setupDetails;
-    moduleInstance->teardownDetails   = moduleDetails->teardownDetails;
+    moduleInstance->setupFunction     = moduleFunction->setupFunction;
+    moduleInstance->teardownFunction  = moduleFunction->teardownFunction;
     moduleInstance->runs              = runs;
     moduleInstance->numberOfRuns      = numberOfRuns;
     moduleInstance->next              = NBP_NULLPTR;
@@ -4134,7 +4146,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        moduleInstance->moduleDetails->function(
+        moduleInstance->moduleFunction->function(
             &moduleInstance->runs[i],
             NBP_NULLPTR,
             &moduleInstance->runs[i],
@@ -4840,8 +4852,8 @@ static int internal_nbp_runner_setup_module(nbp_module_t* module)
             internal_nbp_runner_setup_module(module->moduleInstance->parent);
 
         if (parentValue == (int) sf_is_processed) {
-            if (module->moduleInstance->setupDetails != NBP_NULLPTR) {
-                module->moduleInstance->setupDetails->function(module);
+            if (module->moduleInstance->setupFunction != NBP_NULLPTR) {
+                module->moduleInstance->setupFunction->function(module);
             }
 
             err = NBP_SYNC_EVENT_NOTIFY(module->setupEvent);
@@ -5029,8 +5041,8 @@ static void internal_nbp_runner_teardown_module(nbp_module_t* module)
 
         int isSkipped = NBP_ATOMIC_INT_LOAD(&module->isSkipped);
         if (isSkipped == (int) sf_is_processed) {
-            if (module->moduleInstance->teardownDetails != NBP_NULLPTR) {
-                module->moduleInstance->teardownDetails->function(module);
+            if (module->moduleInstance->teardownFunction != NBP_NULLPTR) {
+                module->moduleInstance->teardownFunction->function(module);
             }
         }
 
@@ -5115,8 +5127,9 @@ static int internal_nbp_runner_setup_test_suite(nbp_test_suite_t* testSuite)
             testSuite->testSuiteInstance->module);
 
         if (parentValue == (int) sf_is_processed) {
-            if (testSuite->testSuiteInstance->setupDetails != NBP_NULLPTR) {
-                testSuite->testSuiteInstance->setupDetails->function(testSuite);
+            if (testSuite->testSuiteInstance->setupFunction != NBP_NULLPTR) {
+                testSuite->testSuiteInstance->setupFunction->function(
+                    testSuite);
             }
 
             err = NBP_SYNC_EVENT_NOTIFY(testSuite->setupEvent);
@@ -5240,8 +5253,8 @@ static void internal_nbp_runner_teardown_test_suite(nbp_test_suite_t* testSuite)
 
     int isSkipped = NBP_ATOMIC_INT_LOAD(&testSuite->isSkipped);
     if (isSkipped == (int) sf_is_processed) {
-        if (testSuite->testSuiteInstance->teardownDetails != NBP_NULLPTR) {
-            testSuite->testSuiteInstance->teardownDetails->function(testSuite);
+        if (testSuite->testSuiteInstance->teardownFunction != NBP_NULLPTR) {
+            testSuite->testSuiteInstance->teardownFunction->function(testSuite);
         }
     }
 
@@ -5368,14 +5381,14 @@ static void internal_nbp_runner_run_ready_test_case(nbp_test_case_t* testCase)
     internal_nbp_test_case_update_state_stats(testCase, tcs_ready, tcs_running);
     internal_nbp_notify_reporter_test_case_started(testCase);
 
-    if (testCase->testCaseInstance->setupDetails != NBP_NULLPTR) {
-        testCase->testCaseInstance->setupDetails->function(testCase);
+    if (testCase->testCaseInstance->setupFunction != NBP_NULLPTR) {
+        testCase->testCaseInstance->setupFunction->function(testCase);
     }
 
-    testCase->testCaseInstance->testCaseDetails->function(testCase);
+    testCase->testCaseInstance->testCaseFunction->function(testCase);
 
-    if (testCase->testCaseInstance->teardownDetails != NBP_NULLPTR) {
-        testCase->testCaseInstance->teardownDetails->function(testCase);
+    if (testCase->testCaseInstance->teardownFunction != NBP_NULLPTR) {
+        testCase->testCaseInstance->teardownFunction->function(testCase);
     }
 
     int newState = (int) tcs_passed;
@@ -5972,14 +5985,14 @@ nbp_test_case_t* internal_nbp_get_test_case_from_instance(
 }
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
-    nbp_test_case_details_t* testCaseDetails,
+    nbp_test_case_function_t* testCaseFunction,
     nbp_module_t* parentModule,
     nbp_test_suite_t* parentTestSuite,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    testCaseDetails->configFunction(testCaseDetails);
+    testCaseFunction->configFunction(testCaseFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -6041,13 +6054,13 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
-    testCaseInstance->testCaseDetails   = testCaseDetails;
+    testCaseInstance->testCaseFunction  = testCaseFunction;
     testCaseInstance->module            = parentModule;
     testCaseInstance->testSuite         = parentTestSuite;
     testCaseInstance->depth             = 0;
     testCaseInstance->instantiationLine = instantiationLine;
-    testCaseInstance->setupDetails      = testCaseDetails->setupDetails;
-    testCaseInstance->teardownDetails   = testCaseDetails->teardownDetails;
+    testCaseInstance->setupFunction     = testCaseFunction->setupFunction;
+    testCaseInstance->teardownFunction  = testCaseFunction->teardownFunction;
     testCaseInstance->runs              = runs;
     testCaseInstance->numberOfRuns      = numberOfRuns;
     testCaseInstance->next              = NBP_NULLPTR;
@@ -6307,13 +6320,13 @@ nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
 }
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
-    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_test_suite_function_t* testSuiteFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    testSuiteDetails->configFunction(testSuiteDetails);
+    testSuiteFunction->configFunction(testSuiteFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -6395,11 +6408,11 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             0U);
     }
 
-    testSuiteInstance->testSuiteDetails  = testSuiteDetails;
+    testSuiteInstance->testSuiteFunction = testSuiteFunction;
     testSuiteInstance->module            = parentModule;
     testSuiteInstance->instantiationLine = instantiationLine;
-    testSuiteInstance->setupDetails      = testSuiteDetails->setupDetails;
-    testSuiteInstance->teardownDetails   = testSuiteDetails->teardownDetails;
+    testSuiteInstance->setupFunction     = testSuiteFunction->setupFunction;
+    testSuiteInstance->teardownFunction  = testSuiteFunction->teardownFunction;
     testSuiteInstance->runs              = runs;
     testSuiteInstance->numberOfRuns      = numberOfRuns;
     testSuiteInstance->next              = NBP_NULLPTR;
@@ -6446,7 +6459,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        testSuiteInstance->testSuiteDetails->function(
+        testSuiteInstance->testSuiteFunction->function(
             &testSuiteInstance->runs[i],
             &testSuiteInstance->runs[i],
             NBP_NULLPTR,

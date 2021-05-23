@@ -41,7 +41,7 @@ SOFTWARE.
 #define NBP_TEST_CASE_SETUP(func)                                              \
     void nbp_test_case_setup_function_##func(                                  \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func = {   \
+    nbp_test_case_setup_function_t gInternalNbpTestCaseSetupFunction##func = { \
         .functionName = #func,                                                 \
         .file         = NBP_SOURCE_FILE,                                       \
         .line         = NBP_SOURCE_LINE,                                       \
@@ -56,8 +56,8 @@ SOFTWARE.
 #define NBP_TEST_CASE_TEARDOWN(func)                                           \
     void nbp_test_case_teardown_function_##func(                               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase);         \
-    nbp_test_case_teardown_details_t                                           \
-        gInternalNbpTestCaseTeardownDetails##func = {                          \
+    nbp_test_case_teardown_function_t                                          \
+        gInternalNbpTestCaseTeardownFunction##func = {                         \
             .functionName = #func,                                             \
             .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
@@ -71,26 +71,26 @@ SOFTWARE.
  */
 #define NBP_TEST_CASE(func, ...)                                               \
     void nbp_test_case_config_function_##func(                                 \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_details_t* testCaseDetails)   \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_function_t* testCaseFunction) \
     {                                                                          \
-        if (testCaseDetails->isConfigured == 1) {                              \
+        if (testCaseFunction->isConfigured == 1) {                             \
             return;                                                            \
         } else {                                                               \
-            testCaseDetails->isConfigured = 1;                                 \
+            testCaseFunction->isConfigured = 1;                                \
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_CASE_CONFIG_FUNCTION(F_##__VA_ARGS__)       \
     }                                                                          \
     void nbp_test_case_function_##func(nbp_test_case_t* nbpParamTestCase);     \
-    nbp_test_case_details_t gInternalNbpTestCaseDetails##func = {              \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_test_case_config_function_##func,               \
-        .function        = nbp_test_case_function_##func,                      \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_test_case_function_t gInternalNbpTestCaseFunction##func = {            \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_test_case_config_function_##func,              \
+        .function         = nbp_test_case_function_##func,                     \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
     void nbp_test_case_function_##func(                                        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase)
@@ -108,39 +108,40 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE_SETUP(func)                                      \
-    extern nbp_test_case_setup_details_t gInternalNbpTestCaseSetupDetails##func
+#define NBP_INCLUDE_TEST_CASE_SETUP_FUNCTION(func)                             \
+    extern nbp_test_case_setup_function_t                                      \
+        gInternalNbpTestCaseSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_SETUP(func)                               \
-    &gInternalNbpTestCaseSetupDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_SETUP_FUNCTION(func)                      \
+    &gInternalNbpTestCaseSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE_TEARDOWN(func)                                   \
-    extern nbp_test_case_teardown_details_t                                    \
-        gInternalNbpTestCaseTeardownDetails##func
+#define NBP_INCLUDE_TEST_CASE_TEARDOWN_FUNCTION(func)                          \
+    extern nbp_test_case_teardown_function_t                                   \
+        gInternalNbpTestCaseTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func)                            \
-    &gInternalNbpTestCaseTeardownDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN_FUNCTION(func)                   \
+    &gInternalNbpTestCaseTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_CASE(func)                                            \
-    extern nbp_test_case_details_t gInternalNbpTestCaseDetails##func
+#define NBP_INCLUDE_TEST_CASE_FUNCTION(func)                                   \
+    extern nbp_test_case_function_t gInternalNbpTestCaseFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func)                             \
-    &gInternalNbpTestCaseDetails##func
+#define NBP_GET_POINTER_TO_TEST_CASE_FUNCTION(func)                            \
+    &gInternalNbpTestCaseFunction##func
 
 /**
  * TODO: add docs
@@ -188,7 +189,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_TEST_CASE_INSTANCE_GET_NAME(testCaseInstance)                      \
-    testCaseInstance->testCaseDetails->name
+    testCaseInstance->testCaseFunction->name
 
 /**
  * TODO: add docs
@@ -228,11 +229,11 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_INSTANTIATE_TEST_CASE(func, ...)                                   \
-    NBP_INCLUDE_TEST_CASE(func);                                               \
+    NBP_INCLUDE_TEST_CASE_FUNCTION(func);                                      \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TCPIO_##__VA_ARGS__))  \
     (TCPIO_, TCPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_case(                                        \
-        NBP_GET_POINTER_TO_TEST_CASE_DETAILS(func),                            \
+        NBP_GET_POINTER_TO_TEST_CASE_FUNCTION(func),                           \
         nbpParamTciParentModule,                                               \
         nbpParamTciParentTestSuite,                                            \
         NBP_SOURCE_LINE,                                                       \
@@ -249,16 +250,17 @@ SOFTWARE.
 #define INTERNAL_NBP_GTCCF_
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_NAME(newName)                         \
-    testCaseDetails->name = newName;
+    testCaseFunction->name = newName;
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(func)                           \
-    NBP_INCLUDE_TEST_CASE_SETUP(func);                                         \
-    testCaseDetails->setupDetails = NBP_GET_POINTER_TO_TEST_CASE_SETUP(func);
+    NBP_INCLUDE_TEST_CASE_SETUP_FUNCTION(func);                                \
+    testCaseFunction->setupFunction =                                          \
+        NBP_GET_POINTER_TO_TEST_CASE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_TEARDOWN(func)                        \
-    NBP_INCLUDE_TEST_CASE_TEARDOWN(func);                                      \
-    testCaseDetails->teardownDetails =                                         \
-        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN(func);
+    NBP_INCLUDE_TEST_CASE_TEARDOWN_FUNCTION(func);                             \
+    testCaseFunction->teardownFunction =                                       \
+        NBP_GET_POINTER_TO_TEST_CASE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GTCCF_NBP_TEST_CASE_FIXTURES(setupFunc, teardownFunc)     \
     INTERNAL_NBP_GTCCF_NBP_TEST_CASE_SETUP(setupFunc)                          \

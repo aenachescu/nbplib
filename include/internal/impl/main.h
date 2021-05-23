@@ -43,7 +43,7 @@ SOFTWARE.
 #include "../types/runner.h"
 #include "../types/sync.h"
 
-extern nbp_module_details_t* gInternalNbpMainModuleDetails;
+extern nbp_module_function_t* gInternalNbpMainModuleFunction;
 
 nbp_module_instance_t* gInternalNbpMainModuleInstance = NBP_NULLPTR;
 
@@ -97,7 +97,7 @@ static int internal_nbp_command_run_all()
     }
 
     gInternalNbpMainModuleInstance = internal_nbp_instantiate_module(
-        gInternalNbpMainModuleDetails,
+        gInternalNbpMainModuleFunction,
         NBP_NULLPTR,
         0,
         1,

@@ -58,7 +58,7 @@ nbp_module_t* internal_nbp_get_module_from_instance(
     unsigned int runId);
 
 nbp_module_instance_t* internal_nbp_instantiate_module(
-    nbp_module_details_t* moduleDetails,
+    nbp_module_function_t* moduleFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,

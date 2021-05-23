@@ -38,12 +38,12 @@ SOFTWARE.
  */
 #define NBP_MAIN_MODULE(func, ...)                                             \
     void nbp_module_config_function_##func(                                    \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_module_details_t* moduleDetails)        \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_module_function_t* moduleFunction)      \
     {                                                                          \
-        if (moduleDetails->isConfigured == 1) {                                \
+        if (moduleFunction->isConfigured == 1) {                               \
             return;                                                            \
         } else {                                                               \
-            moduleDetails->isConfigured = 1;                                   \
+            moduleFunction->isConfigured = 1;                                  \
         }                                                                      \
         INTERNAL_NBP_GENERATE_MAIN_MODULE_CONFIG_FUNCTION(F_##__VA_ARGS__)     \
     }                                                                          \
@@ -54,19 +54,19 @@ SOFTWARE.
         nbp_module_t* nbpParamTsiParentModule,                                 \
         nbp_module_t* nbpParamMiParentModule,                                  \
         unsigned int nbpParamNumberOfRuns);                                    \
-    nbp_module_details_t gInternalNbpModuleDetails##func = {                   \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_module_config_function_##func,                  \
-        .function        = nbp_module_function_##func,                         \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_module_function_t gInternalNbpModuleFunction##func = {                 \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_module_config_function_##func,                 \
+        .function         = nbp_module_function_##func,                        \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
-    nbp_module_details_t* gInternalNbpMainModuleDetails =                      \
-        &gInternalNbpModuleDetails##func;                                      \
+    nbp_module_function_t* gInternalNbpMainModuleFunction =                    \
+        &gInternalNbpModuleFunction##func;                                     \
     void nbp_module_function_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t*                           \
@@ -84,15 +84,17 @@ SOFTWARE.
 #define INTERNAL_NBP_GMMCF_
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_NAME(newName)                            \
-    moduleDetails->name = newName;
+    moduleFunction->name = newName;
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_SETUP(func)                              \
-    NBP_INCLUDE_MODULE_SETUP(func);                                            \
-    moduleDetails->setupDetails = NBP_GET_POINTER_TO_MODULE_SETUP(func);
+    NBP_INCLUDE_MODULE_SETUP_FUNCTION(func);                                   \
+    moduleFunction->setupFunction =                                            \
+        NBP_GET_POINTER_TO_MODULE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_TEARDOWN(func)                           \
-    NBP_INCLUDE_MODULE_TEARDOWN(func);                                         \
-    moduleDetails->teardownDetails = NBP_GET_POINTER_TO_MODULE_TEARDOWN(func);
+    NBP_INCLUDE_MODULE_TEARDOWN_FUNCTION(func);                                \
+    moduleFunction->teardownFunction =                                         \
+        NBP_GET_POINTER_TO_MODULE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GMMCF_NBP_MODULE_FIXTURES(setupFunc, teardownFunc)        \
     INTERNAL_NBP_GMMCF_NBP_MODULE_SETUP(setupFunc)                             \

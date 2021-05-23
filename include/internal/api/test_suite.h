@@ -40,11 +40,12 @@ SOFTWARE.
 #define NBP_TEST_SUITE_SETUP(func)                                             \
     void nbp_test_suite_setup_function_##func(                                 \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
-    nbp_test_suite_setup_details_t gInternalNbpTestSuiteSetupDetails##func = { \
-        .functionName = #func,                                                 \
-        .file         = NBP_SOURCE_FILE,                                       \
-        .line         = NBP_SOURCE_LINE,                                       \
-        .function     = nbp_test_suite_setup_function_##func,                  \
+    nbp_test_suite_setup_function_t gInternalNbpTestSuiteSetupFunction##func = \
+        {                                                                      \
+            .functionName = #func,                                             \
+            .file         = NBP_SOURCE_FILE,                                   \
+            .line         = NBP_SOURCE_LINE,                                   \
+            .function     = nbp_test_suite_setup_function_##func,              \
     };                                                                         \
     void nbp_test_suite_setup_function_##func(                                 \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite)
@@ -55,8 +56,8 @@ SOFTWARE.
 #define NBP_TEST_SUITE_TEARDOWN(func)                                          \
     void nbp_test_suite_teardown_function_##func(                              \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite);       \
-    nbp_test_suite_teardown_details_t                                          \
-        gInternalNbpTestSuiteTeardownDetails##func = {                         \
+    nbp_test_suite_teardown_function_t                                         \
+        gInternalNbpTestSuiteTeardownFunction##func = {                        \
             .functionName = #func,                                             \
             .file         = NBP_SOURCE_FILE,                                   \
             .line         = NBP_SOURCE_LINE,                                   \
@@ -70,12 +71,13 @@ SOFTWARE.
  */
 #define NBP_TEST_SUITE(func, ...)                                              \
     void nbp_test_suite_config_function_##func(                                \
-        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_details_t* testSuiteDetails) \
+        NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_function_t*                  \
+            testSuiteFunction)                                                 \
     {                                                                          \
-        if (testSuiteDetails->isConfigured == 1) {                             \
+        if (testSuiteFunction->isConfigured == 1) {                            \
             return;                                                            \
         } else {                                                               \
-            testSuiteDetails->isConfigured = 1;                                \
+            testSuiteFunction->isConfigured = 1;                               \
         }                                                                      \
         INTERNAL_NBP_GENERATE_TEST_SUITE_CONFIG_FUNCTION(F_##__VA_ARGS__)      \
     }                                                                          \
@@ -84,16 +86,16 @@ SOFTWARE.
         nbp_test_suite_t* nbpParamTciParentTestSuite,                          \
         nbp_module_t* nbpParamTciParentModule,                                 \
         unsigned int nbpParamNumberOfRuns);                                    \
-    nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func = {            \
-        .name            = #func,                                              \
-        .functionName    = #func,                                              \
-        .file            = NBP_SOURCE_FILE,                                    \
-        .line            = NBP_SOURCE_LINE,                                    \
-        .isConfigured    = 0,                                                  \
-        .configFunction  = nbp_test_suite_config_function_##func,              \
-        .function        = nbp_test_suite_function_##func,                     \
-        .setupDetails    = NBP_NULLPTR,                                        \
-        .teardownDetails = NBP_NULLPTR,                                        \
+    nbp_test_suite_function_t gInternalNbpTestSuiteFunction##func = {          \
+        .name             = #func,                                             \
+        .functionName     = #func,                                             \
+        .file             = NBP_SOURCE_FILE,                                   \
+        .line             = NBP_SOURCE_LINE,                                   \
+        .isConfigured     = 0,                                                 \
+        .configFunction   = nbp_test_suite_config_function_##func,             \
+        .function         = nbp_test_suite_function_##func,                    \
+        .setupFunction    = NBP_NULLPTR,                                       \
+        .teardownFunction = NBP_NULLPTR,                                       \
     };                                                                         \
     void nbp_test_suite_function_##func(                                       \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -115,40 +117,40 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE_SETUP(func)                                     \
-    extern nbp_test_suite_setup_details_t                                      \
-        gInternalNbpTestSuiteSetupDetails##func
+#define NBP_INCLUDE_TEST_SUITE_SETUP_FUNCTION(func)                            \
+    extern nbp_test_suite_setup_function_t                                     \
+        gInternalNbpTestSuiteSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func)                              \
-    &gInternalNbpTestSuiteSetupDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_SETUP_FUNCTION(func)                     \
+    &gInternalNbpTestSuiteSetupFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE_TEARDOWN(func)                                  \
-    extern nbp_test_suite_teardown_details_t                                   \
-        gInternalNbpTestSuiteTeardownDetails##func
+#define NBP_INCLUDE_TEST_SUITE_TEARDOWN_FUNCTION(func)                         \
+    extern nbp_test_suite_teardown_function_t                                  \
+        gInternalNbpTestSuiteTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func)                           \
-    &gInternalNbpTestSuiteTeardownDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN_FUNCTION(func)                  \
+    &gInternalNbpTestSuiteTeardownFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_INCLUDE_TEST_SUITE(func)                                           \
-    extern nbp_test_suite_details_t gInternalNbpTestSuiteDetails##func
+#define NBP_INCLUDE_TEST_SUITE_FUNCTION(func)                                  \
+    extern nbp_test_suite_function_t gInternalNbpTestSuiteFunction##func
 
 /**
  * TODO: add docs
  */
-#define NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func)                            \
-    &gInternalNbpTestSuiteDetails##func
+#define NBP_GET_POINTER_TO_TEST_SUITE_FUNCTION(func)                           \
+    &gInternalNbpTestSuiteFunction##func
 
 /**
  * TODO: add docs
@@ -202,7 +204,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_TEST_SUITE_INSTANCE_GET_NAME(testSuiteInstance)                    \
-    testSuiteInstance->testSuiteDetails->name
+    testSuiteInstance->testSuiteFunction->name
 
 /**
  * TODO: add docs
@@ -248,11 +250,11 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_INSTANTIATE_TEST_SUITE(func, ...)                                  \
-    NBP_INCLUDE_TEST_SUITE(func);                                              \
+    NBP_INCLUDE_TEST_SUITE_FUNCTION(func);                                     \
     NBP_PP_CONCAT(NBP_PP_PARSE_PARAMETER_, NBP_PP_COUNT(TSPIO_##__VA_ARGS__))  \
     (TSPIO_, TSPIO_##__VA_ARGS__);                                             \
     internal_nbp_instantiate_test_suite(                                       \
-        NBP_GET_POINTER_TO_TEST_SUITE_DETAILS(func),                           \
+        NBP_GET_POINTER_TO_TEST_SUITE_FUNCTION(func),                          \
         nbpParamTsiParentModule,                                               \
         NBP_SOURCE_LINE,                                                       \
         nbpParamNumberOfRuns,                                                  \
@@ -267,16 +269,17 @@ SOFTWARE.
 #define INTERNAL_NBP_GTSCF_
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_NAME(newName)                        \
-    testSuiteDetails->name = newName;
+    testSuiteFunction->name = newName;
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(func)                          \
-    NBP_INCLUDE_TEST_SUITE_SETUP(func);                                        \
-    testSuiteDetails->setupDetails = NBP_GET_POINTER_TO_TEST_SUITE_SETUP(func);
+    NBP_INCLUDE_TEST_SUITE_SETUP_FUNCTION(func);                               \
+    testSuiteFunction->setupFunction =                                         \
+        NBP_GET_POINTER_TO_TEST_SUITE_SETUP_FUNCTION(func);
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_TEARDOWN(func)                       \
-    NBP_INCLUDE_TEST_SUITE_TEARDOWN(func);                                     \
-    testSuiteDetails->teardownDetails =                                        \
-        NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN(func);
+    NBP_INCLUDE_TEST_SUITE_TEARDOWN_FUNCTION(func);                            \
+    testSuiteFunction->teardownFunction =                                      \
+        NBP_GET_POINTER_TO_TEST_SUITE_TEARDOWN_FUNCTION(func);
 
 #define INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_FIXTURES(setupFunc, teardownFunc)    \
     INTERNAL_NBP_GTSCF_NBP_TEST_SUITE_SETUP(setupFunc)                         \

@@ -37,7 +37,7 @@ struct nbp_module_t;
 
 struct nbp_test_suite_t;
 
-struct nbp_test_case_details_t;
+struct nbp_test_case_function_t;
 struct nbp_test_case_instance_t;
 struct nbp_test_case_t;
 
@@ -50,7 +50,7 @@ typedef void (*nbp_test_case_teardown_pfn_t)(
 );
 
 typedef void (*nbp_test_case_config_pfn_t)(
-    struct nbp_test_case_details_t* /* testCaseDetails */
+    struct nbp_test_case_function_t* /* testCaseFunction */
 );
 
 typedef void (*nbp_test_case_pfn_t)(
@@ -77,7 +77,7 @@ enum nbp_test_case_state_e
 };
 typedef enum nbp_test_case_state_e nbp_test_case_state_e;
 
-struct nbp_test_case_setup_details_t
+struct nbp_test_case_setup_function_t
 {
     const char* functionName;
 
@@ -86,9 +86,9 @@ struct nbp_test_case_setup_details_t
 
     nbp_test_case_setup_pfn_t function;
 };
-typedef struct nbp_test_case_setup_details_t nbp_test_case_setup_details_t;
+typedef struct nbp_test_case_setup_function_t nbp_test_case_setup_function_t;
 
-struct nbp_test_case_teardown_details_t
+struct nbp_test_case_teardown_function_t
 {
     const char* functionName;
 
@@ -97,10 +97,10 @@ struct nbp_test_case_teardown_details_t
 
     nbp_test_case_teardown_pfn_t function;
 };
-typedef struct nbp_test_case_teardown_details_t
-    nbp_test_case_teardown_details_t;
+typedef struct nbp_test_case_teardown_function_t
+    nbp_test_case_teardown_function_t;
 
-struct nbp_test_case_details_t
+struct nbp_test_case_function_t
 {
     const char* name;
     const char* functionName;
@@ -113,14 +113,14 @@ struct nbp_test_case_details_t
     nbp_test_case_config_pfn_t configFunction;
     nbp_test_case_pfn_t function;
 
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
+    nbp_test_case_setup_function_t* setupFunction;
+    nbp_test_case_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_test_case_details_t nbp_test_case_details_t;
+typedef struct nbp_test_case_function_t nbp_test_case_function_t;
 
 struct nbp_test_case_instance_t
 {
-    nbp_test_case_details_t* testCaseDetails;
+    nbp_test_case_function_t* testCaseFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -132,8 +132,8 @@ struct nbp_test_case_instance_t
 
     int instantiationLine;
 
-    nbp_test_case_setup_details_t* setupDetails;
-    nbp_test_case_teardown_details_t* teardownDetails;
+    nbp_test_case_setup_function_t* setupFunction;
+    nbp_test_case_teardown_function_t* teardownFunction;
 
     struct nbp_test_case_t* runs;
     unsigned int numberOfRuns;

@@ -316,14 +316,14 @@ nbp_test_case_t* internal_nbp_get_test_case_from_instance(
 }
 
 nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
-    nbp_test_case_details_t* testCaseDetails,
+    nbp_test_case_function_t* testCaseFunction,
     nbp_module_t* parentModule,
     nbp_test_suite_t* parentTestSuite,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    testCaseDetails->configFunction(testCaseDetails);
+    testCaseFunction->configFunction(testCaseFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -385,13 +385,13 @@ nbp_test_case_instance_t* internal_nbp_instantiate_test_case(
         NBP_ATOMIC_INT_STORE(&runs[i].isSkipped, (int) sf_is_not_set);
     }
 
-    testCaseInstance->testCaseDetails   = testCaseDetails;
+    testCaseInstance->testCaseFunction  = testCaseFunction;
     testCaseInstance->module            = parentModule;
     testCaseInstance->testSuite         = parentTestSuite;
     testCaseInstance->depth             = 0;
     testCaseInstance->instantiationLine = instantiationLine;
-    testCaseInstance->setupDetails      = testCaseDetails->setupDetails;
-    testCaseInstance->teardownDetails   = testCaseDetails->teardownDetails;
+    testCaseInstance->setupFunction     = testCaseFunction->setupFunction;
+    testCaseInstance->teardownFunction  = testCaseFunction->teardownFunction;
     testCaseInstance->runs              = runs;
     testCaseInstance->numberOfRuns      = numberOfRuns;
     testCaseInstance->next              = NBP_NULLPTR;

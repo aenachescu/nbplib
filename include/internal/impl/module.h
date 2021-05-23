@@ -37,7 +37,7 @@ SOFTWARE.
 #include "../details/utils.h"
 #include "../types/flags.h"
 
-extern nbp_module_details_t* gInternalNbpMainModuleDetails;
+extern nbp_module_function_t* gInternalNbpMainModuleFunction;
 
 static void internal_nbp_increment_number_of_modules(
     NBP_ATOMIC_UINT_TYPE* statsArray,
@@ -238,13 +238,13 @@ nbp_module_t* internal_nbp_get_module_from_instance(
 }
 
 nbp_module_instance_t* internal_nbp_instantiate_module(
-    nbp_module_details_t* moduleDetails,
+    nbp_module_function_t* moduleFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    moduleDetails->configFunction(moduleDetails);
+    moduleFunction->configFunction(moduleFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -255,7 +255,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     if (parentModule == NBP_NULLPTR
-        && moduleDetails != gInternalNbpMainModuleDetails) {
+        && moduleFunction != gInternalNbpMainModuleFunction) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
             ec_invalid_parent,
             "module instance has no parent");
@@ -264,7 +264,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
     }
 
     if (parentModule != NBP_NULLPTR) {
-        if (parentModule->moduleInstance->moduleDetails == moduleDetails) {
+        if (parentModule->moduleInstance->moduleFunction == moduleFunction) {
             NBP_REPORT_ERROR_STRING_CONTEXT(
                 ec_invalid_parent,
                 "a module cannot self instantiate");
@@ -274,7 +274,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
 
         nbp_module_t* p = parentModule->moduleInstance->parent;
         while (p != NBP_NULLPTR) {
-            if (p->moduleInstance->moduleDetails == moduleDetails) {
+            if (p->moduleInstance->moduleFunction == moduleFunction) {
                 NBP_REPORT_ERROR_STRING_CONTEXT(
                     ec_invalid_parent,
                     "a module cannot instantiate a parent module");
@@ -372,12 +372,12 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
             0U);
     }
 
-    moduleInstance->moduleDetails     = moduleDetails;
+    moduleInstance->moduleFunction    = moduleFunction;
     moduleInstance->parent            = parentModule;
     moduleInstance->depth             = 0;
     moduleInstance->instantiationLine = instantiationLine;
-    moduleInstance->setupDetails      = moduleDetails->setupDetails;
-    moduleInstance->teardownDetails   = moduleDetails->teardownDetails;
+    moduleInstance->setupFunction     = moduleFunction->setupFunction;
+    moduleInstance->teardownFunction  = moduleFunction->teardownFunction;
     moduleInstance->runs              = runs;
     moduleInstance->numberOfRuns      = numberOfRuns;
     moduleInstance->next              = NBP_NULLPTR;
@@ -443,7 +443,7 @@ nbp_module_instance_t* internal_nbp_instantiate_module(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        moduleInstance->moduleDetails->function(
+        moduleInstance->moduleFunction->function(
             &moduleInstance->runs[i],
             NBP_NULLPTR,
             &moduleInstance->runs[i],

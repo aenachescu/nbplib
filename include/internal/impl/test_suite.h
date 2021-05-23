@@ -246,13 +246,13 @@ nbp_test_suite_t* internal_nbp_get_test_suite_from_instance(
 }
 
 nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
-    nbp_test_suite_details_t* testSuiteDetails,
+    nbp_test_suite_function_t* testSuiteFunction,
     nbp_module_t* parentModule,
     int instantiationLine,
     unsigned int numberOfRuns,
     void* context)
 {
-    testSuiteDetails->configFunction(testSuiteDetails);
+    testSuiteFunction->configFunction(testSuiteFunction);
 
     if (numberOfRuns == 0) {
         NBP_REPORT_ERROR_STRING_CONTEXT(
@@ -334,11 +334,11 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
             0U);
     }
 
-    testSuiteInstance->testSuiteDetails  = testSuiteDetails;
+    testSuiteInstance->testSuiteFunction = testSuiteFunction;
     testSuiteInstance->module            = parentModule;
     testSuiteInstance->instantiationLine = instantiationLine;
-    testSuiteInstance->setupDetails      = testSuiteDetails->setupDetails;
-    testSuiteInstance->teardownDetails   = testSuiteDetails->teardownDetails;
+    testSuiteInstance->setupFunction     = testSuiteFunction->setupFunction;
+    testSuiteInstance->teardownFunction  = testSuiteFunction->teardownFunction;
     testSuiteInstance->runs              = runs;
     testSuiteInstance->numberOfRuns      = numberOfRuns;
     testSuiteInstance->next              = NBP_NULLPTR;
@@ -385,7 +385,7 @@ nbp_test_suite_instance_t* internal_nbp_instantiate_test_suite(
         context);
 
     for (unsigned int i = 0; i < numberOfRuns; i++) {
-        testSuiteInstance->testSuiteDetails->function(
+        testSuiteInstance->testSuiteFunction->function(
             &testSuiteInstance->runs[i],
             &testSuiteInstance->runs[i],
             NBP_NULLPTR,

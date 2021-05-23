@@ -36,7 +36,7 @@ SOFTWARE.
 
 struct nbp_module_t;
 
-struct nbp_test_suite_details_t;
+struct nbp_test_suite_function_t;
 struct nbp_test_suite_instance_t;
 struct nbp_test_suite_t;
 
@@ -49,7 +49,7 @@ typedef void (*nbp_test_suite_teardown_pfn_t)(
 );
 
 typedef void (*nbp_test_suite_config_pfn_t)(
-    struct nbp_test_suite_details_t* /* testSuiteDetails */
+    struct nbp_test_suite_function_t* /* testSuiteFunction */
 );
 
 typedef void (*nbp_test_suite_pfn_t)(
@@ -79,7 +79,7 @@ enum nbp_test_suite_state_e
 };
 typedef enum nbp_test_suite_state_e nbp_test_suite_state_e;
 
-struct nbp_test_suite_setup_details_t
+struct nbp_test_suite_setup_function_t
 {
     const char* functionName;
 
@@ -88,9 +88,9 @@ struct nbp_test_suite_setup_details_t
 
     nbp_test_suite_setup_pfn_t function;
 };
-typedef struct nbp_test_suite_setup_details_t nbp_test_suite_setup_details_t;
+typedef struct nbp_test_suite_setup_function_t nbp_test_suite_setup_function_t;
 
-struct nbp_test_suite_teardown_details_t
+struct nbp_test_suite_teardown_function_t
 {
     const char* functionName;
 
@@ -99,10 +99,10 @@ struct nbp_test_suite_teardown_details_t
 
     nbp_test_suite_teardown_pfn_t function;
 };
-typedef struct nbp_test_suite_teardown_details_t
-    nbp_test_suite_teardown_details_t;
+typedef struct nbp_test_suite_teardown_function_t
+    nbp_test_suite_teardown_function_t;
 
-struct nbp_test_suite_details_t
+struct nbp_test_suite_function_t
 {
     const char* name;
     const char* functionName;
@@ -115,14 +115,14 @@ struct nbp_test_suite_details_t
     nbp_test_suite_config_pfn_t configFunction;
     nbp_test_suite_pfn_t function;
 
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
+    nbp_test_suite_setup_function_t* setupFunction;
+    nbp_test_suite_teardown_function_t* teardownFunction;
 };
-typedef struct nbp_test_suite_details_t nbp_test_suite_details_t;
+typedef struct nbp_test_suite_function_t nbp_test_suite_function_t;
 
 struct nbp_test_suite_instance_t
 {
-    nbp_test_suite_details_t* testSuiteDetails;
+    nbp_test_suite_function_t* testSuiteFunction;
 
     NBP_ATOMIC_INT_TYPE state;
 
@@ -133,8 +133,8 @@ struct nbp_test_suite_instance_t
 
     int instantiationLine;
 
-    nbp_test_suite_setup_details_t* setupDetails;
-    nbp_test_suite_teardown_details_t* teardownDetails;
+    nbp_test_suite_setup_function_t* setupFunction;
+    nbp_test_suite_teardown_function_t* teardownFunction;
 
     struct nbp_test_suite_t* runs;
     unsigned int numberOfRuns;
