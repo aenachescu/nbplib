@@ -36,24 +36,23 @@ SOFTWARE.
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_INIT(func) static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_INIT(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_UNINIT(func)                                       \
-    static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_UNINIT(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_RUN(func) static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_RUN(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)                        \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -64,7 +63,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)               \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
@@ -74,7 +73,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)             \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -83,7 +82,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                   \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
@@ -93,7 +92,7 @@ SOFTWARE.
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)                 \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -148,25 +147,33 @@ SOFTWARE.
 #define INTERNAL_NBP_RNC_
 
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INIT(func)                        \
+    NBP_RUNNER_CALLBACK_INIT(func);                                            \
     runnerInterface->initCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_UNINIT(func)                      \
+    NBP_RUNNER_CALLBACK_UNINIT(func);                                          \
     runnerInterface->uninitCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_RUN(func)                         \
+    NBP_RUNNER_CALLBACK_RUN(func);                                             \
     runnerInterface->runCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func);                           \
     runnerInterface->instantiateTestCaseCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func);                  \
     runnerInterface->instantiateTestSuiteStartedCbk =                          \
         nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func);                \
     runnerInterface->instantiateTestSuiteCompletedCbk =                        \
         nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func);                      \
     runnerInterface->instantiateModuleStartedCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func);                    \
     runnerInterface->instantiateModuleCompletedCbk = nbp_runner_callback_##func;
 
 #endif // end if _H_NBP_INTERNAL_API_RUNNER

@@ -2547,40 +2547,38 @@ void internal_nbp_copy_array_of_atomic_uint(
 /**
  * TODO: add docs
  */
-#define NBP_REPORTER_CALLBACK_INIT(func)                                       \
-    static void nbp_reporter_callback_##func()
+#define NBP_REPORTER_CALLBACK_INIT(func) void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_REPORTER_CALLBACK_UNINIT(func)                                     \
-    static void nbp_reporter_callback_##func()
+#define NBP_REPORTER_CALLBACK_UNINIT(func) void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)                     \
-    static void nbp_reporter_callback_##func()
+    void nbp_reporter_callback_##func()
 
 /**
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_ON_ERROR(func)                                   \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_t nbpParamError)
 
 /**
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_ON_EXIT(func)                                    \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_error_code_e nbpParamErrorCode)
 
 /**
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                                 \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
@@ -2588,7 +2586,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_AFTER_RUN(func)                                  \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_reporter_statistics_t*                  \
             nbpParamStatistics)
 
@@ -2596,7 +2594,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)                      \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2606,7 +2604,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)             \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2615,7 +2613,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)           \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2624,7 +2622,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                 \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2633,7 +2631,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)               \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2642,7 +2640,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)                          \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -2653,7 +2651,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)                        \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_t* nbpParamTestCase,          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
@@ -2664,7 +2662,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)                 \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2674,7 +2672,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func)               \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -2684,7 +2682,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)                         \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -2694,7 +2692,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)                       \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
@@ -2704,7 +2702,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func)                \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2713,7 +2711,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func)              \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -2722,7 +2720,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_MODULE_STARTED(func)                             \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -2731,7 +2729,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)                           \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
@@ -2740,7 +2738,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)                    \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
@@ -2748,7 +2746,7 @@ void internal_nbp_copy_array_of_atomic_uint(
  * TODO: add docs
  */
 #define NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)                  \
-    static void nbp_reporter_callback_##func(                                  \
+    void nbp_reporter_callback_##func(                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance)
 
@@ -2831,65 +2829,89 @@ void internal_nbp_copy_array_of_atomic_uint(
 #define INTERNAL_NBP_R_
 
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INIT(func)                        \
+    NBP_REPORTER_CALLBACK_INIT(func);                                          \
     reporterInterface->initCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_UNINIT(func)                      \
+    NBP_REPORTER_CALLBACK_UNINIT(func);                                        \
     reporterInterface->uninitCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func)      \
+    NBP_REPORTER_CALLBACK_HANDLE_VERSION_COMMAND(func);                        \
     reporterInterface->handleVersionCommandCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_ON_ERROR(func)                    \
+    NBP_REPORTER_CALLBACK_ON_ERROR(func);                                      \
     reporterInterface->errorCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_ON_EXIT(func)                     \
+    NBP_REPORTER_CALLBACK_ON_EXIT(func);                                       \
     reporterInterface->exitCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_BEFORE_RUN(func)                  \
+    NBP_REPORTER_CALLBACK_BEFORE_RUN(func);                                    \
     reporterInterface->beforeRunCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_AFTER_RUN(func)                   \
+    NBP_REPORTER_CALLBACK_AFTER_RUN(func);                                     \
     reporterInterface->afterRunCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
+    NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_CASE(func);                         \
     reporterInterface->instantiateTestCaseCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
+    NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func);                \
     reporterInterface->instantiateTestSuiteStartedCbk =                        \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
+    NBP_REPORTER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func);              \
     reporterInterface->instantiateTestSuiteCompletedCbk =                      \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
+    NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_STARTED(func);                    \
     reporterInterface->instantiateModuleStartedCbk =                           \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
     func)                                                                      \
+    NBP_REPORTER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func);                  \
     reporterInterface->instantiateModuleCompletedCbk =                         \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func)           \
+    NBP_REPORTER_CALLBACK_TEST_CASE_STARTED(func);                             \
     reporterInterface->testCaseStartedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func)         \
+    NBP_REPORTER_CALLBACK_TEST_CASE_COMPLETED(func);                           \
     reporterInterface->testCaseCompletedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func)  \
+    NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_STARTED(func);                    \
     reporterInterface->testCaseInstanceStartedCbk =                            \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(     \
     func)                                                                      \
+    NBP_REPORTER_CALLBACK_TEST_CASE_INSTANCE_COMPLETED(func);                  \
     reporterInterface->testCaseInstanceCompletedCbk =                          \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func)          \
+    NBP_REPORTER_CALLBACK_TEST_SUITE_STARTED(func);                            \
     reporterInterface->testSuiteStartedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func)        \
+    NBP_REPORTER_CALLBACK_TEST_SUITE_COMPLETED(func);                          \
     reporterInterface->testSuiteCompletedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func) \
+    NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_STARTED(func);                   \
     reporterInterface->testSuiteInstanceStartedCbk =                           \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(    \
     func)                                                                      \
+    NBP_REPORTER_CALLBACK_TEST_SUITE_INSTANCE_COMPLETED(func);                 \
     reporterInterface->testSuiteInstanceCompletedCbk =                         \
         nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_MODULE_STARTED(func)              \
+    NBP_REPORTER_CALLBACK_MODULE_STARTED(func);                                \
     reporterInterface->moduleStartedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func)            \
+    NBP_REPORTER_CALLBACK_MODULE_COMPLETED(func);                              \
     reporterInterface->moduleCompletedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func)     \
+    NBP_REPORTER_CALLBACK_MODULE_INSTANCE_STARTED(func);                       \
     reporterInterface->moduleInstanceStartedCbk = nbp_reporter_callback_##func;
 #define INTERNAL_NBP_R_NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func)   \
+    NBP_REPORTER_CALLBACK_MODULE_INSTANCE_COMPLETED(func);                     \
     reporterInterface->moduleInstanceCompletedCbk =                            \
         nbp_reporter_callback_##func;
 
@@ -7680,24 +7702,23 @@ NBP_REPORTER(
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_INIT(func) static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_INIT(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_UNINIT(func)                                       \
-    static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_UNINIT(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
-#define NBP_RUNNER_CALLBACK_RUN(func) static void nbp_runner_callback_##func()
+#define NBP_RUNNER_CALLBACK_RUN(func) void nbp_runner_callback_##func()
 
 /**
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)                        \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_case_instance_t*                   \
             nbpParamTestCaseInstance,                                          \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_t* nbpParamTestSuite,        \
@@ -7708,7 +7729,7 @@ NBP_REPORTER(
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func)               \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
@@ -7718,7 +7739,7 @@ NBP_REPORTER(
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func)             \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_test_suite_instance_t*                  \
             nbpParamTestSuiteInstance,                                         \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -7727,7 +7748,7 @@ NBP_REPORTER(
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)                   \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule,               \
@@ -7737,7 +7758,7 @@ NBP_REPORTER(
  * TODO: add docs
  */
 #define NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func)                 \
-    static void nbp_runner_callback_##func(                                    \
+    void nbp_runner_callback_##func(                                           \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_instance_t*                      \
             nbpParamModuleInstance,                                            \
         NBP_MAYBE_UNUSED_PARAMETER nbp_module_t* nbpParamModule)
@@ -7792,25 +7813,33 @@ NBP_REPORTER(
 #define INTERNAL_NBP_RNC_
 
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INIT(func)                        \
+    NBP_RUNNER_CALLBACK_INIT(func);                                            \
     runnerInterface->initCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_UNINIT(func)                      \
+    NBP_RUNNER_CALLBACK_UNINIT(func);                                          \
     runnerInterface->uninitCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_RUN(func)                         \
+    NBP_RUNNER_CALLBACK_RUN(func);                                             \
     runnerInterface->runCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func)       \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_CASE(func);                           \
     runnerInterface->instantiateTestCaseCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(   \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_STARTED(func);                  \
     runnerInterface->instantiateTestSuiteStartedCbk =                          \
         nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED( \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_TEST_SUITE_COMPLETED(func);                \
     runnerInterface->instantiateTestSuiteCompletedCbk =                        \
         nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func)  \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_STARTED(func);                      \
     runnerInterface->instantiateModuleStartedCbk = nbp_runner_callback_##func;
 #define INTERNAL_NBP_RNC_NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(     \
     func)                                                                      \
+    NBP_RUNNER_CALLBACK_INSTANTIATE_MODULE_COMPLETED(func);                    \
     runnerInterface->instantiateModuleCompletedCbk = nbp_runner_callback_##func;
 
 struct nbp_br_task_queue_t
