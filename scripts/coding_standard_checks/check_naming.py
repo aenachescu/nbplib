@@ -66,6 +66,13 @@ fieldValueExceptions = [
     "nbp_error_code_e"
 ]
 
+localVariableNameExceptions = [
+    "SUCCESS_MESSAGE_macro_already_used",
+    "FAILURE_MESSAGE_macro_already_used",
+
+    "fatality_level_already_set",
+]
+
 macroNameExceptions = [
     "^_DEFAULT_SOURCE$",
 
@@ -80,6 +87,7 @@ macroNameExceptions = [
     "^INTERNAL_NBP_TCPIO_$",
     "^INTERNAL_NBP_TSPIO_$",
     "^INTERNAL_NBP_MPIO_$",
+    "^INTERNAL_NBP_APP_$",
 
     "^INTERNAL_NBP_RS_PARAM_$",
     "^INTERNAL_NBP_TCGS_PARAM_$",
@@ -100,6 +108,10 @@ macroNameExceptions = [
     "^INTERNAL_NBP_(RS|TCGS|TCIGS|TSGS|TSIGS|MGS|MIGS)_st_number_of_"
     "(test_cases|test_case_instances|test_suites|test_suite_instances|"
     "modules|module_instances)1$",
+
+    "^INTERNAL_NBP_APP_afl_"
+    "(test_case|test_case_instance|test_suite|test_suite_instance|"
+    "module|module_instance|complete)$",
 ]
 
 functionNameExceptions = [
@@ -142,6 +154,17 @@ enumNameConfig = [
     )),
 ]
 
+unionNameConfig = [
+    tuple((
+        "include/internal/runners/basic_runner.h",
+        [ "nbp_br_" ]
+    )),
+    tuple((
+        "include/internal/reporters/linux_console_reporter.h",
+        [ "nbp_cr_" ]
+    )),
+]
+
 functionNameConfig = [
     tuple((
         "include/internal/runners/basic_runner.h",
@@ -174,6 +197,7 @@ class TypedefType(Enum):
     POINTER_TO_FUNC = 1
     STRUCT          = 2
     ENUM            = 3
+    UNION           = 4
 
 def is_test_file(filePath):
     rootPathNoSep = os.path.join(rootPath, '')
@@ -320,6 +344,13 @@ def get_enum_name_prefixes(filePath):
 
     return [ "nbp_", "internal_nbp_" ]
 
+def get_union_name_prefixes(filePath):
+    for fp, p in unionNameConfig:
+        if filePath.endswith(fp):
+            return p
+
+    return [ "nbp_", "internal_nbp_" ]
+
 def get_function_name_prefixes(filePath):
     if is_test_file(filePath):
         return [ "" ]
@@ -453,7 +484,7 @@ def check_unnamed_union(log, node, parentStructName, filePath):
             field.location.line
         )
 
-        expectedTypedefLine = field.location.line + 3
+        expectedTypedefLine = field.extent.end.line + 3
 
     return status, expectedTypedefLine
 
@@ -479,7 +510,7 @@ def check_structs(log, root, filePath):
         expectedTypedefLine = 0
         fieldsStatus = True
 
-        hasPrefix, prefix = starts_with_prefix(structName, prefixes)
+        hasPrefix, _ = starts_with_prefix(structName, prefixes)
 
         if not hasPrefix:
             log.error(
@@ -579,7 +610,7 @@ def check_structs(log, root, filePath):
                 fieldsStatus = False
                 continue
 
-            expectedTypedefLine = field.location.line + 2
+            expectedTypedefLine = field.extent.end.line + 2
             expectedFieldName = camelize_name(field.spelling, False)
 
             if field.spelling != expectedFieldName:
@@ -692,7 +723,7 @@ def check_enum_fields(log, enum, filePath, prefix, enumName):
             continue
 
         fieldName = field.spelling
-        expectedTypedefLine = field.location.line + 2
+        expectedTypedefLine = field.extent.end.line + 2
 
         if not fieldName.startswith(prefix):
             log.error(
@@ -953,6 +984,125 @@ def check_enums(log, root, filePath):
 
     return status, foundEnums
 
+def check_union_fields(log, union, filePath, unionName):
+    status = True
+    expectedTypedefLine = 0
+
+    for field in union.get_children():
+        if field.kind != clang.cindex.CursorKind.FIELD_DECL:
+            log.error(
+                "Unexpected union field kind [%s]. Union = %s. "
+                "File = [%s]. Line = %d",
+                field.kind,
+                unionName,
+                filePath,
+                field.location.line
+            )
+            status = False
+            continue
+
+        expectedTypedefLine = field.extent.end.line + 2
+        expectedFieldName = camelize_name(field.spelling, False)
+
+        if field.spelling != expectedFieldName:
+            log.error(
+                "Unexpected union field name. Expected = [%s]. Actual = [%s]. "
+                "Union = %s. File = [%s]. Line = %d",
+                expectedFieldName,
+                field.spelling,
+                unionName,
+                filePath,
+                field.location.line
+            )
+            status = False
+            continue
+
+        log.info(
+            "Valid union field %s. Union = %s. File = [%s]. Line = %d",
+            field.spelling,
+            unionName,
+            filePath,
+            field.location.line
+        )
+
+    return status, expectedTypedefLine
+
+def check_unions(log, root, filePath):
+    log.info("Checking unions... [%s]", filePath)
+
+    status = True
+    foundUnions = []
+    prefixes = get_union_name_prefixes(filePath)
+
+    for union in root.get_children():
+        if union.kind != clang.cindex.CursorKind.UNION_DECL:
+            continue
+        if union.location.file.name != filePath:
+            continue
+
+        unionName = union.spelling
+        hasPrefix, _ = starts_with_prefix(unionName, prefixes)
+
+        if not hasPrefix:
+            log.error(
+                "Invalid union name. The name should start with %s. "
+                "Actual name = [%s]. File = [%s]. Line = %d",
+                prefixes,
+                unionName,
+                filePath,
+                union.location.line
+            )
+            status = False
+            continue
+
+        if not unionName.endswith("_u"):
+            log.error(
+                "Invalid union name. The name should end with _u. "
+                "Actual name = [%s]. File = [%s]. Line = %d",
+                unionName,
+                filePath,
+                union.location.line
+            )
+            status = False
+            continue
+
+        expectedUnionName = underscore_name(unionName)
+        if expectedUnionName != unionName:
+            log.error(
+                "Invalid union name. Expected = [%s]. Actual = [%s]. "
+                "File = [%s]. Line = %d",
+                expectedUnionName,
+                unionName,
+                filePath,
+                union.location.line
+            )
+            status = False
+            continue
+
+        log.info(
+            "Found valid union %s. File = [%s]. Line = %d",
+            unionName,
+            filePath,
+            union.location.line
+        )
+
+        unionFieldsStatus, expectedTypedefLine = check_union_fields(
+            log,
+            union,
+            filePath,
+            unionName
+        )
+        if not unionFieldsStatus:
+            status = False
+            continue
+
+        foundUnions.append(tuple((unionName, expectedTypedefLine)))
+
+    if status:
+        log.info("Union names are ok: %s", filePath)
+
+    return status, foundUnions
+
 def get_typedef_type(log, filePath, typedef):
     numberOfChildren = get_number_of_children(typedef)
 
@@ -978,6 +1128,9 @@ def get_typedef_type(log, filePath, typedef):
             if child.spelling.startswith("enum "):
                 details = [ child.spelling, typedef.type.spelling ]
                 return TypedefType.ENUM, details
+            if child.spelling.startswith("union "):
+                details = [ child.spelling, typedef.type.spelling ]
+                return TypedefType.UNION, details
 
             log.error(
                 "Unknown type ref [%s]. File = [%s]. Line = %d",
@@ -1092,6 +1245,49 @@ def check_typedef_struct(log, filePath, line, name):
 
     return True
 
+def check_typedef_union(log, filePath, line, name):
+    if not name.startswith("nbp_"):
+        log.error(
+            "Invalid typedef union name. The name should start with nbp_. "
+            "Name = [%s]. File = [%s]. Line = %d",
+            name,
+            filePath,
+            line
+        )
+        return False
+
+    if not name.endswith("_u"):
+        log.error(
+            "Invalid typedef union name. The name should end with _u. "
+            "Name = [%s]. File = [%s]. Line = %d",
+            name,
+            filePath,
+            line
+        )
+        return False
+
+    expectedName = underscore_name(name)
+
+    if expectedName != name:
+        log.error(
+            "Invalid typedef union name. Expected = [%s]. Name = [%s]. "
+            "File = [%s]. Line = %d",
+            expectedName,
+            name,
+            filePath,
+            line
+        )
+        return False
+
+    log.info(
+        "Valid typedef union name [%s]. File = [%s]. Line = %d",
+        name,
+        filePath,
+        line
+    )
+
+    return True
+
 def check_typedef_pfn(log, filePath, line, name):
     if not name.startswith("nbp_"):
         log.error(
@@ -1186,6 +1382,57 @@ def check_expected_typedef_struct(log, filePath, expectedTypedefStructs,
 
     return status
 
+def check_expected_typedef_union(log, filePath, expectedTypedefUnions,
+    actualTypedefUnions):
+    status = True
+
+    for unionName, expectedLine in expectedTypedefUnions:
+        s = [union for union in actualTypedefUnions
+                if union[1] == expectedLine]
+        if len(s) == 0:
+            log.error(
+                "Expected [typedef union %s %s] on line %d. File = [%s]",
+                unionName,
+                unionName,
+                expectedLine,
+                filePath
+            )
+            status = False
+            continue
+
+        if len(s) > 1:
+            log.error(
+                "Too many typedefs on same line [%d]. File = [%s]",
+                expectedLine,
+                filePath
+            )
+            status = False
+            continue
+
+        typeName, line, underlying = s[0]
+
+        if unionName != typeName or ("union " + unionName) != underlying:
+            log.error(
+                "Expected [typedef union %s %s] on line %d. Actual [typedef "
+                "%s %s]",
+                unionName,
+                unionName,
+                expectedLine,
+                underlying,
+                typeName
+            )
+            status = False
+            continue
+
+        log.info(
+            "Found typedef for union %s. File = [%s]. Line = %d",
+            unionName,
+            filePath,
+            line
+        )
+
+    return status
+
 def check_expected_typedef_enum(log, filePath, expectedTypedefEnums,
     actualTypedefEnums):
     status = True
@@ -1247,13 +1494,14 @@ def get_typedef_location_line(typedef):
 
     return typedef.location.line
 
-def check_typedefs(log, root, filePath, structs, enums):
+def check_typedefs(log, root, filePath, structs, enums, unions):
     log.info("Checking typedefs... [%s]", filePath)
 
     status = True
 
     typedefStructs = []
     typedefEnums   = []
+    typedefUnions  = []
 
     for typedef in root.get_children():
         if typedef.kind != clang.cindex.CursorKind.TYPEDEF_DECL:
@@ -1310,6 +1558,21 @@ def check_typedefs(log, root, filePath, structs, enums):
                 tuple((details[1], locationLine, details[0]))
             )
             continue
+        elif typedefType == TypedefType.UNION:
+            st = check_typedef_union(
+                log,
+                filePath,
+                locationLine,
+                details[1]
+            )
+            if not st:
+                status = False
+                continue
+
+            typedefUnions.append(
+                tuple((details[1], locationLine, details[0]))
+            )
+            continue
 
         log.error("Unknown typedef type")
         status = False
@@ -1329,6 +1592,15 @@ def check_typedefs(log, root, filePath, structs, enums):
         filePath,
         enums,
         typedefEnums
+    )
+    if not st:
+        status = False
+
+    st = check_expected_typedef_union(
+        log,
+        filePath,
+        unions,
+        typedefUnions
     )
     if not st:
         status = False
@@ -1590,6 +1862,9 @@ def check_local_variables_impl(log, func, filePath, funcName):
 
         if (localVar.linkage == clang.cindex.LinkageKind.EXTERNAL and
             is_auto_generated_global_variable(localVar.spelling)):
+            continue
+
+        if localVar.spelling in localVariableNameExceptions:
             continue
 
         expectedLocalVarName = camelize_name(localVar.spelling, False)
@@ -1860,7 +2135,18 @@ def check_naming(log, filePath):
     if not st:
         status = False
 
-    st = check_typedefs(log, translationUnit.cursor, filePath, structs, enums)
+    st, unions = check_unions(log, translationUnit.cursor, filePath)
+    if not st:
+        status = False
+
+    st = check_typedefs(
+        log,
+        translationUnit.cursor,
+        filePath,
+        structs,
+        enums,
+        unions
+    )
     if not st:
         status = False
 
